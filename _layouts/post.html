@@ -1,0 +1,30 @@
+---
+layout: default
+title: Post
+---
+<article class="post-content">
+  <h1>{{ page.title }}</h1>
+  <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
+  <div class="entry">
+    {{ content }}
+  </div>
+</article>
+
+<style>
+.post-content {
+  max-width: 700px;
+  padding: 80px 0;
+}
+.post-content h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+.post-date {
+  color: var(--secondary-text);
+  margin-bottom: 40px;
+}
+.entry {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+</style>

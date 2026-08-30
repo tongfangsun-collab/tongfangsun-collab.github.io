@@ -1,0 +1,30 @@
+---
+layout: default
+title: Home
+---
+
+<section class="hero">
+  <h1>Designer, thinker, and creator.</h1>
+  <p class="hero-subtext">I focus on creating clean, functional, and aesthetically balanced digital experiences.</p>
+  <div class="hero-links">
+    <a href="{{ '/projects' | relative_url }}" class="btn-primary">View Work</a>
+    <a href="{{ '/about' | relative_url }}" class="btn-secondary">About Me</a>
+  </div>
+</section>
+
+<section class="featured-work">
+  <h2>Selected Projects</h2>
+  <div class="projects-grid">
+    {% for project in site.projects limit:3 %}
+      <a href="{{ project.url }}" class="project-card">
+        <div class="project-image" style="background-color: {{ project.color | default: '#f0f0f0' }}">
+           <!-- Placeholder for image -->
+        </div>
+        <div class="project-info">
+          <h3>{{ project.title }}</h3>
+          <p>{{ project.excerpt }}</p>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</section>

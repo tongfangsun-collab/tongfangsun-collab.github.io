@@ -1,0 +1,15 @@
+title: Tong Fang Sun
+email: your-email@example.com
+description: Designer & Creative Technologist
+baseurl: ""
+url: "https://tongfangsun.github.io"
+
+# Collections for Portfolio
+collections:
+  projects:
+    output: true
+    permalink: /projects/:path/
+
+# Build settings
+markdown: kramdown
+theme: minima # We will override this with custom CSS, but keeping a base is helpful for Jekyll
