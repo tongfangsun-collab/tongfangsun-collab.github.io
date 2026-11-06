@@ -2,11 +2,11 @@
 // Art & Explore — Interactive Gallery Engine (app.js)
 // Features:
 // 1. "After Hours" Artist Character Stage with unclipped speech bubbles
-// 2. Artist Docent Guided Introductions (Text + Web Speech Voice Synthesis)
+// 2. Visual Artist Docent Guided Introductions (No audio/speaker — pure visual text)
 // 3. Full-Screen Immersive Masterpiece Theatre with Next/Prev + Deep Zoom
 // 4. MediaPipe HandLandmarker Livestream Gesture Control:
-//    - Hand move -> Moves virtual cursor + auto-scrolls near viewport edges
-//    - Two-finger touch (thumb tip #4 + index tip #8 pinch) -> Clicks UI elements
+//    - Index finger tip (#8) moves the cursor smoothly (with pinch-lock stabilization)
+//    - Two-finger touch (thumb tip #4 + index tip #8 pinch) dispatches a REAL click
 // ============================================================================
 
 (function () {
@@ -24,7 +24,6 @@
     lightboxArtwork: null,
     lightboxArtist: null,
     docentMode: "voice", // "voice" | "story" | "technique"
-    autoNarrate: true,
     specsDrawerOpen: false,
     zoomLevel: 1,
     panX: 0,
@@ -47,7 +46,7 @@
   // Cache for live Met API image lookups in the browser
   const metApiImageCache = new Map();
 
-  // UI Copy Dictionary (Bilingual EN / 中文)
+  // UI Copy Dictionary (Bilingual EN / 中文) — All audio/speaker functions removed
   const UI_COPY = {
     en: {
       stageTitle: "Art & Explore · After Hours",
@@ -55,7 +54,7 @@
         "The Met Fifth Avenue has closed for the night — stroll the galleries and let the 10 masters introduce their art.",
       handBtnOff: "✋ Hand Gesture Control",
       handBtnLoading: "⏳ Starting Camera...",
-      handBtnOn: "✋ Hand Active (Pinch = Click)",
+      handBtnOn: "✋ Hand Active (2-Finger Touch = Click)",
       navStage: "Character Stage",
       navGallery: "Masterpieces (61)",
       navImmersive: "✨ Full-Screen Tour",
@@ -68,13 +67,13 @@
       colorFilterLabel: "Pigment Palette:",
       allWorksHeading: "Curated Masterpieces at The Met",
       worksCountSuffix: "artworks on view",
-      askArtistBtn: "🗣️ Artist Introduces Work",
+      askArtistBtn: "💬 Artist Introduces Work",
       inspectZoomBadge: "⛶ Full-Screen & Artist Intro",
       chatHeaderTag: "After Hours Studio Chat",
       promptFav: "✨ Which Met work is your favorite?",
       promptTech: "🎨 Secret of your brushwork?",
       promptSecret: "🤫 Tell me a hidden museum story!",
-      promptTour: "🖼️ Guide Me in Full Screen",
+      promptTour: "🖼️ Open Full-Screen Artist Tour",
       wingsHeading: "Explore The Met Fifth Avenue by Wing",
       wingsSub: "Click any curatorial department to filter artists and galleries.",
       specArtist: "Artist",
@@ -87,27 +86,26 @@
       docentTabArtist: "🎨 Artist's Personal Intro",
       docentTabCurator: "🏛️ Met Curatorial Story",
       docentTabTechnique: "🖌️ Brushwork & Technique",
-      listenAudioBtn: "🔊 Hear Artist Speak",
-      stopAudioBtn: "⏹ Stop Voice",
+      prevArtBtn: "← Prev Artwork",
       nextArtBtn: "Next Artwork →",
       viewOnMetBtn: "View on The Met ↗",
       viewOnGacBtn: "Google Arts & Culture ↗",
       fullScreenBtn: "⛶ Full Screen",
       specsBtn: "📋 Curatorial Specs",
-      charTourBadge: "🗣️ Click for Guided Tour",
-      hudDefaultHint: "Move hand → Move cursor · Two-finger touch (Thumb + Index) → Click"
+      charTourBadge: "✨ Click to View Works",
+      hudDefaultHint: "Move hand → Move cursor · Touch thumb + index finger → Click"
     },
     zh: {
       stageTitle: "Art & Explore · 美术馆夜游",
-      stageSubtitle: "纽约大都会艺术博物馆打烊了，让 10 位馆藏艺术大师亲自为您导览代表作",
+      stageSubtitle: "纽约大都会艺术博物馆打烊了，让 10 位馆藏艺术大师亲自为您介绍代表作",
       handBtnOff: "✋ 开启手势隔空操控",
       handBtnLoading: "⏳ 正在启动摄像头...",
-      handBtnOn: "✋ 手势操控中 (双指轻触=点击)",
+      handBtnOn: "✋ 手势操控中 (双指碰触=点击)",
       navStage: "艺术家剧场",
       navGallery: "馆藏杰作 (61)",
       navImmersive: "✨ 全屏沉浸导览",
       navWings: "大都会展厅导览",
-      immersiveHeroBtn: "🖼️ 全屏大师语音导览",
+      immersiveHeroBtn: "🖼️ 全屏大师导览",
       enterBtn: "进入展厅 →",
       creditSub: "纽约大都会艺术博物馆 · 10大巨匠 · 61件镇馆名作",
       allArtistsChip: "全部 10 位馆藏大师 (61)",
@@ -115,7 +113,7 @@
       colorFilterLabel: "色彩色谱筛选:",
       allWorksHeading: "大都会馆藏传世杰作",
       worksCountSuffix: "件馆藏作品",
-      askArtistBtn: "🗣️ 画家亲自为您讲解",
+      askArtistBtn: "💬 画家亲自介绍这幅画",
       inspectZoomBadge: "⛶ 全屏沉浸赏析",
       chatHeaderTag: "美术馆打烊后 · 与画家唠嗑",
       promptFav: "✨ 您最偏爱大都会哪幅画？",
@@ -131,18 +129,17 @@
       specGallery: "大都会展厅",
       specAccession: "馆藏编号",
       specPalette: "提取色谱",
-      docentTabArtist: "🎨 画家第一人称自述",
+      docentTabArtist: "🎨 画家第一人称介绍",
       docentTabCurator: "🏛️ 大都会策展故事",
       docentTabTechnique: "🖌️ 技法与秘密",
-      listenAudioBtn: "🔊 听画家语音讲解",
-      stopAudioBtn: "⏹ 停止语音",
+      prevArtBtn: "← 上一幅杰作",
       nextArtBtn: "下一幅杰作 →",
       viewOnMetBtn: "大都会官网详情 ↗",
       viewOnGacBtn: "Google 艺术与文化 ↗",
       fullScreenBtn: "⛶ 浏览器全屏",
       specsBtn: "📋 馆藏档案参数",
-      charTourBadge: "🗣️ 点击听大师导览",
-      hudDefaultHint: "移动手掌 → 移动光标 · 拇指与食指轻触捏合 → 点击"
+      charTourBadge: "✨ 点击查看大师杰作",
+      hudDefaultHint: "移动食指 → 移动光标 · 拇指与食指相碰 → 真实点击"
     }
   };
 
@@ -333,35 +330,62 @@
   }
 
   async function enrichArtworkImage(artwork, imgEl, preferLarge = false) {
-    if (!imgEl || !artwork.objectId) return;
+    if (!imgEl) return;
 
-    let fellBackToApi = false;
+    imgEl.referrerPolicy = "no-referrer";
+
+    // Build ordered candidate list:
+    // 1. Primary Wikimedia Commons Special:FilePath URL (CORS & hotlink friendly)
+    // 2. Direct Met IIIF / CRDImages fallbackImageUrl
+    // 3. Live Met Collection API object lookup
+    const candidates = [];
+    if (artwork.imageUrl) {
+      candidates.push(
+        preferLarge
+          ? artwork.imageUrl.replace("?width=1280", "?width=1920")
+          : artwork.imageUrl
+      );
+    }
+    if (artwork.fallbackImageUrl && !candidates.includes(artwork.fallbackImageUrl)) {
+      candidates.push(artwork.fallbackImageUrl);
+    }
+
+    let candidateIdx = 0;
+    let triedMetApi = false;
 
     imgEl.onload = () => {
       imgEl.classList.add("loaded");
+      const fallbackCanvas = imgEl.parentElement?.querySelector(
+        ".artwork-canvas-fallback"
+      );
+      if (fallbackCanvas) {
+        fallbackCanvas.style.opacity = "0";
+      }
     };
 
     imgEl.onerror = async () => {
-      if (fellBackToApi) return;
-      fellBackToApi = true;
-      const apiObj = await fetchMetObjectImage(artwork.objectId);
-      const url = apiObj ? (preferLarge ? apiObj.large : apiObj.small) : null;
-      if (url && imgEl.src !== url) {
-        imgEl.src = url;
+      candidateIdx++;
+      if (candidateIdx < candidates.length) {
+        imgEl.src = candidates[candidateIdx];
+        return;
+      }
+      if (!triedMetApi && artwork.objectId) {
+        triedMetApi = true;
+        const apiObj = await fetchMetObjectImage(artwork.objectId);
+        const apiUrl = apiObj ? (preferLarge ? apiObj.large : apiObj.small) : null;
+        if (apiUrl && !candidates.includes(apiUrl)) {
+          imgEl.src = apiUrl;
+        }
       }
     };
 
-    if (artwork.imageUrl && artwork.imageUrl.includes("/iiif/")) {
-      imgEl.src = artwork.imageUrl;
-    } else {
+    if (candidates.length > 0) {
+      imgEl.src = candidates[0];
+    } else if (artwork.objectId) {
+      triedMetApi = true;
       const apiObj = await fetchMetObjectImage(artwork.objectId);
-      const url = apiObj ? (preferLarge ? apiObj.large : apiObj.small) : null;
-      if (url) {
-        fellBackToApi = true;
-        imgEl.src = url;
-      } else if (artwork.imageUrl) {
-        imgEl.src = artwork.imageUrl;
-      }
+      const apiUrl = apiObj ? (preferLarge ? apiObj.large : apiObj.small) : null;
+      if (apiUrl) imgEl.src = apiUrl;
     }
   }
 
@@ -407,7 +431,6 @@
       const metaText =
         state.lang === "zh" ? artist.galleryZh : artist.galleryEn;
 
-      // Notice `.speech-bubble-slot` keeps the bubble inside the layout box so overflow-x never clips it!
       node.innerHTML = `
         <div class="speech-bubble-slot">
           <div class="speech-bubble">
@@ -437,16 +460,8 @@
         });
       });
 
-      // Clicking an artist character selects them AND launches their personal introduction!
       node.addEventListener("click", () => {
         selectArtist(artist.id, true);
-        if (artist.artworks && artist.artworks.length > 0) {
-          speakArtistText(
-            state.lang === "zh"
-              ? `${artist.nameZh}。${artist.bubbleGreetingZh} ${artist.chatResponses.favoriteZh}`
-              : `${artist.nameEn}. ${artist.bubbleGreetingEn} ${artist.chatResponses.favoriteEn}`
-          );
-        }
       });
 
       node.addEventListener("keydown", (e) => {
@@ -469,6 +484,7 @@
     strip.innerHTML = "";
 
     const allBtn = document.createElement("button");
+    allBtn.type = "button";
     allBtn.className =
       "avatar-chip" + (state.selectedArtistId === "all" ? " active" : "");
     allBtn.id = "chip-artist-all";
@@ -478,6 +494,7 @@
 
     DATA.artists.forEach((artist) => {
       const btn = document.createElement("button");
+      btn.type = "button";
       btn.className =
         "avatar-chip" + (state.selectedArtistId === artist.id ? " active" : "");
       btn.id = `chip-artist-${artist.id}`;
@@ -575,7 +592,6 @@
               : activeArtist.chatResponses.secretEn;
         }
         msgEl.textContent = `"${text}"`;
-        speakArtistText(text);
       });
     });
 
@@ -583,7 +599,7 @@
     if (startTourBtn) {
       startTourBtn.addEventListener("click", () => {
         if (activeArtist.artworks && activeArtist.artworks.length > 0) {
-          openLightbox(activeArtist.artworks[0], activeArtist, true);
+          openLightbox(activeArtist.artworks[0], activeArtist);
         }
       });
     }
@@ -666,6 +682,7 @@
           <img
             class="artwork-real-img"
             alt="${title} — ${artistName}"
+            referrerpolicy="no-referrer"
             loading="lazy"
           />
           <span class="artwork-gallery-pill">📍 ${artwork.gallery}</span>
@@ -693,17 +710,17 @@
       const imgEl = card.querySelector(".artwork-real-img");
       enrichArtworkImage(artwork, imgEl, false);
 
-      // Clicking "Artist Introduces Work" opens the Full-Screen Immersive Stage with spoken introduction
+      // Clicking "Artist Introduces Work" opens the Full-Screen Immersive Stage
       const askBtn = card.querySelector(".ask-artist-mini-btn");
       askBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         state.lightboxIndex = index;
-        openLightbox(artwork, artist, true);
+        openLightbox(artwork, artist);
       });
 
       card.addEventListener("click", () => {
         state.lightboxIndex = index;
-        openLightbox(artwork, artist, true);
+        openLightbox(artwork, artist);
       });
 
       grid.appendChild(card);
@@ -754,7 +771,7 @@
   }
 
   // ==========================================================================
-  // 6. FULL-SCREEN IMMERSIVE ARTWORK STAGE & ARTIST DOCENT OVERLAY
+  // 6. FULL-SCREEN IMMERSIVE ARTWORK STAGE & ARTIST DOCENT OVERLAY (NO AUDIO)
   // ==========================================================================
   function getDocentNarrationText(artwork, artist, mode) {
     const title = state.lang === "zh" ? artwork.titleZh : artwork.titleEn;
@@ -772,37 +789,14 @@
     if (mode === "technique") {
       return `${tech} (${voice})`;
     }
-    // Default "voice": First-person artist introduction
+    // Default "voice": First-person artist written introduction
     if (state.lang === "zh") {
       return `大家好，我是${artistName}。欢迎来到大都会艺术博物馆 ${artwork.gallery}，您眼前这幅是我创作于 ${artwork.date} 年的《${title}》。${voice}`;
     }
     return `Hello, I am ${artistName}. Welcome to ${artwork.gallery} at The Met — before you is my ${artwork.date} work, "${title}". ${voice}`;
   }
 
-  function speakArtistText(text, onStateChange) {
-    if (!("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = state.lang === "zh" ? "zh-CN" : "en-US";
-    utter.rate = 0.96;
-
-    const avatarWrap = document.getElementById("docent-avatar-wrap");
-    if (avatarWrap) avatarWrap.classList.add("speaking");
-
-    utter.onend = () => {
-      if (avatarWrap) avatarWrap.classList.remove("speaking");
-      if (onStateChange) onStateChange(false);
-    };
-    utter.onerror = () => {
-      if (avatarWrap) avatarWrap.classList.remove("speaking");
-      if (onStateChange) onStateChange(false);
-    };
-
-    if (onStateChange) onStateChange(true);
-    window.speechSynthesis.speak(utter);
-  }
-
-  function openLightbox(artwork, artist, autoSpeak = true) {
+  function openLightbox(artwork, artist) {
     state.lightboxArtwork = artwork;
     state.lightboxArtist = artist;
     state.docentMode = "voice";
@@ -834,27 +828,29 @@
 
     // Render high-res canvas fallback + real full-res Met image
     const canvas = document.createElement("canvas");
+    canvas.className = "artwork-canvas-fallback";
     drawMasterpieceCanvas(canvas, artwork, artist);
     zoomWrap.appendChild(canvas);
 
     const img = document.createElement("img");
     img.alt = artwork.titleEn;
+    img.referrerPolicy = "no-referrer";
     img.style.display = "none";
-    img.onload = () => {
+    img.addEventListener("load", () => {
       canvas.style.display = "none";
       img.style.display = "block";
-    };
+    });
     zoomWrap.appendChild(img);
     enrichArtworkImage(artwork, img, true);
 
-    renderImmersiveDocent(artwork, artist, autoSpeak);
+    renderImmersiveDocent(artwork, artist);
     renderImmersiveSpecsDrawer(artwork, artist);
 
     updateZoomButtons();
     backdrop.classList.add("open");
   }
 
-  function renderImmersiveDocent(artwork, artist, autoSpeak) {
+  function renderImmersiveDocent(artwork, artist) {
     const docentHost = document.getElementById("immersive-artist-docent");
     if (!docentHost) return;
 
@@ -871,7 +867,7 @@
         <div class="docent-header-line">
           <div class="docent-title-group">
             <h2 class="docent-artwork-title">${title}</h2>
-            <span class="docent-artist-badge">🗣️ ${artist.bubbleName} · ${artwork.date} · ${medium}</span>
+            <span class="docent-artist-badge">💬 ${artist.bubbleName} · ${artwork.date} · ${medium}</span>
           </div>
         </div>
         <p class="docent-speech-text" id="docent-speech-text">“${speechText}”</p>
@@ -888,10 +884,10 @@
             </button>
           </div>
           <div class="docent-mode-chips">
-            <button type="button" class="docent-chip-btn voice-btn" id="docent-speak-btn">
-              ${t("listenAudioBtn")}
+            <button type="button" class="docent-chip-btn" id="docent-prev-art-btn">
+              ${t("prevArtBtn")}
             </button>
-            <button type="button" class="docent-chip-btn" id="docent-next-art-btn">
+            <button type="button" class="docent-chip-btn voice-btn" id="docent-next-art-btn">
               ${t("nextArtBtn")}
             </button>
           </div>
@@ -902,37 +898,18 @@
     docentHost.querySelectorAll(".docent-chip-btn[data-docent-mode]").forEach((btn) => {
       btn.addEventListener("click", () => {
         state.docentMode = btn.getAttribute("data-docent-mode") || "voice";
-        renderImmersiveDocent(artwork, artist, true);
+        renderImmersiveDocent(artwork, artist);
       });
     });
 
-    const speakBtn = document.getElementById("docent-speak-btn");
-    if (speakBtn) {
-      speakBtn.addEventListener("click", () => {
-        if ("speechSynthesis" in window && window.speechSynthesis.speaking) {
-          window.speechSynthesis.cancel();
-          speakBtn.textContent = t("listenAudioBtn");
-          document.getElementById("docent-avatar-wrap")?.classList.remove("speaking");
-        } else {
-          speakArtistText(speechText, (isSpeaking) => {
-            if (speakBtn) {
-              speakBtn.textContent = isSpeaking ? t("stopAudioBtn") : t("listenAudioBtn");
-            }
-          });
-        }
-      });
+    const prevBtn = document.getElementById("docent-prev-art-btn");
+    if (prevBtn) {
+      prevBtn.addEventListener("click", () => stepLightboxArtwork(-1));
     }
 
     const nextBtn = document.getElementById("docent-next-art-btn");
     if (nextBtn) {
       nextBtn.addEventListener("click", () => stepLightboxArtwork(1));
-    }
-
-    if (autoSpeak) {
-      speakArtistText(speechText, (isSpeaking) => {
-        const b = document.getElementById("docent-speak-btn");
-        if (b) b.textContent = isSpeaking ? t("stopAudioBtn") : t("listenAudioBtn");
-      });
     }
   }
 
@@ -996,14 +973,11 @@
       state.filteredPairs.length;
     const nextPair = state.filteredPairs[state.lightboxIndex];
     if (nextPair) {
-      openLightbox(nextPair.artwork, nextPair.artist, true);
+      openLightbox(nextPair.artwork, nextPair.artist);
     }
   }
 
   function closeLightbox() {
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-    }
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
     }
@@ -1040,8 +1014,8 @@
   // ==========================================================================
   // 7. MEDIAPIPE HAND LANDMARKER LIVESTREAM GESTURE CONTROLLER
   //    https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker#livestream
-  //    - Hand movement moves the virtual cursor across the viewport
-  //    - Two-finger touch (Thumb tip #4 + Index finger tip #8 pinch) triggers click
+  //    - Index finger tip (#8) controls cursor position with pinch-freeze stabilization
+  //    - Two-finger touch (Thumb tip #4 + Index finger tip #8) dispatches a REAL click
   // ==========================================================================
   const HAND_CONNECTIONS = [
     [0, 1], [1, 2], [2, 3], [3, 4],
@@ -1120,8 +1094,8 @@
       if (statusEl) {
         statusEl.textContent =
           state.lang === "zh"
-            ? "无法访问摄像头或加载模型，请检查浏览器摄像头权限。"
-            : "Camera access denied or unavailable. Please allow webcam access in Brave.";
+            ? "无法访问摄像头或加载模型，请通过 https:// 或 localhost 打开并允许摄像头权限。"
+            : "Camera access denied. Please open via https:// or localhost and allow webcam access.";
       }
     }
   }
@@ -1198,6 +1172,18 @@
       ctx.lineTo(b.x * w, b.y * h);
       ctx.stroke();
     }
+    // Draw connecting line between Thumb Tip (#4) and Index Tip (#8) so user sees pinch distance
+    const thumb = landmarks[4];
+    const index = landmarks[8];
+    if (thumb && index) {
+      ctx.strokeStyle = state.isPinching ? "#28e070" : "rgba(228, 0, 43, 0.75)";
+      ctx.lineWidth = state.isPinching ? 3.5 : 1.5;
+      ctx.beginPath();
+      ctx.moveTo(thumb.x * w, thumb.y * h);
+      ctx.lineTo(index.x * w, index.y * h);
+      ctx.stroke();
+    }
+
     landmarks.forEach((pt, idx) => {
       const isPinchTip = idx === 4 || idx === 8;
       ctx.fillStyle = isPinchTip
@@ -1206,31 +1192,53 @@
           : "#e4002b"
         : "#ffffff";
       ctx.beginPath();
-      ctx.arc(pt.x * w, pt.y * h, isPinchTip ? 5.5 : 3, 0, Math.PI * 2);
+      ctx.arc(pt.x * w, pt.y * h, isPinchTip ? 6 : 3, 0, Math.PI * 2);
       ctx.fill();
     });
   }
 
   function processHandLandmarks(landmarks) {
-    // Landmark 8 = Index Finger Tip, Landmark 4 = Thumb Tip
+    // Landmark 8 = Index Finger Tip, Landmark 4 = Thumb Tip, Landmark 0 = Wrist, Landmark 9 = Middle MCP
     const indexTip = landmarks[8];
     const thumbTip = landmarks[4];
-    if (!indexTip || !thumbTip) return;
+    const wrist = landmarks[0];
+    const middleMcp = landmarks[9];
+    if (!indexTip || !thumbTip || !wrist || !middleMcp) return;
 
-    // Midpoint between thumb tip & index tip for natural aiming
-    const rawX = 1 - (indexTip.x * 0.7 + thumbTip.x * 0.3); // Mirrored X
-    const rawY = indexTip.y * 0.7 + thumbTip.y * 0.3;
+    // Normalize pinch distance by hand scale (wrist-to-middle-knuckle length)
+    // so two-finger touch works reliably whether hand is close to or far from the webcam!
+    const palmScale = Math.max(
+      0.08,
+      Math.hypot(middleMcp.x - wrist.x, middleMcp.y - wrist.y)
+    );
+    const pinchDistRaw = Math.hypot(
+      indexTip.x - thumbTip.x,
+      indexTip.y - thumbTip.y
+    );
+    const pinchRatio = pinchDistRaw / palmScale;
 
-    // Clamp with comfortable camera margin so reaching screen edges is effortless
-    const normX = Math.max(0, Math.min(1, (rawX - 0.1) / 0.8));
-    const normY = Math.max(0, Math.min(1, (rawY - 0.1) / 0.8));
+    // Two-finger touch thresholds (relative to hand size):
+    // < 0.42 means thumb tip and index tip are touching / pinched
+    // < 0.58 means fingers are closing in to click (freeze cursor so it doesn't jump off target!)
+    const PINCH_TOUCH_RATIO = 0.42;
+    const PINCH_APPROACH_RATIO = 0.58;
+    const PINCH_RELEASE_RATIO = 0.54;
+
+    // Track cursor using the stable Index Finger Knuckle/Tip blend,
+    // and lock cursor position as fingers close together so the click lands dead-center!
+    const rawX = 1 - indexTip.x; // Mirrored selfie X
+    const rawY = indexTip.y;
+
+    const normX = Math.max(0, Math.min(1, (rawX - 0.12) / 0.76));
+    const normY = Math.max(0, Math.min(1, (rawY - 0.12) / 0.76));
 
     const targetX = normX * window.innerWidth;
     const targetY = normY * window.innerHeight;
 
-    // Smooth exponential filter so cursor glides without jitter
-    state.cursorX += (targetX - state.cursorX) * 0.32;
-    state.cursorY += (targetY - state.cursorY) * 0.32;
+    // When fingers are closing in to pinch, damp cursor movement heavily so it stays on the button
+    const smoothing = pinchRatio < PINCH_APPROACH_RATIO ? 0.04 : 0.28;
+    state.cursorX += (targetX - state.cursorX) * smoothing;
+    state.cursorY += (targetY - state.cursorY) * smoothing;
 
     const cursorEl = document.getElementById("hand-virtual-cursor");
     const cursorLabel = document.getElementById("hand-cursor-label");
@@ -1238,23 +1246,22 @@
       cursorEl.style.transform = `translate3d(${state.cursorX}px, ${state.cursorY}px, 0)`;
     }
 
-    // Gentle auto-scroll when hand moves near top or bottom of viewport (when not in full-screen modal)
+    // Gentle auto-scroll when hand moves near top or bottom of viewport (when not pinching)
     const lightboxOpen = document
       .getElementById("lightbox-backdrop")
       ?.classList.contains("open");
-    if (!lightboxOpen) {
-      if (state.cursorY < 75) {
-        window.scrollBy({ top: -12, behavior: "auto" });
-      } else if (state.cursorY > window.innerHeight - 75) {
-        window.scrollBy({ top: 12, behavior: "auto" });
+    if (!lightboxOpen && pinchRatio >= PINCH_APPROACH_RATIO) {
+      if (state.cursorY < 70) {
+        window.scrollBy({ top: -11, behavior: "auto" });
+      } else if (state.cursorY > window.innerHeight - 70) {
+        window.scrollBy({ top: 11, behavior: "auto" });
       }
-      // Horizontal scroll on character stage when hovering near left/right edges of character parade
       const parade = document.getElementById("character-parade");
-      if (parade && state.cursorY < 500) {
-        if (state.cursorX < 90) {
-          parade.scrollBy({ left: -14, behavior: "auto" });
-        } else if (state.cursorX > window.innerWidth - 90) {
-          parade.scrollBy({ left: 14, behavior: "auto" });
+      if (parade && state.cursorY < 480) {
+        if (state.cursorX < 85) {
+          parade.scrollBy({ left: -12, behavior: "auto" });
+        } else if (state.cursorX > window.innerWidth - 85) {
+          parade.scrollBy({ left: 12, behavior: "auto" });
         }
       }
     }
@@ -1262,27 +1269,19 @@
     // Highlight interactive element underneath the virtual hand cursor
     updateGestureHoverElement(state.cursorX, state.cursorY);
 
-    // 2D distance between Thumb Tip (#4) and Index Finger Tip (#8) in normalized camera space
-    const dx = indexTip.x - thumbTip.x;
-    const dy = indexTip.y - thumbTip.y;
-    const pinchDist = Math.hypot(dx, dy);
-
-    // Two-finger touch threshold (with hysteresis)
-    const PINCH_TRIGGER = 0.058;
-    const PINCH_RELEASE = 0.082;
     const now = performance.now();
 
-    if (!state.isPinching && pinchDist < PINCH_TRIGGER) {
+    if (!state.isPinching && pinchRatio < PINCH_TOUCH_RATIO) {
       state.isPinching = true;
       if (cursorEl) cursorEl.classList.add("pinching");
       if (cursorLabel) {
         cursorLabel.textContent = state.lang === "zh" ? "点击!" : "Click!";
       }
-      if (now - state.lastPinchTime > 480) {
+      if (now - state.lastPinchTime > 380) {
         state.lastPinchTime = now;
-        triggerVirtualClick(state.cursorX, state.cursorY);
+        triggerRealClick(state.cursorX, state.cursorY);
       }
-    } else if (state.isPinching && pinchDist > PINCH_RELEASE) {
+    } else if (state.isPinching && pinchRatio > PINCH_RELEASE_RATIO) {
       state.isPinching = false;
       if (cursorEl) cursorEl.classList.remove("pinching");
       if (cursorLabel) {
@@ -1292,13 +1291,21 @@
   }
 
   function findInteractiveTarget(x, y) {
-    const el = document.elementFromPoint(x, y);
-    if (!el) return null;
-    return (
-      el.closest(
-        "button, a, .artist-character-node, .artwork-card, .wing-card, input"
-      ) || el
-    );
+    // Hit-test the exact screen coordinate (hand-virtual-cursor has pointer-events: none)
+    const elements = document.elementsFromPoint(x, y);
+    for (const el of elements) {
+      if (
+        el.id === "hand-virtual-cursor" ||
+        el.closest("#hand-virtual-cursor")
+      ) {
+        continue;
+      }
+      const interactive = el.closest(
+        "button, a, .artist-character-node, .artwork-card, .wing-card, input, [role='button']"
+      );
+      if (interactive) return interactive;
+    }
+    return elements[0] || null;
   }
 
   function clearGestureHover() {
@@ -1329,10 +1336,52 @@
     }
   }
 
-  function triggerVirtualClick(x, y) {
-    const target = findInteractiveTarget(x, y);
+  // Dispatches a complete, real DOM pointer + mouse click sequence AND visual ripple
+  function triggerRealClick(x, y) {
+    showClickRipple(x, y);
+
+    // Prefer the locked hoveredElement so micro-jitter during pinch never misses the button
+    const target = state.hoveredElement || findInteractiveTarget(x, y);
     if (!target) return;
-    target.click();
+
+    const eventInit = {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      view: window,
+      clientX: x,
+      clientY: y,
+      button: 0,
+      buttons: 1
+    };
+
+    try {
+      target.dispatchEvent(new PointerEvent("pointerdown", eventInit));
+      target.dispatchEvent(new MouseEvent("mousedown", eventInit));
+      target.dispatchEvent(new PointerEvent("pointerup", eventInit));
+      target.dispatchEvent(new MouseEvent("mouseup", eventInit));
+    } catch (_) {}
+
+    if (typeof target.click === "function") {
+      target.click();
+    } else {
+      target.dispatchEvent(new MouseEvent("click", eventInit));
+    }
+
+    if (target.tagName === "INPUT") {
+      target.focus();
+    }
+  }
+
+  function showClickRipple(x, y) {
+    const ripple = document.createElement("div");
+    ripple.className = "hand-click-ripple";
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+    document.body.appendChild(ripple);
+    setTimeout(() => {
+      ripple.remove();
+    }, 520);
   }
 
   // ==========================================================================
@@ -1416,7 +1465,7 @@
           state.lightboxArtwork &&
           state.lightboxArtist
         ) {
-          renderImmersiveDocent(state.lightboxArtwork, state.lightboxArtist, true);
+          renderImmersiveDocent(state.lightboxArtwork, state.lightboxArtist);
           renderImmersiveSpecsDrawer(state.lightboxArtwork, state.lightboxArtist);
         }
       });
@@ -1450,7 +1499,7 @@
       if (state.filteredPairs.length > 0) {
         state.lightboxIndex = 0;
         const first = state.filteredPairs[0];
-        openLightbox(first.artwork, first.artist, true);
+        openLightbox(first.artwork, first.artist);
       }
     };
     document

@@ -1659,6 +1659,31 @@ body {
   white-space: nowrap;
 }
 
+.hand-click-ripple {
+  position: fixed;
+  width: 56px;
+  height: 56px;
+  margin-left: -28px;
+  margin-top: -28px;
+  border-radius: 50%;
+  border: 3px solid #28e070;
+  background: rgba(40, 224, 112, 0.28);
+  pointer-events: none;
+  z-index: 9998;
+  animation: hand-ripple-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes hand-ripple-pop {
+  0% {
+    transform: scale(0.35);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.85);
+    opacity: 0;
+  }
+}
+
 .hand-camera-hud {
   position: fixed;
   bottom: 20px;

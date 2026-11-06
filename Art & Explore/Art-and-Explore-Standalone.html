@@ -1670,6 +1670,31 @@ body {
   white-space: nowrap;
 }
 
+.hand-click-ripple {
+  position: fixed;
+  width: 56px;
+  height: 56px;
+  margin-left: -28px;
+  margin-top: -28px;
+  border-radius: 50%;
+  border: 3px solid #28e070;
+  background: rgba(40, 224, 112, 0.28);
+  pointer-events: none;
+  z-index: 9998;
+  animation: hand-ripple-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes hand-ripple-pop {
+  0% {
+    transform: scale(0.35);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.85);
+    opacity: 0;
+  }
+}
+
 .hand-camera-hud {
   position: fixed;
   bottom: 20px;
@@ -2217,7 +2242,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "73.2 × 93.4 cm",
           gallery: "Gallery 822",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/436535/2383011/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Wheat_Field_with_Cypresses_(1889)_by_Vincent_van_Gogh_MET_DT1567.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/436535/2383011/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/436535",
           palette: ["#3a6ea5", "#7fa9c4", "#e3b448", "#2d4c39", "#d89c52"],
           motif: "cypress-wheat",
@@ -2237,7 +2263,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "40.6 × 31.8 cm",
           gallery: "Gallery 825",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1502_cropped2.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Self-Portrait_with_a_Straw_Hat_(obverse-_The_Potato_Peeler)_MET_DT1502_cropped2.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/436532/1671316/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/436532",
           palette: ["#e5c158", "#d97736", "#5b7c99", "#a3b899", "#3b2f2f"],
           motif: "portrait-strawhat",
@@ -2257,7 +2284,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "73.7 × 92.1 cm",
           gallery: "Gallery 822",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1494.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Irises_MET_DP346474.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP346474.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/436528",
           palette: ["#3f4a8a", "#5c7a52", "#e8dec8", "#c8a951", "#2c3152"],
           motif: "irises-bouquet",
@@ -2277,7 +2305,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "93.4 × 74 cm",
           gallery: "Gallery 822",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1364.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Cypresses_MET_DP130999.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP130999.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/437980",
           palette: ["#1e382d", "#3d6b58", "#d9b44a", "#789bb8", "#b36b3f"],
           motif: "cypress-vertical",
@@ -2297,7 +2326,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "43.2 × 61 cm",
           gallery: "Gallery 825",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1503.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Sunflowers_MET_DP229743.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP229743.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/436524",
           palette: ["#e59f24", "#c45a1d", "#2c5784", "#4f6d3a", "#7a3b1e"],
           motif: "sunflowers-cut",
@@ -2317,7 +2347,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "45.7 × 55.2 cm",
           gallery: "Gallery 825",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1947.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Shoes_MET_DT1947.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1947.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/436533",
           palette: ["#8c4327", "#c46d3b", "#3d352e", "#d6a760", "#592b1b"],
           motif: "shoes-arles",
@@ -2337,7 +2368,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "92.7 × 73.7 cm",
           gallery: "Gallery 822",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1967.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/La_Berceuse_(Woman_Rocking_a_Cradle;_Augustine-Alix_Pellicot_Roulin,_1851%E2%80%931930)_MET_DT1951.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1951.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/437984",
           palette: ["#266147", "#d94e34", "#e6b839", "#4f8c6f", "#8a2be2"],
           motif: "berceuse-portrait",
@@ -2389,7 +2421,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "92.7 × 73.7 cm",
           gallery: "Gallery 819",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437127/2331256/restricted",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Bridge_over_a_Pond_of_Water_Lilies_MET_DT1854.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1854.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/437127",
           palette: ["#4a7c59", "#7ea172", "#9bb8c9", "#d9a7b0", "#2f523b"],
           motif: "lily-bridge",
@@ -2409,7 +2442,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "98.1 × 129.9 cm",
           gallery: "Gallery 818",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437133/1566072/source",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Claude_Monet_-_Jardin_%C3%A0_Sainte-Adresse.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437133/1566072/source",
           metUrl: "https://www.metmuseum.org/art/collection/search/437133",
           palette: ["#4a8bc2", "#8ec3eb", "#d93829", "#5c8a47", "#e8c86b"],
           motif: "seaside-garden",
@@ -2429,7 +2463,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "74.6 × 99.7 cm",
           gallery: "Gallery 818",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT834.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/La_Grenouill%C3%A8re_MET_DT833.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT833.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/437135",
           palette: ["#335c81", "#7ea8be", "#d4b483", "#384d3b", "#232b38"],
           motif: "grenouillere-boats",
@@ -2449,7 +2484,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "65.4 × 92.1 cm",
           gallery: "Gallery 819",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1412.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Haystacks_(Effect_of_Snow_and_Sun)_MET_DT1035.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1035.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/437122",
           palette: ["#d99b66", "#8c9ec9", "#e8e2d5", "#b86b52", "#6e7b9b"],
           motif: "haystacks-snow",
@@ -2469,7 +2505,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "99.7 × 65.7 cm",
           gallery: "Gallery 819",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1414.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Rouen_Cathedral-_The_Portal_(Sunlight)_MET_DT2185.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437124/796303/source",
           metUrl: "https://www.metmuseum.org/art/collection/search/437124",
           palette: ["#d4b27c", "#879ec4", "#b5835a", "#6e6578", "#f0dec0"],
           motif: "cathedral-sunlight",
@@ -2489,7 +2526,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "65.4 × 81.3 cm",
           gallery: "Gallery 819",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/438823/796132/source",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/The_Manneporte_(%C3%89tretat)_MET_DT1897.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/438823/796132/source",
           metUrl: "https://www.metmuseum.org/art/collection/search/438823",
           palette: ["#4a809c", "#d69f6a", "#7aaec4", "#8a5c52", "#e8d5b7"],
           motif: "etretat-arch",
@@ -2509,7 +2547,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "101 × 200 cm",
           gallery: "Gallery 819",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1854.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Water_Lilies_MET_DT1856.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1856.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/437137",
           palette: ["#2b4c7e", "#4e7d63", "#8c5383", "#d49b94", "#1b2e4b"],
           motif: "water-lilies-late",
@@ -2561,7 +2600,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "143.5 × 136.5 cm",
           gallery: "Gallery 964",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437394/2211141/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Aristotle_with_a_Bust_of_Homer_MET_DP319026.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437394/2211141/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/437394",
           palette: ["#241c15", "#c8963e", "#e3d4b9", "#5c3f24", "#8a6836"],
           motif: "aristotle-homer",
@@ -2581,7 +2621,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "80.3 × 67.3 cm",
           gallery: "Gallery 964",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1979.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Self-Portrait_MET_DP152808.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437397/1843832/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/437397",
           palette: ["#1f1812", "#b87d4b", "#7a4928", "#d9b082", "#3d2c1e"],
           motif: "rembrandt-self",
@@ -2601,7 +2642,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "100 × 91.8 cm",
           gallery: "Gallery 964",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1570.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Rembrandt,_Flora,_circa_1654,_Metropolitan_Museum_of_Art,_New_York.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP357268.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/437398",
           palette: ["#38281c", "#d9c29c", "#a84232", "#c49444", "#5c4328"],
           motif: "flora-spring",
@@ -2621,7 +2663,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "92.1 × 74.6 cm",
           gallery: "Gallery 964",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1569.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Woman_with_a_Pink_MET_DP145910.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP145910.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/437402",
           palette: ["#211915", "#c99b68", "#8f2d24", "#e3c9a8", "#4f3727"],
           motif: "woman-pink",
@@ -2641,7 +2684,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "木板油画",
           dimensions: "75.2 × 55.2 cm",
           gallery: "Gallery 964",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT14.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Herman_Doomer_(born_about_1595,_died_1650)_MET_DP145921.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP145921.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/437392",
           palette: ["#1c1714", "#d6b289", "#e8e4dc", "#543d2b", "#332922"],
           motif: "doomer-hat",
@@ -2661,7 +2705,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "112.7 × 87.6 cm",
           gallery: "Gallery 955 (Lehman Wing)",
-          imageUrl: "https://images.metmuseum.org/CRDImages/rl/original/DT716.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Portrait_of_Gerard_de_Lairesse_MET_DP121332.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/rl/original/DP121332.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/459082",
           palette: ["#261d16", "#b88a58", "#6e4e32", "#d9c2a3", "#403124"],
           motif: "lairesse-portrait",
@@ -2713,7 +2758,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "44.5 × 40 cm",
           gallery: "Gallery 964",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437879/1475736/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Study_of_a_Young_Woman_MET_DP353256.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437879/1475736/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/437879",
           palette: ["#181a1f", "#e3bfa8", "#3a669c", "#d9b45b", "#7a6348"],
           motif: "vermeer-tronie",
@@ -2733,7 +2779,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "45.7 × 40.6 cm",
           gallery: "Gallery 964",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437881/1476893/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Young_Woman_with_a_Water_Pitcher_MET_DP353257.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437881/1476893/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/437881",
           palette: ["#2c4c7e", "#d9c27e", "#d6d4ce", "#8c3b2b", "#5c5346"],
           motif: "vermeer-pitcher",
@@ -2753,7 +2800,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "87.6 × 76.5 cm",
           gallery: "Gallery 964",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437878/1478816/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/A_Maid_Asleep_MET_DP355525.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437878/1478816/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/437878",
           palette: ["#7a2e24", "#4d3628", "#c99e67", "#2b241f", "#8a6d4b"],
           motif: "vermeer-maid",
@@ -2773,7 +2821,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "51.4 × 45.7 cm",
           gallery: "Gallery 964",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437880/1477226/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Woman_with_a_Lute_MET_DP354965.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437880/1477226/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/437880",
           palette: ["#2b3648", "#c9a64e", "#b59d7e", "#4a3b2c", "#d9cdb8"],
           motif: "vermeer-lute",
@@ -2793,7 +2842,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "114.3 × 88.9 cm",
           gallery: "Gallery 964",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437877/795793/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Allegory_of_the_Catholic_Faith_MET_DP145924.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/437877/795793/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/437877",
           palette: ["#254b82", "#d9d2c5", "#b88c42", "#7a3028", "#2d3033"],
           motif: "vermeer-allegory",
@@ -2845,7 +2895,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "83.5 × 77.2 cm",
           gallery: "Gallery 815",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT46.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/The_Dance_Class_MET_DT46.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/438817/2007191/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/438817",
           palette: ["#8a9a86", "#d9cfc1", "#b87a56", "#c94a38", "#3d352e"],
           motif: "dance-class",
@@ -2865,7 +2916,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "局部着色青铜、棉质纱裙、绸带",
           dimensions: "H. 98.4 cm",
           gallery: "Gallery 815",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/196439/1781282/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/The_Little_Fourteen-Year-Old_Dancer_MET_DP-14939-005.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/196439/1781282/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/196439",
           palette: ["#6e5a47", "#d9cdb8", "#a89882", "#8bb0c4", "#3d3024"],
           motif: "little-dancer",
@@ -2885,7 +2937,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面综合材料",
           dimensions: "75.6 × 81.3 cm",
           gallery: "Gallery 815",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/436139/796576/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Dancers_Practicing_at_the_Barre_MET_DT840.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/436139/796576/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/436139",
           palette: ["#7c8a6b", "#c99b68", "#e8ded1", "#b56945", "#4a5240"],
           motif: "barre-dancers",
@@ -2905,7 +2958,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "纸本松节油油彩、水彩及粉彩",
           dimensions: "54.3 × 73 cm",
           gallery: "Gallery 815",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/436155/796065/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/The_Rehearsal_of_the_Ballet_Onstage_MET_DT1565.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/436155/796065/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/436155",
           palette: ["#b89668", "#d9c5a3", "#7a5e42", "#4a3b2c", "#e8dec8"],
           motif: "ballet-onstage",
@@ -2925,7 +2979,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "73.7 × 92.7 cm",
           gallery: "Gallery 815",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/436121/2175914/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/A_Woman_Seated_beside_a_Vase_of_Flowers_(Madame_Paul_Valpin%C3%A7on%3F)_MET_DT1566.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/436121/2175914/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/436121",
           palette: ["#c9a259", "#bf4e3b", "#5c7352", "#d9c8a9", "#3d352e"],
           motif: "woman-flowers",
@@ -2945,7 +3000,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "浅绿织纹纸本粉彩",
           dimensions: "74 × 60.6 cm",
           gallery: "Gallery 816",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/436173/801881/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Woman_Having_Her_Hair_Combed_MET_DP253480_(cropped).jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/436173/801881/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/436173",
           palette: ["#d99b66", "#c95b3c", "#8fa876", "#e8cdb8", "#6e4736"],
           motif: "hair-combed",
@@ -2997,7 +3053,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "锦绘木版画；纸本设色",
           dimensions: "25.7 × 37.9 cm",
           gallery: "Asian Art · Gallery 231",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/45434/134438/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Tsunami_by_hokusai_19th_century.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/45434/134438/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/45434",
           palette: ["#1b3b6f", "#3d6b99", "#e8dcc4", "#d9c29c", "#6e7a85"],
           motif: "great-wave",
@@ -3017,7 +3074,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "锦绘木版画；纸本设色",
           dimensions: "25.4 × 38.1 cm",
           gallery: "Asian Art",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/36490/140210/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Red_Fuji_southern_wind_clear_morning.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/36490/140210/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/36490",
           palette: ["#b8422b", "#245488", "#e8dfd1", "#3d6342", "#7a2b1e"],
           motif: "red-fuji",
@@ -3037,7 +3095,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "锦绘木版画；纸本设色",
           dimensions: "25.4 × 37.5 cm",
           gallery: "Asian Art",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/36492/140125/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Hokusai32_black-fuji.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/36492/140125/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/36492",
           palette: ["#1e324a", "#a3462d", "#d98a36", "#597a8e", "#e3d6be"],
           motif: "storm-fuji",
@@ -3057,7 +3116,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "锦绘木版画；纸本设色",
           dimensions: "24.4 × 37.5 cm",
           gallery: "Asian Art",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/56388/140315/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Hokusai08_aoyama.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/56388/140315/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/56388",
           palette: ["#386646", "#2b5c8f", "#d9cdb4", "#8a6d4b", "#5c8c67"],
           motif: "cushion-pine",
@@ -3077,7 +3137,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "锦绘木版画；纸本设色",
           dimensions: "24.4 × 37.5 cm",
           gallery: "Asian Art",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/55735/140194/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/%E5%86%A8%E5%B6%BD%E4%B8%89%E5%8D%81%E5%85%AD%E6%99%AF_%E9%A7%BF%E5%B7%9E%E6%B1%9F%E5%B0%BB-Ejiri_in_Suruga_Province_(Sunsh%C5%AB_Ejiri),_from_the_series_Thirty-six_Views_of_Mount_Fuji_(Fugaku_sanj%C5%ABrokkei)_MET_DP141046.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/55735/140194/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/55735",
           palette: ["#c9b896", "#4a6b52", "#2b4c73", "#8a7356", "#e8e2d5"],
           motif: "wind-ejiri",
@@ -3097,7 +3158,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "锦绘木版画；纸本设色",
           dimensions: "24.8 × 37.8 cm",
           gallery: "Asian Art",
-          imageUrl: "https://images.metmuseum.org/CRDImages/as/original/DP141038.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/%E5%86%A8%E5%B6%BD%E4%B8%89%E5%8D%81%E5%85%AD%E6%99%AF_%E4%BF%A1%E5%B7%9E%E8%AB%8F%E8%A8%AA%E6%B9%96-Lake_Suwa_in_Shinano_Province_(Shinsh%C5%AB_Suwako),_from_the_series_Thirty-six_Views_of_Mount_Fuji_(Fugaku_sanj%C5%ABrokkei)_MET_DP140970.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/as/original/DP140970.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/39798",
           palette: ["#254b7c", "#5c85ad", "#d49b63", "#3d5942", "#e3dac9"],
           motif: "lake-suwa",
@@ -3149,7 +3211,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "208.6 × 109.9 cm",
           gallery: "American Wing · Gallery 771",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/12127/2199429/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Madame_X_(Madame_Pierre_Gautreau),_John_Singer_Sargent,_1884_(unfree_frame_crop).jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/12127/2199429/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/12127",
           palette: ["#141416", "#e8d8c8", "#8c5a3c", "#b88a44", "#4a3328"],
           motif: "madame-x",
@@ -3169,7 +3232,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "292.1 × 213.7 cm",
           gallery: "American Wing · Gallery 771",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/12477/35270/restricted",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/The_Wyndham_Sisters-_Lady_Elcho,_Mrs._Adeane,_and_Mrs._Tennant_MET_DT2962.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT2962.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/12477",
           palette: ["#f0ece1", "#d9cdb8", "#3d2e24", "#8c6d46", "#6e8268"],
           motif: "wyndham-sisters",
@@ -3189,7 +3253,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "214 × 101 cm",
           gallery: "American Wing · Gallery 771",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/12140/33437/source",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Mr._and_Mrs._I._N._Phelps_Stokes_MET_DT1225.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/12140/33437/source",
           metUrl: "https://www.metmuseum.org/art/collection/search/12140",
           palette: ["#e8e2d5", "#242936", "#c99b78", "#5c4938", "#8a7f72"],
           motif: "stokes-couple",
@@ -3209,7 +3274,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "205.7 × 115.6 cm",
           gallery: "American Wing · Gallery 771",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/16255/1362608/source",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Mrs._Hugh_Hammersley_MET_DT2064.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/16255/1362608/source",
           metUrl: "https://www.metmuseum.org/art/collection/search/16255",
           palette: ["#b8294b", "#e3d4be", "#c49a45", "#3d282e", "#8c5c42"],
           motif: "hammersley-velvet",
@@ -3229,7 +3295,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "纸本水彩、蜡笔及铅笔",
           dimensions: "37.5 × 45.4 cm",
           gallery: "American Wing",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DP161215.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/In_the_Generalife_MET_DT4540.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT4540.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/12116",
           palette: ["#386646", "#d9a752", "#527a9c", "#e3d6be", "#6e4e32"],
           motif: "generalife-watercolor",
@@ -3249,7 +3316,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "米白织纹纸本铅笔素描",
           dimensions: "37.1 × 25.6 cm",
           gallery: "American Wing",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DP105749.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Sargent_John_Singer_Spanish_Dancer.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DP105749.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/12236",
           palette: ["#d9d2c5", "#4a433d", "#7a7267", "#2b2623", "#b8afa0"],
           motif: "spanish-dancer",
@@ -3301,7 +3369,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "65.4 × 81.9 cm",
           gallery: "Gallery 826",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/435868/800382/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/The_Card_Players_MET_DP231550.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/435868/800382/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/435868",
           palette: ["#4a5d73", "#b88a56", "#7a4e36", "#d9c29c", "#2d3640"],
           motif: "card-players",
@@ -3321,7 +3390,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "73 × 92.4 cm",
           gallery: "Gallery 826",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1489.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Still_Life_with_Apples_and_a_Pot_of_Primroses_MET_DT47.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT47.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/435882",
           palette: ["#c94a32", "#4a7352", "#e3d6c4", "#d99b38", "#5c6e82"],
           motif: "apples-primroses",
@@ -3341,7 +3411,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "116.5 × 89.5 cm",
           gallery: "Gallery 826",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1486.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Madame_C%C3%A9zanne_(Hortense_Fiquet,_1850%E2%80%931922)_in_a_Red_Dress_MET_DP320128.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP320128.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/435876",
           palette: ["#a32b2b", "#4a6d82", "#d9b452", "#c99b78", "#2d3b46"],
           motif: "madame-cezanne",
@@ -3361,7 +3432,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "65.4 × 81.6 cm",
           gallery: "Gallery 826",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/435878/795031/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Mont_Sainte-Victoire_and_the_Viaduct_of_the_Arc_River_Valley_MET_DT889.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/435878/795031/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/435878",
           palette: ["#527a68", "#d9b478", "#6e8ca8", "#3d5942", "#c4965a"],
           motif: "mont-sainte-victoire",
@@ -3381,7 +3453,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "60.6 × 73.7 cm",
           gallery: "Gallery 826",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1490.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Still_Life_with_Jar,_Cup,_and_Apples_MET_DP130322.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP130322.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/435884",
           palette: ["#384d5e", "#d45338", "#e3b846", "#d9d2c5", "#4a5c42"],
           motif: "jar-apples",
@@ -3401,7 +3474,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "45.7 × 55.2 cm",
           gallery: "Gallery 826",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT4168.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Dish_of_Apples_MET_DT1939.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ep/original/DT1939.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/437989",
           palette: ["#c9422b", "#d9a238", "#e8e2d5", "#4a6152", "#5c4233"],
           motif: "dish-apples",
@@ -3453,7 +3527,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "92.4 × 73.7 cm",
           gallery: "American Wing · Gallery 768",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/10425/32441/restricted",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Young_Mother_Sewing_MET_DP139632.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DP139632.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/10425",
           palette: ["#e8e2d5", "#5c7a52", "#c95b42", "#d9b48f", "#3d4652"],
           motif: "mother-sewing",
@@ -3473,7 +3548,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "92.4 × 65.4 cm",
           gallery: "American Wing · Gallery 768",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT61.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/The_Cup_of_Tea_MET_DT88.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT88.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/10388",
           palette: ["#d97a8c", "#8c2b3d", "#4a6b52", "#e8d8c8", "#3d282e"],
           motif: "cup-of-tea",
@@ -3493,7 +3569,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "73.7 × 61 cm",
           gallery: "American Wing · Gallery 768",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT2053.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Lady_at_the_Tea_Table_MET_DT516.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT516.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/10391",
           palette: ["#1e2838", "#385c8f", "#e8e2d5", "#c99b68", "#8a7356"],
           motif: "tea-table-lady",
@@ -3513,7 +3590,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "65.6 × 92.6 cm",
           gallery: "American Wing · Gallery 768",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT70.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Lydia_Crocheting_in_the_Garden_at_Marly_MET_DP165250.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DP165250.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/10393",
           palette: ["#5c8547", "#3d5973", "#c94a38", "#e8dec8", "#8fa876"],
           motif: "garden-marly",
@@ -3533,7 +3611,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "81.6 × 65.7 cm",
           gallery: "American Wing · Gallery 768",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT2150.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Mother_and_Child_(The_Oval_Mirror)_MET_DT2025.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT2025.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/10401",
           palette: ["#d9a782", "#5c735e", "#c98a4b", "#e8dfd1", "#4a3b32"],
           motif: "oval-mirror",
@@ -3553,7 +3632,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "92.7 × 73.7 cm",
           gallery: "American Wing · Gallery 768",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT2149.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Mother_and_Child_(Baby_Getting_Up_from_His_Nap)_MET_DT2028.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT2028.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/10400",
           palette: ["#4a6b5c", "#e3c9b0", "#b84e3d", "#d9d2c5", "#38463d"],
           motif: "baby-nap",
@@ -3605,7 +3685,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "71.4 × 124.8 cm",
           gallery: "American Wing · Gallery 767",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/11122/2018691/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/The_Gulf_Stream_MET_DP140858.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/11122/2018691/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/11122",
           palette: ["#1f526e", "#3d859c", "#8c3b2b", "#d9cdb8", "#2d3b42"],
           motif: "gulf-stream",
@@ -3625,7 +3706,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "30.5 × 50.8 cm",
           gallery: "American Wing · Gallery 763",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/11140/2018693/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Snap_the_Whip_1872_Winslow_Homer.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/11140/2018693/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/11140",
           palette: ["#5c7a42", "#b83b2b", "#6e8ca8", "#d9c29c", "#3d4632"],
           motif: "snap-the-whip",
@@ -3645,7 +3727,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "87.6 × 127 cm",
           gallery: "American Wing · Gallery 767",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT73.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Northeaster_MET_DT1545.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT1545.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/11130",
           palette: ["#2d4e5e", "#e8ece6", "#4a3b32", "#6e8c96", "#1f2b33"],
           motif: "northeaster-wave",
@@ -3665,7 +3748,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "61.3 × 96.8 cm",
           gallery: "American Wing · Gallery 763",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT1509.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/The_Veteran_in_a_New_Field_MET_DP102298.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DP102298.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/11145",
           palette: ["#d9a742", "#8c6528", "#6e859c", "#3d3224", "#e3d4a8"],
           motif: "veteran-wheat",
@@ -3685,7 +3769,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "61 × 96.5 cm",
           gallery: "American Wing · Gallery 763",
-          imageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/11133/33070/main-image",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Prisoners_from_the_Front_MET_DT83.jpg?width=1280",
+          fallbackImageUrl: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/11133/33070/main-image",
           metUrl: "https://www.metmuseum.org/art/collection/search/11133",
           palette: ["#6e6556", "#8c7d68", "#2d3b4d", "#b8afa0", "#42382e"],
           motif: "prisoners-front",
@@ -3705,7 +3790,8 @@ window.MET_MUSEUM_DATA = {
           mediumZh: "布面油画",
           dimensions: "60.3 × 96.8 cm",
           gallery: "American Wing · Gallery 763",
-          imageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT2056.jpg",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Camp_Fire_MET_DT2829.jpg?width=1280",
+          fallbackImageUrl: "https://images.metmuseum.org/CRDImages/ad/original/DT2829.jpg",
           metUrl: "https://www.metmuseum.org/art/collection/search/11112",
           palette: ["#1c1814", "#e36b24", "#f0b842", "#4a3828", "#7a3b1e"],
           motif: "camp-fire",
@@ -3720,16 +3806,16 @@ window.MET_MUSEUM_DATA = {
 };
 
 </script>
-<script>
+  <script>
 // ============================================================================
 // Art & Explore — Interactive Gallery Engine (app.js)
 // Features:
 // 1. "After Hours" Artist Character Stage with unclipped speech bubbles
-// 2. Artist Docent Guided Introductions (Text + Web Speech Voice Synthesis)
+// 2. Visual Artist Docent Guided Introductions (No audio/speaker — pure visual text)
 // 3. Full-Screen Immersive Masterpiece Theatre with Next/Prev + Deep Zoom
 // 4. MediaPipe HandLandmarker Livestream Gesture Control:
-//    - Hand move -> Moves virtual cursor + auto-scrolls near viewport edges
-//    - Two-finger touch (thumb tip #4 + index tip #8 pinch) -> Clicks UI elements
+//    - Index finger tip (#8) moves the cursor smoothly (with pinch-lock stabilization)
+//    - Two-finger touch (thumb tip #4 + index tip #8 pinch) dispatches a REAL click
 // ============================================================================
 
 (function () {
@@ -3747,7 +3833,6 @@ window.MET_MUSEUM_DATA = {
     lightboxArtwork: null,
     lightboxArtist: null,
     docentMode: "voice", // "voice" | "story" | "technique"
-    autoNarrate: true,
     specsDrawerOpen: false,
     zoomLevel: 1,
     panX: 0,
@@ -3770,7 +3855,7 @@ window.MET_MUSEUM_DATA = {
   // Cache for live Met API image lookups in the browser
   const metApiImageCache = new Map();
 
-  // UI Copy Dictionary (Bilingual EN / 中文)
+  // UI Copy Dictionary (Bilingual EN / 中文) — All audio/speaker functions removed
   const UI_COPY = {
     en: {
       stageTitle: "Art & Explore · After Hours",
@@ -3778,7 +3863,7 @@ window.MET_MUSEUM_DATA = {
         "The Met Fifth Avenue has closed for the night — stroll the galleries and let the 10 masters introduce their art.",
       handBtnOff: "✋ Hand Gesture Control",
       handBtnLoading: "⏳ Starting Camera...",
-      handBtnOn: "✋ Hand Active (Pinch = Click)",
+      handBtnOn: "✋ Hand Active (2-Finger Touch = Click)",
       navStage: "Character Stage",
       navGallery: "Masterpieces (61)",
       navImmersive: "✨ Full-Screen Tour",
@@ -3791,13 +3876,13 @@ window.MET_MUSEUM_DATA = {
       colorFilterLabel: "Pigment Palette:",
       allWorksHeading: "Curated Masterpieces at The Met",
       worksCountSuffix: "artworks on view",
-      askArtistBtn: "🗣️ Artist Introduces Work",
+      askArtistBtn: "💬 Artist Introduces Work",
       inspectZoomBadge: "⛶ Full-Screen & Artist Intro",
       chatHeaderTag: "After Hours Studio Chat",
       promptFav: "✨ Which Met work is your favorite?",
       promptTech: "🎨 Secret of your brushwork?",
       promptSecret: "🤫 Tell me a hidden museum story!",
-      promptTour: "🖼️ Guide Me in Full Screen",
+      promptTour: "🖼️ Open Full-Screen Artist Tour",
       wingsHeading: "Explore The Met Fifth Avenue by Wing",
       wingsSub: "Click any curatorial department to filter artists and galleries.",
       specArtist: "Artist",
@@ -3810,27 +3895,26 @@ window.MET_MUSEUM_DATA = {
       docentTabArtist: "🎨 Artist's Personal Intro",
       docentTabCurator: "🏛️ Met Curatorial Story",
       docentTabTechnique: "🖌️ Brushwork & Technique",
-      listenAudioBtn: "🔊 Hear Artist Speak",
-      stopAudioBtn: "⏹ Stop Voice",
+      prevArtBtn: "← Prev Artwork",
       nextArtBtn: "Next Artwork →",
       viewOnMetBtn: "View on The Met ↗",
       viewOnGacBtn: "Google Arts & Culture ↗",
       fullScreenBtn: "⛶ Full Screen",
       specsBtn: "📋 Curatorial Specs",
-      charTourBadge: "🗣️ Click for Guided Tour",
-      hudDefaultHint: "Move hand → Move cursor · Two-finger touch (Thumb + Index) → Click"
+      charTourBadge: "✨ Click to View Works",
+      hudDefaultHint: "Move hand → Move cursor · Touch thumb + index finger → Click"
     },
     zh: {
       stageTitle: "Art & Explore · 美术馆夜游",
-      stageSubtitle: "纽约大都会艺术博物馆打烊了，让 10 位馆藏艺术大师亲自为您导览代表作",
+      stageSubtitle: "纽约大都会艺术博物馆打烊了，让 10 位馆藏艺术大师亲自为您介绍代表作",
       handBtnOff: "✋ 开启手势隔空操控",
       handBtnLoading: "⏳ 正在启动摄像头...",
-      handBtnOn: "✋ 手势操控中 (双指轻触=点击)",
+      handBtnOn: "✋ 手势操控中 (双指碰触=点击)",
       navStage: "艺术家剧场",
       navGallery: "馆藏杰作 (61)",
       navImmersive: "✨ 全屏沉浸导览",
       navWings: "大都会展厅导览",
-      immersiveHeroBtn: "🖼️ 全屏大师语音导览",
+      immersiveHeroBtn: "🖼️ 全屏大师导览",
       enterBtn: "进入展厅 →",
       creditSub: "纽约大都会艺术博物馆 · 10大巨匠 · 61件镇馆名作",
       allArtistsChip: "全部 10 位馆藏大师 (61)",
@@ -3838,7 +3922,7 @@ window.MET_MUSEUM_DATA = {
       colorFilterLabel: "色彩色谱筛选:",
       allWorksHeading: "大都会馆藏传世杰作",
       worksCountSuffix: "件馆藏作品",
-      askArtistBtn: "🗣️ 画家亲自为您讲解",
+      askArtistBtn: "💬 画家亲自介绍这幅画",
       inspectZoomBadge: "⛶ 全屏沉浸赏析",
       chatHeaderTag: "美术馆打烊后 · 与画家唠嗑",
       promptFav: "✨ 您最偏爱大都会哪幅画？",
@@ -3854,18 +3938,17 @@ window.MET_MUSEUM_DATA = {
       specGallery: "大都会展厅",
       specAccession: "馆藏编号",
       specPalette: "提取色谱",
-      docentTabArtist: "🎨 画家第一人称自述",
+      docentTabArtist: "🎨 画家第一人称介绍",
       docentTabCurator: "🏛️ 大都会策展故事",
       docentTabTechnique: "🖌️ 技法与秘密",
-      listenAudioBtn: "🔊 听画家语音讲解",
-      stopAudioBtn: "⏹ 停止语音",
+      prevArtBtn: "← 上一幅杰作",
       nextArtBtn: "下一幅杰作 →",
       viewOnMetBtn: "大都会官网详情 ↗",
       viewOnGacBtn: "Google 艺术与文化 ↗",
       fullScreenBtn: "⛶ 浏览器全屏",
       specsBtn: "📋 馆藏档案参数",
-      charTourBadge: "🗣️ 点击听大师导览",
-      hudDefaultHint: "移动手掌 → 移动光标 · 拇指与食指轻触捏合 → 点击"
+      charTourBadge: "✨ 点击查看大师杰作",
+      hudDefaultHint: "移动食指 → 移动光标 · 拇指与食指相碰 → 真实点击"
     }
   };
 
@@ -4056,35 +4139,62 @@ window.MET_MUSEUM_DATA = {
   }
 
   async function enrichArtworkImage(artwork, imgEl, preferLarge = false) {
-    if (!imgEl || !artwork.objectId) return;
+    if (!imgEl) return;
 
-    let fellBackToApi = false;
+    imgEl.referrerPolicy = "no-referrer";
+
+    // Build ordered candidate list:
+    // 1. Primary Wikimedia Commons Special:FilePath URL (CORS & hotlink friendly)
+    // 2. Direct Met IIIF / CRDImages fallbackImageUrl
+    // 3. Live Met Collection API object lookup
+    const candidates = [];
+    if (artwork.imageUrl) {
+      candidates.push(
+        preferLarge
+          ? artwork.imageUrl.replace("?width=1280", "?width=1920")
+          : artwork.imageUrl
+      );
+    }
+    if (artwork.fallbackImageUrl && !candidates.includes(artwork.fallbackImageUrl)) {
+      candidates.push(artwork.fallbackImageUrl);
+    }
+
+    let candidateIdx = 0;
+    let triedMetApi = false;
 
     imgEl.onload = () => {
       imgEl.classList.add("loaded");
+      const fallbackCanvas = imgEl.parentElement?.querySelector(
+        ".artwork-canvas-fallback"
+      );
+      if (fallbackCanvas) {
+        fallbackCanvas.style.opacity = "0";
+      }
     };
 
     imgEl.onerror = async () => {
-      if (fellBackToApi) return;
-      fellBackToApi = true;
-      const apiObj = await fetchMetObjectImage(artwork.objectId);
-      const url = apiObj ? (preferLarge ? apiObj.large : apiObj.small) : null;
-      if (url && imgEl.src !== url) {
-        imgEl.src = url;
+      candidateIdx++;
+      if (candidateIdx < candidates.length) {
+        imgEl.src = candidates[candidateIdx];
+        return;
+      }
+      if (!triedMetApi && artwork.objectId) {
+        triedMetApi = true;
+        const apiObj = await fetchMetObjectImage(artwork.objectId);
+        const apiUrl = apiObj ? (preferLarge ? apiObj.large : apiObj.small) : null;
+        if (apiUrl && !candidates.includes(apiUrl)) {
+          imgEl.src = apiUrl;
+        }
       }
     };
 
-    if (artwork.imageUrl && artwork.imageUrl.includes("/iiif/")) {
-      imgEl.src = artwork.imageUrl;
-    } else {
+    if (candidates.length > 0) {
+      imgEl.src = candidates[0];
+    } else if (artwork.objectId) {
+      triedMetApi = true;
       const apiObj = await fetchMetObjectImage(artwork.objectId);
-      const url = apiObj ? (preferLarge ? apiObj.large : apiObj.small) : null;
-      if (url) {
-        fellBackToApi = true;
-        imgEl.src = url;
-      } else if (artwork.imageUrl) {
-        imgEl.src = artwork.imageUrl;
-      }
+      const apiUrl = apiObj ? (preferLarge ? apiObj.large : apiObj.small) : null;
+      if (apiUrl) imgEl.src = apiUrl;
     }
   }
 
@@ -4130,7 +4240,6 @@ window.MET_MUSEUM_DATA = {
       const metaText =
         state.lang === "zh" ? artist.galleryZh : artist.galleryEn;
 
-      // Notice `.speech-bubble-slot` keeps the bubble inside the layout box so overflow-x never clips it!
       node.innerHTML = `
         <div class="speech-bubble-slot">
           <div class="speech-bubble">
@@ -4160,16 +4269,8 @@ window.MET_MUSEUM_DATA = {
         });
       });
 
-      // Clicking an artist character selects them AND launches their personal introduction!
       node.addEventListener("click", () => {
         selectArtist(artist.id, true);
-        if (artist.artworks && artist.artworks.length > 0) {
-          speakArtistText(
-            state.lang === "zh"
-              ? `${artist.nameZh}。${artist.bubbleGreetingZh} ${artist.chatResponses.favoriteZh}`
-              : `${artist.nameEn}. ${artist.bubbleGreetingEn} ${artist.chatResponses.favoriteEn}`
-          );
-        }
       });
 
       node.addEventListener("keydown", (e) => {
@@ -4192,6 +4293,7 @@ window.MET_MUSEUM_DATA = {
     strip.innerHTML = "";
 
     const allBtn = document.createElement("button");
+    allBtn.type = "button";
     allBtn.className =
       "avatar-chip" + (state.selectedArtistId === "all" ? " active" : "");
     allBtn.id = "chip-artist-all";
@@ -4201,6 +4303,7 @@ window.MET_MUSEUM_DATA = {
 
     DATA.artists.forEach((artist) => {
       const btn = document.createElement("button");
+      btn.type = "button";
       btn.className =
         "avatar-chip" + (state.selectedArtistId === artist.id ? " active" : "");
       btn.id = `chip-artist-${artist.id}`;
@@ -4298,7 +4401,6 @@ window.MET_MUSEUM_DATA = {
               : activeArtist.chatResponses.secretEn;
         }
         msgEl.textContent = `"${text}"`;
-        speakArtistText(text);
       });
     });
 
@@ -4306,7 +4408,7 @@ window.MET_MUSEUM_DATA = {
     if (startTourBtn) {
       startTourBtn.addEventListener("click", () => {
         if (activeArtist.artworks && activeArtist.artworks.length > 0) {
-          openLightbox(activeArtist.artworks[0], activeArtist, true);
+          openLightbox(activeArtist.artworks[0], activeArtist);
         }
       });
     }
@@ -4389,6 +4491,7 @@ window.MET_MUSEUM_DATA = {
           <img
             class="artwork-real-img"
             alt="${title} — ${artistName}"
+            referrerpolicy="no-referrer"
             loading="lazy"
           />
           <span class="artwork-gallery-pill">📍 ${artwork.gallery}</span>
@@ -4416,17 +4519,17 @@ window.MET_MUSEUM_DATA = {
       const imgEl = card.querySelector(".artwork-real-img");
       enrichArtworkImage(artwork, imgEl, false);
 
-      // Clicking "Artist Introduces Work" opens the Full-Screen Immersive Stage with spoken introduction
+      // Clicking "Artist Introduces Work" opens the Full-Screen Immersive Stage
       const askBtn = card.querySelector(".ask-artist-mini-btn");
       askBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         state.lightboxIndex = index;
-        openLightbox(artwork, artist, true);
+        openLightbox(artwork, artist);
       });
 
       card.addEventListener("click", () => {
         state.lightboxIndex = index;
-        openLightbox(artwork, artist, true);
+        openLightbox(artwork, artist);
       });
 
       grid.appendChild(card);
@@ -4477,7 +4580,7 @@ window.MET_MUSEUM_DATA = {
   }
 
   // ==========================================================================
-  // 6. FULL-SCREEN IMMERSIVE ARTWORK STAGE & ARTIST DOCENT OVERLAY
+  // 6. FULL-SCREEN IMMERSIVE ARTWORK STAGE & ARTIST DOCENT OVERLAY (NO AUDIO)
   // ==========================================================================
   function getDocentNarrationText(artwork, artist, mode) {
     const title = state.lang === "zh" ? artwork.titleZh : artwork.titleEn;
@@ -4495,37 +4598,14 @@ window.MET_MUSEUM_DATA = {
     if (mode === "technique") {
       return `${tech} (${voice})`;
     }
-    // Default "voice": First-person artist introduction
+    // Default "voice": First-person artist written introduction
     if (state.lang === "zh") {
       return `大家好，我是${artistName}。欢迎来到大都会艺术博物馆 ${artwork.gallery}，您眼前这幅是我创作于 ${artwork.date} 年的《${title}》。${voice}`;
     }
     return `Hello, I am ${artistName}. Welcome to ${artwork.gallery} at The Met — before you is my ${artwork.date} work, "${title}". ${voice}`;
   }
 
-  function speakArtistText(text, onStateChange) {
-    if (!("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = state.lang === "zh" ? "zh-CN" : "en-US";
-    utter.rate = 0.96;
-
-    const avatarWrap = document.getElementById("docent-avatar-wrap");
-    if (avatarWrap) avatarWrap.classList.add("speaking");
-
-    utter.onend = () => {
-      if (avatarWrap) avatarWrap.classList.remove("speaking");
-      if (onStateChange) onStateChange(false);
-    };
-    utter.onerror = () => {
-      if (avatarWrap) avatarWrap.classList.remove("speaking");
-      if (onStateChange) onStateChange(false);
-    };
-
-    if (onStateChange) onStateChange(true);
-    window.speechSynthesis.speak(utter);
-  }
-
-  function openLightbox(artwork, artist, autoSpeak = true) {
+  function openLightbox(artwork, artist) {
     state.lightboxArtwork = artwork;
     state.lightboxArtist = artist;
     state.docentMode = "voice";
@@ -4557,27 +4637,29 @@ window.MET_MUSEUM_DATA = {
 
     // Render high-res canvas fallback + real full-res Met image
     const canvas = document.createElement("canvas");
+    canvas.className = "artwork-canvas-fallback";
     drawMasterpieceCanvas(canvas, artwork, artist);
     zoomWrap.appendChild(canvas);
 
     const img = document.createElement("img");
     img.alt = artwork.titleEn;
+    img.referrerPolicy = "no-referrer";
     img.style.display = "none";
-    img.onload = () => {
+    img.addEventListener("load", () => {
       canvas.style.display = "none";
       img.style.display = "block";
-    };
+    });
     zoomWrap.appendChild(img);
     enrichArtworkImage(artwork, img, true);
 
-    renderImmersiveDocent(artwork, artist, autoSpeak);
+    renderImmersiveDocent(artwork, artist);
     renderImmersiveSpecsDrawer(artwork, artist);
 
     updateZoomButtons();
     backdrop.classList.add("open");
   }
 
-  function renderImmersiveDocent(artwork, artist, autoSpeak) {
+  function renderImmersiveDocent(artwork, artist) {
     const docentHost = document.getElementById("immersive-artist-docent");
     if (!docentHost) return;
 
@@ -4594,7 +4676,7 @@ window.MET_MUSEUM_DATA = {
         <div class="docent-header-line">
           <div class="docent-title-group">
             <h2 class="docent-artwork-title">${title}</h2>
-            <span class="docent-artist-badge">🗣️ ${artist.bubbleName} · ${artwork.date} · ${medium}</span>
+            <span class="docent-artist-badge">💬 ${artist.bubbleName} · ${artwork.date} · ${medium}</span>
           </div>
         </div>
         <p class="docent-speech-text" id="docent-speech-text">“${speechText}”</p>
@@ -4611,10 +4693,10 @@ window.MET_MUSEUM_DATA = {
             </button>
           </div>
           <div class="docent-mode-chips">
-            <button type="button" class="docent-chip-btn voice-btn" id="docent-speak-btn">
-              ${t("listenAudioBtn")}
+            <button type="button" class="docent-chip-btn" id="docent-prev-art-btn">
+              ${t("prevArtBtn")}
             </button>
-            <button type="button" class="docent-chip-btn" id="docent-next-art-btn">
+            <button type="button" class="docent-chip-btn voice-btn" id="docent-next-art-btn">
               ${t("nextArtBtn")}
             </button>
           </div>
@@ -4625,37 +4707,18 @@ window.MET_MUSEUM_DATA = {
     docentHost.querySelectorAll(".docent-chip-btn[data-docent-mode]").forEach((btn) => {
       btn.addEventListener("click", () => {
         state.docentMode = btn.getAttribute("data-docent-mode") || "voice";
-        renderImmersiveDocent(artwork, artist, true);
+        renderImmersiveDocent(artwork, artist);
       });
     });
 
-    const speakBtn = document.getElementById("docent-speak-btn");
-    if (speakBtn) {
-      speakBtn.addEventListener("click", () => {
-        if ("speechSynthesis" in window && window.speechSynthesis.speaking) {
-          window.speechSynthesis.cancel();
-          speakBtn.textContent = t("listenAudioBtn");
-          document.getElementById("docent-avatar-wrap")?.classList.remove("speaking");
-        } else {
-          speakArtistText(speechText, (isSpeaking) => {
-            if (speakBtn) {
-              speakBtn.textContent = isSpeaking ? t("stopAudioBtn") : t("listenAudioBtn");
-            }
-          });
-        }
-      });
+    const prevBtn = document.getElementById("docent-prev-art-btn");
+    if (prevBtn) {
+      prevBtn.addEventListener("click", () => stepLightboxArtwork(-1));
     }
 
     const nextBtn = document.getElementById("docent-next-art-btn");
     if (nextBtn) {
       nextBtn.addEventListener("click", () => stepLightboxArtwork(1));
-    }
-
-    if (autoSpeak) {
-      speakArtistText(speechText, (isSpeaking) => {
-        const b = document.getElementById("docent-speak-btn");
-        if (b) b.textContent = isSpeaking ? t("stopAudioBtn") : t("listenAudioBtn");
-      });
     }
   }
 
@@ -4719,14 +4782,11 @@ window.MET_MUSEUM_DATA = {
       state.filteredPairs.length;
     const nextPair = state.filteredPairs[state.lightboxIndex];
     if (nextPair) {
-      openLightbox(nextPair.artwork, nextPair.artist, true);
+      openLightbox(nextPair.artwork, nextPair.artist);
     }
   }
 
   function closeLightbox() {
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-    }
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
     }
@@ -4763,8 +4823,8 @@ window.MET_MUSEUM_DATA = {
   // ==========================================================================
   // 7. MEDIAPIPE HAND LANDMARKER LIVESTREAM GESTURE CONTROLLER
   //    https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker#livestream
-  //    - Hand movement moves the virtual cursor across the viewport
-  //    - Two-finger touch (Thumb tip #4 + Index finger tip #8 pinch) triggers click
+  //    - Index finger tip (#8) controls cursor position with pinch-freeze stabilization
+  //    - Two-finger touch (Thumb tip #4 + Index finger tip #8) dispatches a REAL click
   // ==========================================================================
   const HAND_CONNECTIONS = [
     [0, 1], [1, 2], [2, 3], [3, 4],
@@ -4843,8 +4903,8 @@ window.MET_MUSEUM_DATA = {
       if (statusEl) {
         statusEl.textContent =
           state.lang === "zh"
-            ? "无法访问摄像头或加载模型，请检查浏览器摄像头权限。"
-            : "Camera access denied or unavailable. Please allow webcam access in Brave.";
+            ? "无法访问摄像头或加载模型，请通过 https:// 或 localhost 打开并允许摄像头权限。"
+            : "Camera access denied. Please open via https:// or localhost and allow webcam access.";
       }
     }
   }
@@ -4921,6 +4981,18 @@ window.MET_MUSEUM_DATA = {
       ctx.lineTo(b.x * w, b.y * h);
       ctx.stroke();
     }
+    // Draw connecting line between Thumb Tip (#4) and Index Tip (#8) so user sees pinch distance
+    const thumb = landmarks[4];
+    const index = landmarks[8];
+    if (thumb && index) {
+      ctx.strokeStyle = state.isPinching ? "#28e070" : "rgba(228, 0, 43, 0.75)";
+      ctx.lineWidth = state.isPinching ? 3.5 : 1.5;
+      ctx.beginPath();
+      ctx.moveTo(thumb.x * w, thumb.y * h);
+      ctx.lineTo(index.x * w, index.y * h);
+      ctx.stroke();
+    }
+
     landmarks.forEach((pt, idx) => {
       const isPinchTip = idx === 4 || idx === 8;
       ctx.fillStyle = isPinchTip
@@ -4929,31 +5001,53 @@ window.MET_MUSEUM_DATA = {
           : "#e4002b"
         : "#ffffff";
       ctx.beginPath();
-      ctx.arc(pt.x * w, pt.y * h, isPinchTip ? 5.5 : 3, 0, Math.PI * 2);
+      ctx.arc(pt.x * w, pt.y * h, isPinchTip ? 6 : 3, 0, Math.PI * 2);
       ctx.fill();
     });
   }
 
   function processHandLandmarks(landmarks) {
-    // Landmark 8 = Index Finger Tip, Landmark 4 = Thumb Tip
+    // Landmark 8 = Index Finger Tip, Landmark 4 = Thumb Tip, Landmark 0 = Wrist, Landmark 9 = Middle MCP
     const indexTip = landmarks[8];
     const thumbTip = landmarks[4];
-    if (!indexTip || !thumbTip) return;
+    const wrist = landmarks[0];
+    const middleMcp = landmarks[9];
+    if (!indexTip || !thumbTip || !wrist || !middleMcp) return;
 
-    // Midpoint between thumb tip & index tip for natural aiming
-    const rawX = 1 - (indexTip.x * 0.7 + thumbTip.x * 0.3); // Mirrored X
-    const rawY = indexTip.y * 0.7 + thumbTip.y * 0.3;
+    // Normalize pinch distance by hand scale (wrist-to-middle-knuckle length)
+    // so two-finger touch works reliably whether hand is close to or far from the webcam!
+    const palmScale = Math.max(
+      0.08,
+      Math.hypot(middleMcp.x - wrist.x, middleMcp.y - wrist.y)
+    );
+    const pinchDistRaw = Math.hypot(
+      indexTip.x - thumbTip.x,
+      indexTip.y - thumbTip.y
+    );
+    const pinchRatio = pinchDistRaw / palmScale;
 
-    // Clamp with comfortable camera margin so reaching screen edges is effortless
-    const normX = Math.max(0, Math.min(1, (rawX - 0.1) / 0.8));
-    const normY = Math.max(0, Math.min(1, (rawY - 0.1) / 0.8));
+    // Two-finger touch thresholds (relative to hand size):
+    // < 0.42 means thumb tip and index tip are touching / pinched
+    // < 0.58 means fingers are closing in to click (freeze cursor so it doesn't jump off target!)
+    const PINCH_TOUCH_RATIO = 0.42;
+    const PINCH_APPROACH_RATIO = 0.58;
+    const PINCH_RELEASE_RATIO = 0.54;
+
+    // Track cursor using the stable Index Finger Knuckle/Tip blend,
+    // and lock cursor position as fingers close together so the click lands dead-center!
+    const rawX = 1 - indexTip.x; // Mirrored selfie X
+    const rawY = indexTip.y;
+
+    const normX = Math.max(0, Math.min(1, (rawX - 0.12) / 0.76));
+    const normY = Math.max(0, Math.min(1, (rawY - 0.12) / 0.76));
 
     const targetX = normX * window.innerWidth;
     const targetY = normY * window.innerHeight;
 
-    // Smooth exponential filter so cursor glides without jitter
-    state.cursorX += (targetX - state.cursorX) * 0.32;
-    state.cursorY += (targetY - state.cursorY) * 0.32;
+    // When fingers are closing in to pinch, damp cursor movement heavily so it stays on the button
+    const smoothing = pinchRatio < PINCH_APPROACH_RATIO ? 0.04 : 0.28;
+    state.cursorX += (targetX - state.cursorX) * smoothing;
+    state.cursorY += (targetY - state.cursorY) * smoothing;
 
     const cursorEl = document.getElementById("hand-virtual-cursor");
     const cursorLabel = document.getElementById("hand-cursor-label");
@@ -4961,23 +5055,22 @@ window.MET_MUSEUM_DATA = {
       cursorEl.style.transform = `translate3d(${state.cursorX}px, ${state.cursorY}px, 0)`;
     }
 
-    // Gentle auto-scroll when hand moves near top or bottom of viewport (when not in full-screen modal)
+    // Gentle auto-scroll when hand moves near top or bottom of viewport (when not pinching)
     const lightboxOpen = document
       .getElementById("lightbox-backdrop")
       ?.classList.contains("open");
-    if (!lightboxOpen) {
-      if (state.cursorY < 75) {
-        window.scrollBy({ top: -12, behavior: "auto" });
-      } else if (state.cursorY > window.innerHeight - 75) {
-        window.scrollBy({ top: 12, behavior: "auto" });
+    if (!lightboxOpen && pinchRatio >= PINCH_APPROACH_RATIO) {
+      if (state.cursorY < 70) {
+        window.scrollBy({ top: -11, behavior: "auto" });
+      } else if (state.cursorY > window.innerHeight - 70) {
+        window.scrollBy({ top: 11, behavior: "auto" });
       }
-      // Horizontal scroll on character stage when hovering near left/right edges of character parade
       const parade = document.getElementById("character-parade");
-      if (parade && state.cursorY < 500) {
-        if (state.cursorX < 90) {
-          parade.scrollBy({ left: -14, behavior: "auto" });
-        } else if (state.cursorX > window.innerWidth - 90) {
-          parade.scrollBy({ left: 14, behavior: "auto" });
+      if (parade && state.cursorY < 480) {
+        if (state.cursorX < 85) {
+          parade.scrollBy({ left: -12, behavior: "auto" });
+        } else if (state.cursorX > window.innerWidth - 85) {
+          parade.scrollBy({ left: 12, behavior: "auto" });
         }
       }
     }
@@ -4985,27 +5078,19 @@ window.MET_MUSEUM_DATA = {
     // Highlight interactive element underneath the virtual hand cursor
     updateGestureHoverElement(state.cursorX, state.cursorY);
 
-    // 2D distance between Thumb Tip (#4) and Index Finger Tip (#8) in normalized camera space
-    const dx = indexTip.x - thumbTip.x;
-    const dy = indexTip.y - thumbTip.y;
-    const pinchDist = Math.hypot(dx, dy);
-
-    // Two-finger touch threshold (with hysteresis)
-    const PINCH_TRIGGER = 0.058;
-    const PINCH_RELEASE = 0.082;
     const now = performance.now();
 
-    if (!state.isPinching && pinchDist < PINCH_TRIGGER) {
+    if (!state.isPinching && pinchRatio < PINCH_TOUCH_RATIO) {
       state.isPinching = true;
       if (cursorEl) cursorEl.classList.add("pinching");
       if (cursorLabel) {
         cursorLabel.textContent = state.lang === "zh" ? "点击!" : "Click!";
       }
-      if (now - state.lastPinchTime > 480) {
+      if (now - state.lastPinchTime > 380) {
         state.lastPinchTime = now;
-        triggerVirtualClick(state.cursorX, state.cursorY);
+        triggerRealClick(state.cursorX, state.cursorY);
       }
-    } else if (state.isPinching && pinchDist > PINCH_RELEASE) {
+    } else if (state.isPinching && pinchRatio > PINCH_RELEASE_RATIO) {
       state.isPinching = false;
       if (cursorEl) cursorEl.classList.remove("pinching");
       if (cursorLabel) {
@@ -5015,13 +5100,21 @@ window.MET_MUSEUM_DATA = {
   }
 
   function findInteractiveTarget(x, y) {
-    const el = document.elementFromPoint(x, y);
-    if (!el) return null;
-    return (
-      el.closest(
-        "button, a, .artist-character-node, .artwork-card, .wing-card, input"
-      ) || el
-    );
+    // Hit-test the exact screen coordinate (hand-virtual-cursor has pointer-events: none)
+    const elements = document.elementsFromPoint(x, y);
+    for (const el of elements) {
+      if (
+        el.id === "hand-virtual-cursor" ||
+        el.closest("#hand-virtual-cursor")
+      ) {
+        continue;
+      }
+      const interactive = el.closest(
+        "button, a, .artist-character-node, .artwork-card, .wing-card, input, [role='button']"
+      );
+      if (interactive) return interactive;
+    }
+    return elements[0] || null;
   }
 
   function clearGestureHover() {
@@ -5052,10 +5145,52 @@ window.MET_MUSEUM_DATA = {
     }
   }
 
-  function triggerVirtualClick(x, y) {
-    const target = findInteractiveTarget(x, y);
+  // Dispatches a complete, real DOM pointer + mouse click sequence AND visual ripple
+  function triggerRealClick(x, y) {
+    showClickRipple(x, y);
+
+    // Prefer the locked hoveredElement so micro-jitter during pinch never misses the button
+    const target = state.hoveredElement || findInteractiveTarget(x, y);
     if (!target) return;
-    target.click();
+
+    const eventInit = {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      view: window,
+      clientX: x,
+      clientY: y,
+      button: 0,
+      buttons: 1
+    };
+
+    try {
+      target.dispatchEvent(new PointerEvent("pointerdown", eventInit));
+      target.dispatchEvent(new MouseEvent("mousedown", eventInit));
+      target.dispatchEvent(new PointerEvent("pointerup", eventInit));
+      target.dispatchEvent(new MouseEvent("mouseup", eventInit));
+    } catch (_) {}
+
+    if (typeof target.click === "function") {
+      target.click();
+    } else {
+      target.dispatchEvent(new MouseEvent("click", eventInit));
+    }
+
+    if (target.tagName === "INPUT") {
+      target.focus();
+    }
+  }
+
+  function showClickRipple(x, y) {
+    const ripple = document.createElement("div");
+    ripple.className = "hand-click-ripple";
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+    document.body.appendChild(ripple);
+    setTimeout(() => {
+      ripple.remove();
+    }, 520);
   }
 
   // ==========================================================================
@@ -5139,7 +5274,7 @@ window.MET_MUSEUM_DATA = {
           state.lightboxArtwork &&
           state.lightboxArtist
         ) {
-          renderImmersiveDocent(state.lightboxArtwork, state.lightboxArtist, true);
+          renderImmersiveDocent(state.lightboxArtwork, state.lightboxArtist);
           renderImmersiveSpecsDrawer(state.lightboxArtwork, state.lightboxArtist);
         }
       });
@@ -5173,7 +5308,7 @@ window.MET_MUSEUM_DATA = {
       if (state.filteredPairs.length > 0) {
         state.lightboxIndex = 0;
         const first = state.filteredPairs[0];
-        openLightbox(first.artwork, first.artist, true);
+        openLightbox(first.artwork, first.artist);
       }
     };
     document
