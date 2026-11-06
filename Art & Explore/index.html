@@ -6,7 +6,7 @@
   <title>Art &amp; Explore — After Hours at The Metropolitan Museum of Art</title>
   <meta
     name="description"
-    content="Explore the top 10 master artists and 61 iconic masterpieces from New York's Metropolitan Museum of Art (The Met) through playful hand-crafted cartoon characters and Google Arts & Culture curatorial stories."
+    content="Explore the top 10 master artists and 61 iconic masterpieces from New York's Metropolitan Museum of Art (The Met) through playful hand-crafted cartoon characters, immersive full-screen artist tours, and MediaPipe Hand Landmarker gesture navigation."
   />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -23,14 +23,26 @@
         </div>
         <h1 class="stage-title" id="stage-title-text">Art &amp; Explore · After Hours</h1>
         <p class="stage-subtitle" id="stage-subtitle-text">
-          The Met Fifth Avenue has closed for the night — stroll the galleries and chat with the 10 masters.
+          The Met Fifth Avenue has closed for the night — stroll the galleries and let the 10 masters introduce their art.
         </p>
       </div>
 
       <div class="stage-controls-right">
+        <!-- MediaPipe Hand Landmarker Gesture Control Toggle -->
+        <button
+          type="button"
+          class="hand-gesture-btn"
+          id="hand-gesture-toggle-btn"
+          title="Move hand to move cursor · Pinch thumb + index finger (two-finger touch) to click"
+        >
+          <span class="gesture-dot" id="gesture-status-dot"></span>
+          <span id="hand-gesture-btn-label">✋ Hand Gesture Control</span>
+        </button>
+
         <nav class="nav-pills" aria-label="Museum Views">
           <button type="button" class="nav-pill active" id="nav-pill-stage">Character Stage</button>
           <button type="button" class="nav-pill" id="nav-pill-gallery">Masterpieces (61)</button>
+          <button type="button" class="nav-pill" id="nav-pill-immersive">✨ Full-Screen Tour</button>
           <button type="button" class="nav-pill" id="nav-pill-wings">Met Floor Wings</button>
         </nav>
 
@@ -47,7 +59,7 @@
       </div>
     </div>
 
-    <!-- Floating Paper-Cut Cartoon Artist Heads with Speech Bubbles -->
+    <!-- Floating Paper-Cut Cartoon Artist Heads with Unclipped Speech Bubbles -->
     <div class="character-parade-wrapper">
       <div class="character-parade" id="character-parade" aria-label="Top 10 Artists at The Met">
         <!-- Populated dynamically by app.js -->
@@ -78,6 +90,9 @@
           aria-label="Scroll artists right"
         >
           →
+        </button>
+        <button type="button" class="immersive-hero-btn" id="start-immersive-tour-btn">
+          🖼️ Full-Screen Artist Tour
         </button>
         <button type="button" class="enter-gallery-btn" id="enter-gallery-btn">
           Enter Gallery →
@@ -201,37 +216,109 @@
   </main>
 
   <!-- ====================================================================
-       4. DEEP-ZOOM LIGHTBOX MODAL (GOOGLE ARTS & CULTURE INSPECTOR)
+       4. FULL-SCREEN IMMERSIVE ARTWORK STAGE & ARTIST DOCENT OVERLAY
        ==================================================================== -->
   <div
     class="lightbox-backdrop"
     id="lightbox-backdrop"
     role="dialog"
     aria-modal="true"
-    aria-label="Artwork Deep Zoom Inspector"
+    aria-label="Full-Screen Immersive Artwork & Artist Introduction"
   >
-    <div class="lightbox-dialog">
-      <div class="lightbox-stage" id="lightbox-stage">
-        <div class="lightbox-zoom-container" id="lightbox-zoom-container"></div>
-        <div class="lightbox-zoom-controls">
-          <button type="button" class="zoom-btn active" data-zoom="1" id="zoom-btn-1x">1×</button>
-          <button type="button" class="zoom-btn" data-zoom="2" id="zoom-btn-2x">2×</button>
-          <button type="button" class="zoom-btn" data-zoom="3.2" id="zoom-btn-3x">3.2×</button>
+    <div class="immersive-theatre" id="immersive-theatre">
+      <!-- Top Floating Bar inside Full-Screen Mode -->
+      <div class="immersive-top-bar">
+        <div class="immersive-top-left">
+          <span class="met-insignia">THE MET</span>
+          <span class="immersive-gallery-tag" id="immersive-gallery-tag">Gallery 825</span>
+          <span class="immersive-counter-pill" id="immersive-counter-pill">1 / 61</span>
+        </div>
+
+        <div class="immersive-top-actions">
+          <div class="immersive-zoom-pills">
+            <button type="button" class="zoom-btn active" data-zoom="1" id="zoom-btn-1x">1×</button>
+            <button type="button" class="zoom-btn" data-zoom="1.8" id="zoom-btn-2x">1.8×</button>
+            <button type="button" class="zoom-btn" data-zoom="3" id="zoom-btn-3x">3×</button>
+          </div>
+          <button type="button" class="immersive-action-pill" id="immersive-fullscreen-btn">
+            ⛶ Full Screen
+          </button>
+          <button type="button" class="immersive-action-pill" id="immersive-info-toggle-btn">
+            📋 Curatorial Specs
+          </button>
+          <button type="button" class="immersive-close-btn" id="lightbox-close-btn" aria-label="Close">
+            ✕
+          </button>
         </div>
       </div>
-      <div class="lightbox-details" id="lightbox-details-pane"></div>
+
+      <!-- Full-Viewport Artwork Canvas/Image Stage -->
+      <div class="lightbox-stage" id="lightbox-stage">
+        <button
+          type="button"
+          class="immersive-nav-arrow prev"
+          id="immersive-prev-btn"
+          aria-label="Previous artwork"
+        >
+          ←
+        </button>
+
+        <div class="lightbox-zoom-container" id="lightbox-zoom-container"></div>
+
+        <button
+          type="button"
+          class="immersive-nav-arrow next"
+          id="immersive-next-btn"
+          aria-label="Next artwork"
+        >
+          →
+        </button>
+      </div>
+
+      <!-- Floating Cartoon Artist Docent Guide (Bottom-Left / Center) -->
+      <div class="immersive-artist-docent" id="immersive-artist-docent">
+        <!-- Populated dynamically by app.js -->
+      </div>
+
+      <!-- Slide-Out Curatorial Specifications Drawer -->
+      <aside class="immersive-specs-drawer" id="lightbox-details-pane">
+        <!-- Populated dynamically by app.js -->
+      </aside>
     </div>
   </div>
 
   <!-- ====================================================================
-       5. MUSEUM FOOTER
+       5. MEDIAPIPE HAND LANDMARKER LIVESTREAM HUD & VIRTUAL CURSOR
+       ==================================================================== -->
+  <div class="hand-cursor" id="hand-virtual-cursor" aria-hidden="true">
+    <div class="hand-cursor-ring"></div>
+    <div class="hand-cursor-dot"></div>
+    <span class="hand-cursor-label" id="hand-cursor-label">Move</span>
+  </div>
+
+  <div class="hand-camera-hud" id="hand-camera-hud" aria-live="polite">
+    <div class="hand-hud-header">
+      <span class="hand-hud-title" id="hand-hud-title">✋ MediaPipe Hand Landmarker</span>
+      <button type="button" class="hand-hud-close" id="hand-hud-close-btn" title="Turn off camera">✕</button>
+    </div>
+    <div class="hand-video-wrap">
+      <video id="hand-webcam-video" autoplay playsinline muted></video>
+      <canvas id="hand-landmark-canvas"></canvas>
+    </div>
+    <div class="hand-hud-instructions" id="hand-hud-status">
+      Move hand → Move cursor · Pinch thumb &amp; index (two-finger touch) → Click
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       6. MUSEUM FOOTER
        ==================================================================== -->
   <footer class="museum-footer">
     <div class="footer-inner">
       <div>
         <strong>Art &amp; Explore · The Metropolitan Museum of Art Collection</strong>
         <p style="margin-top:4px;">
-          Featuring Open Access public-domain masterpieces from The Met Fifth Avenue (1000 Fifth Ave, New York, NY) &amp; custom paper-cut cartoon artist portraits.
+          Featuring Open Access public-domain masterpieces from The Met Fifth Avenue (1000 Fifth Ave, New York, NY), custom paper-cut cartoon artist docents, and MediaPipe Hand Landmarker gesture control.
         </p>
       </div>
       <div>
