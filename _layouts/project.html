@@ -1,11 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>{{ page.title }} | {{ site.title }}</title>
-  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
-</head>
-<body>
-  {% include layouts/default.html %}
-</body>
-</html>
+---
+layout: default
+---
+<article class="project-detail" style="max-width: 760px; padding: 60px 0;">
+  <h1>{{ page.title }}</h1>
+  {% if page.excerpt %}
+    <p style="color: var(--secondary-text); font-size: 1.15rem; margin-bottom: 32px;">{{ page.excerpt }}</p>
+  {% endif %}
+  <div class="project-body">
+    {{ content }}
+  </div>
+</article>

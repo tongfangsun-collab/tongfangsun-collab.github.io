@@ -7,7 +7,7 @@ title: Projects
   <h2>All Work</h2>
   <div class="projects-grid">
     {% for project in site.projects %}
-      <a href="{{ project.url }}" class="project-card">
+      <a href="{{ project.url | relative_url }}" class="project-card">
         <div class="project-image" style="background-color: {{ project.color | default: '#f0f0f0' }}"></div>
         <div class="project-info">
           <h3>{{ project.title }}</h3>

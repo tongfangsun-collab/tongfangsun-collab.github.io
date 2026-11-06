@@ -7,7 +7,7 @@ title: Writing
   <h2>Writing</h2>
   <div class="blog-list">
     {% for post in site.posts %}
-      <a href="{{ post.url }}" class="blog-item">
+      <a href="{{ post.url | relative_url }}" class="blog-item">
         <span class="date">{{ post.date | date: "%b %d, %Y" }}</span>
         <span class="title">{{ post.title }}</span>
         <span class="arrow">→</span>

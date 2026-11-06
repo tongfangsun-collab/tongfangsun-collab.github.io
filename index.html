@@ -17,7 +17,7 @@ title: Home
   <h2>Selected Projects</h2>
   <div class="projects-grid">
     {% for project in site.projects limit:3 %}
-      <a href="{{ project.url }}" class="project-card">
+      <a href="{{ project.url | relative_url }}" class="project-card">
         <div class="project-image" style="background-color: {{ project.color | default: '#f0f0f0' }}">
            <!-- Placeholder for image -->
         </div>
