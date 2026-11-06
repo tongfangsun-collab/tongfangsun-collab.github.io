@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Art &amp; Explore — After Hours at The Metropolitan Museum of Art</title>
+  <meta
+    name="description"
+    content="Explore the top 10 master artists and 61 iconic masterpieces from New York's Metropolitan Museum of Art (The Met) through playful hand-crafted cartoon characters and Google Arts & Culture curatorial stories."
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ====================================================================
+       1. "AFTER HOURS" HERO CHARACTER STAGE (Reference Screenshot Homage)
+       ==================================================================== -->
+  <header class="after-hours-stage" id="after-hours-stage">
+    <div class="stage-top-bar">
+      <div class="brand-block">
+        <div class="met-badge-row">
+          <span class="met-insignia">THE MET</span>
+          <span class="gac-tag">Art &amp; Explore · 1000 Fifth Avenue, NYC</span>
+        </div>
+        <h1 class="stage-title" id="stage-title-text">Art &amp; Explore · After Hours</h1>
+        <p class="stage-subtitle" id="stage-subtitle-text">
+          The Met Fifth Avenue has closed for the night — stroll the galleries and chat with the 10 masters.
+        </p>
+      </div>
+
+      <div class="stage-controls-right">
+        <nav class="nav-pills" aria-label="Museum Views">
+          <button type="button" class="nav-pill active" id="nav-pill-stage">Character Stage</button>
+          <button type="button" class="nav-pill" id="nav-pill-gallery">Masterpieces (61)</button>
+          <button type="button" class="nav-pill" id="nav-pill-wings">Met Floor Wings</button>
+        </nav>
+
+        <button
+          type="button"
+          class="lang-switch"
+          id="lang-switch-btn"
+          aria-label="Toggle English or Chinese"
+        >
+          <span id="lang-en" class="active-lang">EN</span>
+          <span>/</span>
+          <span id="lang-zh">中文</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating Paper-Cut Cartoon Artist Heads with Speech Bubbles -->
+    <div class="character-parade-wrapper">
+      <div class="character-parade" id="character-parade" aria-label="Top 10 Artists at The Met">
+        <!-- Populated dynamically by app.js -->
+      </div>
+    </div>
+
+    <div class="stage-bottom-bar">
+      <div class="stage-credit">
+        <span>@Art &amp; Explore</span>
+        <span class="stage-credit-sub" id="stage-credit-sub">
+          Top 10 Artists · 61 Masterpieces · New York Metropolitan Museum of Art
+        </span>
+      </div>
+
+      <div class="parade-arrows">
+        <button
+          type="button"
+          class="circle-arrow-btn"
+          id="parade-prev-btn"
+          aria-label="Scroll artists left"
+        >
+          ←
+        </button>
+        <button
+          type="button"
+          class="circle-arrow-btn"
+          id="parade-next-btn"
+          aria-label="Scroll artists right"
+        >
+          →
+        </button>
+        <button type="button" class="enter-gallery-btn" id="enter-gallery-btn">
+          Enter Gallery →
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ====================================================================
+       2. STICKY ARTIST & SEARCH BAR
+       ==================================================================== -->
+  <div class="sticky-museum-bar" id="sticky-museum-bar">
+    <div class="sticky-bar-inner">
+      <div class="artist-avatar-strip" id="artist-avatar-strip" role="tablist">
+        <!-- Populated dynamically by app.js -->
+      </div>
+
+      <div class="search-and-color-bar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input
+            type="search"
+            id="museum-search-input"
+            class="search-input"
+            placeholder="Search paintings, galleries, motifs..."
+            aria-label="Search artworks"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       3. MAIN EXHIBITION & ARTIST STUDIO SECTION
+       ==================================================================== -->
+  <main class="museum-main" id="museum-main-section">
+    <!-- Interactive Artist Studio + "After Hours Chat" -->
+    <div id="artist-studio-container"></div>
+
+    <!-- Google Arts & Culture Curatorial Toolbar & Pigment Filter -->
+    <div class="curatorial-toolbar">
+      <div class="toolbar-left">
+        <h2 class="section-heading" id="gallery-section-heading">
+          Curated Masterpieces at The Met
+        </h2>
+        <span class="artwork-count-badge" id="artwork-count-badge">61 artworks on view</span>
+      </div>
+
+      <div class="color-palette-filter" role="group" aria-label="Filter by pigment color">
+        <span class="color-filter-label" id="color-filter-label">Pigment Palette:</span>
+        <button
+          type="button"
+          class="color-dot-btn active"
+          data-color="all"
+          id="color-btn-all"
+          title="All Palettes"
+          style="background: conic-gradient(#1b3b6f, #e59f24, #b8422b, #4a7c59, #1b3b6f)"
+        ></button>
+        <button
+          type="button"
+          class="color-dot-btn"
+          data-color="blue"
+          id="color-btn-blue"
+          title="Prussian & Ultramarine Blue"
+          style="background: #2554a3"
+        ></button>
+        <button
+          type="button"
+          class="color-dot-btn"
+          data-color="gold"
+          id="color-btn-gold"
+          title="Sunlit Ochre & Gold"
+          style="background: #e3b448"
+        ></button>
+        <button
+          type="button"
+          class="color-dot-btn"
+          data-color="red"
+          id="color-btn-red"
+          title="Vermilion, Rose & Crimson"
+          style="background: #c94a32"
+        ></button>
+        <button
+          type="button"
+          class="color-dot-btn"
+          data-color="green"
+          id="color-btn-green"
+          title="Emerald, Willow & Cypress Green"
+          style="background: #4a7c59"
+        ></button>
+        <button
+          type="button"
+          class="color-dot-btn"
+          data-color="dark"
+          id="color-btn-dark"
+          title="Chiaroscuro Umber & Velvet Black"
+          style="background: #241c15"
+        ></button>
+      </div>
+    </div>
+
+    <!-- Masterpieces Grid -->
+    <section class="artworks-grid" id="artworks-grid" aria-label="Artworks Gallery">
+      <!-- Populated dynamically by app.js -->
+    </section>
+
+    <!-- The Met Fifth Avenue Curatorial Wings Overview -->
+    <section class="wings-overview-section" id="wings-overview-section">
+      <div class="toolbar-left">
+        <h2 class="section-heading" id="wings-section-heading">
+          Explore The Met Fifth Avenue by Wing
+        </h2>
+        <span class="artwork-count-badge" id="wings-section-sub">
+          Click any curatorial department to filter artists and galleries.
+        </span>
+      </div>
+      <div class="wings-grid" id="wings-grid">
+        <!-- Populated dynamically by app.js -->
+      </div>
+    </section>
+  </main>
+
+  <!-- ====================================================================
+       4. DEEP-ZOOM LIGHTBOX MODAL (GOOGLE ARTS & CULTURE INSPECTOR)
+       ==================================================================== -->
+  <div
+    class="lightbox-backdrop"
+    id="lightbox-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Artwork Deep Zoom Inspector"
+  >
+    <div class="lightbox-dialog">
+      <div class="lightbox-stage" id="lightbox-stage">
+        <div class="lightbox-zoom-container" id="lightbox-zoom-container"></div>
+        <div class="lightbox-zoom-controls">
+          <button type="button" class="zoom-btn active" data-zoom="1" id="zoom-btn-1x">1×</button>
+          <button type="button" class="zoom-btn" data-zoom="2" id="zoom-btn-2x">2×</button>
+          <button type="button" class="zoom-btn" data-zoom="3.2" id="zoom-btn-3x">3.2×</button>
+        </div>
+      </div>
+      <div class="lightbox-details" id="lightbox-details-pane"></div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       5. MUSEUM FOOTER
+       ==================================================================== -->
+  <footer class="museum-footer">
+    <div class="footer-inner">
+      <div>
+        <strong>Art &amp; Explore · The Metropolitan Museum of Art Collection</strong>
+        <p style="margin-top:4px;">
+          Featuring Open Access public-domain masterpieces from The Met Fifth Avenue (1000 Fifth Ave, New York, NY) &amp; custom paper-cut cartoon artist portraits.
+        </p>
+      </div>
+      <div>
+        <a
+          href="../"
+          style="color:var(--text-primary);font-weight:600;text-decoration:none;"
+          id="back-home-link"
+        >
+          ← Back to Portfolio Home
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
