@@ -994,7 +994,7 @@ window.MET_MUSEUM_DATA = {
       galleryZh: "美国翼楼 · 771 号展厅",
       avatar: "assets/artists/sargent.png",
       accentColor: "#9c2b3b",
-      bioEn: "Born in Florence to American parents and trained in Paris, John Singer Sargent was the undisputed virtuoso of Gilded Age portraiture. His bravura brushwork ("a la prima") made silk, velvet, and pearls shimmer with electric vitality in The Met's American Wing.",
+      bioEn: "Born in Florence to American parents and trained in Paris, John Singer Sargent was the undisputed virtuoso of Gilded Age portraiture. His bravura brushwork ('alla prima') made silk, velvet, and pearls shimmer with electric vitality in The Met's American Wing.",
       bioZh: "出生于佛罗伦萨、成名于巴黎与伦敦的美国画家约翰·辛格·萨金特，是镀金时代肖像画当之无愧的炫技大师。他在大都会美国翼楼的巨幅肖像画以潇洒凌厉的笔触令丝绸、天鹅绒与珠光跃然画布。",
       chatResponses: {
         favoriteEn: "When I sold 'Madame X' to The Met in 1916, I wrote to the director: 'I suppose it is the best thing I have done.' Look at her alabaster profile and black velvet gown!",

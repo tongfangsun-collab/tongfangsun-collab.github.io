@@ -271,42 +271,60 @@
   // ==========================================================================
   // Live Met Collection API Image Enricher (Client-side progressive enhancement)
   // ==========================================================================
+  async function fetchMetObjectImage(objectId) {
+    if (!objectId) return null;
+    if (metApiImageCache.has(objectId)) {
+      return metApiImageCache.get(objectId);
+    }
+    const promise = (async () => {
+      try {
+        const res = await fetch(
+          `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectId}`
+        );
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.primaryImageSmall || data.primaryImage || null;
+      } catch (_) {
+        return null;
+      }
+    })();
+    metApiImageCache.set(objectId, promise);
+    const resolved = await promise;
+    metApiImageCache.set(objectId, resolved);
+    return resolved;
+  }
+
   async function enrichArtworkImage(artwork, imgEl) {
     if (!imgEl || !artwork.objectId) return;
 
-    // First try direct imageUrl if present
-    if (artwork.imageUrl) {
-      imgEl.src = artwork.imageUrl;
-    }
+    let fellBackToApi = false;
 
     imgEl.onload = () => {
       imgEl.classList.add("loaded");
     };
 
     imgEl.onerror = async () => {
-      // Fallback: query official Met Collection Open Access API for primaryImageSmall
-      if (metApiImageCache.has(artwork.objectId)) {
-        const cachedUrl = metApiImageCache.get(artwork.objectId);
-        if (cachedUrl && imgEl.src !== cachedUrl) {
-          imgEl.src = cachedUrl;
-        }
-        return;
-      }
-      try {
-        const res = await fetch(
-          `https://collectionapi.metmuseum.org/public/collection/v1/objects/${artwork.objectId}`
-        );
-        if (!res.ok) return;
-        const data = await res.json();
-        const apiImg = data.primaryImageSmall || data.primaryImage;
-        if (apiImg) {
-          metApiImageCache.set(artwork.objectId, apiImg);
-          imgEl.src = apiImg;
-        }
-      } catch (_) {
-        // Offline or blocked by sandbox CSP: the bespoke painted canvas remains visible!
+      if (fellBackToApi) return;
+      fellBackToApi = true;
+      const apiImg = await fetchMetObjectImage(artwork.objectId);
+      if (apiImg && imgEl.src !== apiImg) {
+        imgEl.src = apiImg;
       }
     };
+
+    // If imageUrl is already an official IIIF endpoint, try it immediately;
+    // otherwise query The Met Collection Open Access API directly for the exact image URL.
+    if (artwork.imageUrl && artwork.imageUrl.includes("/iiif/")) {
+      imgEl.src = artwork.imageUrl;
+    } else {
+      const apiImg = await fetchMetObjectImage(artwork.objectId);
+      if (apiImg) {
+        fellBackToApi = true;
+        imgEl.src = apiImg;
+      } else if (artwork.imageUrl) {
+        imgEl.src = artwork.imageUrl;
+      }
+    }
   }
 
   // ==========================================================================
@@ -714,9 +732,21 @@
       canvas.style.display = "none";
       img.style.display = "block";
     };
-    const cached = metApiImageCache.get(artwork.objectId);
-    img.src = cached || artwork.imageUrl || "";
+    img.onerror = async () => {
+      const apiImg = await fetchMetObjectImage(artwork.objectId);
+      if (apiImg && img.src !== apiImg) {
+        img.src = apiImg;
+      }
+    };
     zoomWrap.appendChild(img);
+    (async () => {
+      if (artwork.imageUrl && artwork.imageUrl.includes("/iiif/")) {
+        img.src = artwork.imageUrl;
+      } else {
+        const apiImg = await fetchMetObjectImage(artwork.objectId);
+        img.src = apiImg || artwork.imageUrl || "";
+      }
+    })();
 
     const title = state.lang === "zh" ? artwork.titleZh : artwork.titleEn;
     const artistName = state.lang === "zh" ? artist.nameZh : artist.nameEn;

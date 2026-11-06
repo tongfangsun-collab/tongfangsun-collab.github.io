@@ -56,12 +56,12 @@ body {
 
 .after-hours-stage {
   position: relative;
-  min-height: 92vh;
+  min-height: 520px;
   background: var(--bg-paper);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 40px 56px 44px;
+  padding: 28px 48px 32px;
   border-bottom: 1px solid var(--border-hairline);
   overflow: hidden;
 }
@@ -188,7 +188,7 @@ body {
 .character-parade-wrapper {
   position: relative;
   margin: auto 0;
-  padding: 72px 0 28px;
+  padding: 12px 0 12px;
   width: 100%;
 }
 
@@ -199,7 +199,7 @@ body {
   gap: clamp(28px, 3.8vw, 56px);
   overflow-x: auto;
   overflow-y: visible;
-  padding: 96px 32px 36px;
+  padding: 108px 32px 24px;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -ms-overflow-style: none;
