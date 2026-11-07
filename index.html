@@ -114,6 +114,32 @@ title: Portfolio — UX & AI Interaction Designer
       </div>
     </a>
   </div>
+
+  <!-- Project 5: Airbnb Installment Booking ("Pay Less Up Front") -->
+  <div class="framer-project-block" id="project-airbnb-installment">
+    <div class="framer-project-copy">
+      <h2 class="project-headline">Airbnb Installment Booking</h2>
+      <p class="project-lead">
+        Originating and designing Airbnb’s flexible split-payment feature ("Pay Less Up Front") on the Guest Growth Team. Streamlined a 54-step legacy checkout into an intuitive 6-step mobile flow across Airbnb DLS, Explore 2.0, and Airbnb Plus—officially shipped globally across Mobile and Web.
+      </p>
+      <div class="project-cta-group">
+        <a href="{{ '/projects/airbnb-installment-booking/' | relative_url }}" class="btn-pill-black" id="read-airbnb-case-btn">Read Case Study</a>
+        <a href="https://money.cnn.com/2018/01/16/technology/airbnb-pay-less-up-front/index.html" target="_blank" rel="noopener noreferrer" class="btn-pill-outline" id="view-airbnb-cnn-btn">CNN Tech Feature ↗</a>
+      </div>
+      <p class="project-helper-note">Shipped globally as "Pay Less Up Front" · Explore 2.0 &amp; Airbnb Plus · 54-step flow simplified.</p>
+    </div>
+
+    <a href="{{ '/projects/airbnb-installment-booking/' | relative_url }}" class="framer-showcase-card" aria-label="Launch Airbnb Installment Booking Case Study">
+      <div class="showcase-media-wrap" style="background: #f8f9fa; border-radius: 16px; overflow: hidden;">
+        <img
+          src="{{ '/airbnb/assets/01_payless_1.png' | relative_url }}"
+          alt="Airbnb Installment Booking — Pay Less Up Front"
+          class="showcase-video"
+          style="object-fit: cover; width: 100%; max-height: 400px;"
+        />
+      </div>
+    </a>
+  </div>
 </section>
 
 <!-- ====================================================================== -->
@@ -138,6 +164,17 @@ title: Portfolio — UX & AI Interaction Designer
           <span style="color: var(--text-color);">Read Case Study →</span>
           <span style="color: var(--secondary-text); margin-left: 14px;">influcio.io ↗</span>
         </div>
+      </div>
+    </a>
+
+    <a href="{{ '/projects/airbnb-installment-booking/' | relative_url }}" class="framer-work-card">
+      <div class="work-card-thumb" style="background: #fff5f5;">
+        <img src="{{ '/airbnb/assets/01_payless_1.png' | relative_url }}" alt="Airbnb Installment Booking Design" class="work-thumb-cover" />
+      </div>
+      <div class="work-card-body">
+        <span class="work-card-tag">Airbnb Guest Growth · FinTech &amp; Travel UX · Shipped</span>
+        <h3>Airbnb Installment Booking ("Pay Less Up Front")</h3>
+        <p>Originating Airbnb’s split-payment checkout experience and streamlining a 54-step booking flow across Explore 2.0 and Airbnb Plus.</p>
       </div>
     </a>
 
@@ -186,7 +223,7 @@ title: Portfolio — UX & AI Interaction Designer
     </a>
 
     {% for project in site.projects %}
-      {% unless project.url contains 'influcio' or project.url contains 'architecture-3d-motion' or project.url contains 'ubi' %}
+      {% unless project.url contains 'influcio' or project.url contains 'architecture-3d-motion' or project.url contains 'ubi' or project.url contains 'airbnb' %}
       <a href="{{ project.url | relative_url }}" class="framer-work-card">
         <div class="work-card-thumb" style="background-color: {{ project.color | default: '#f4f4f5' }};">
           <div class="work-thumb-placeholder">{{ project.title }}</div>
