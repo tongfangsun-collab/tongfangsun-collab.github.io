@@ -88,6 +88,32 @@ title: Portfolio — UX & AI Interaction Designer
       </div>
     </a>
   </div>
+
+  <!-- Project 4: Ubi-Interactive Augmented Reality Design -->
+  <div class="framer-project-block" id="project-ubi-augmented-reality">
+    <div class="framer-project-copy">
+      <h2 class="project-headline">Ubi-Interactive Augmented Reality</h2>
+      <p class="project-lead">
+        A Natural User Interface (NUI) software platform turning any wall, tabletop, or whiteboard into a multi-touch computing display using 3D depth-sensing cameras (such as Microsoft Kinect) and computer-vision tracking. Designed floating annotation tools, document camera workflows for classrooms, and touchless InAir gestures.
+      </p>
+      <div class="project-cta-group">
+        <a href="{{ '/projects/ubi-augmented-reality/' | relative_url }}" class="btn-pill-black" id="read-ubi-case-btn">Read Case Study</a>
+        <a href="http://www.geekwire.com/2015/ubi-interactives-new-hardware-brings-20-point-multi-touch-to-any-screen/" target="_blank" rel="noopener noreferrer" class="btn-pill-outline" id="view-ubi-geekwire-btn">GeekWire Feature ↗</a>
+      </div>
+      <p class="project-helper-note">Turn any surface into a touchscreen · Touchless InAir gestures · Multi-touch pen &amp; finger tracking.</p>
+    </div>
+
+    <a href="{{ '/projects/ubi-augmented-reality/' | relative_url }}" class="framer-showcase-card" aria-label="Launch Ubi-Interactive Augmented Reality Case Study">
+      <div class="showcase-media-wrap" style="background: #000000; border-radius: 16px; overflow: hidden;">
+        <img
+          src="{{ '/ubi/assets/inair_gesture.gif' | relative_url }}"
+          alt="InAir Gesture Mode Animated Demo"
+          class="showcase-video"
+          style="object-fit: contain; width: 100%; max-height: 400px;"
+        />
+      </div>
+    </a>
+  </div>
 </section>
 
 <!-- ====================================================================== -->
@@ -112,6 +138,17 @@ title: Portfolio — UX & AI Interaction Designer
           <span style="color: var(--text-color);">Read Case Study →</span>
           <span style="color: var(--secondary-text); margin-left: 14px;">influcio.io ↗</span>
         </div>
+      </div>
+    </a>
+
+    <a href="{{ '/projects/ubi-augmented-reality/' | relative_url }}" class="framer-work-card">
+      <div class="work-card-thumb" style="background: #1a1e29;">
+        <img src="{{ '/ubi/assets/ubi_hero_cover.jpg' | relative_url }}" alt="Ubi Interactive Augmented Reality Design" class="work-thumb-cover" />
+      </div>
+      <div class="work-card-body">
+        <span class="work-card-tag">Design Lab · Augmented Reality &amp; NUI · 2016</span>
+        <h3>Ubi-Interactive Augmented Reality Design</h3>
+        <p>Turning any physical wall into an interactive multi-touchscreen using depth camera sensors, floating annotation tools, and touchless InAir gestures.</p>
       </div>
     </a>
 
@@ -149,7 +186,7 @@ title: Portfolio — UX & AI Interaction Designer
     </a>
 
     {% for project in site.projects %}
-      {% unless project.url contains 'influcio' or project.url contains 'architecture-3d-motion' %}
+      {% unless project.url contains 'influcio' or project.url contains 'architecture-3d-motion' or project.url contains 'ubi' %}
       <a href="{{ project.url | relative_url }}" class="framer-work-card">
         <div class="work-card-thumb" style="background-color: {{ project.color | default: '#f4f4f5' }};">
           <div class="work-thumb-placeholder">{{ project.title }}</div>
