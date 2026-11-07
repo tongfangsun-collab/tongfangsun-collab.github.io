@@ -7,23 +7,27 @@
   <meta name="description" content="{{ site.description }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
 </head>
-<body>
+<body class="cyber-theme">
+  <!-- Ambient Cyberpunk Scanline & Corner Telemetry Overlay -->
+  <div class="cyber-scanlines" aria-hidden="true"></div>
+
   <header class="site-header">
     <div class="header-inner">
       <a href="{{ '/' | relative_url }}" class="brand-logo" aria-label="{{ site.title }} Home">
         <img src="{{ '/assets/images/logo-t.png' | relative_url }}" alt="T Logo" class="brand-logo-img" />
+        <span class="brand-status-tag">SYS.ONLINE // 2026</span>
       </a>
       <nav class="site-nav" aria-label="Main Navigation">
-        <a href="{{ '/#work' | relative_url }}">Work</a>
-        <a href="{{ '/#ai-ux-research' | relative_url }}">AI+UX Research</a>
-        <a href="{{ '/#side-project' | relative_url }}">Side Project</a>
-        <a href="{{ '/#about' | relative_url }}">About</a>
+        <a href="{{ '/#design-lab' | relative_url }}" class="nav-link-active"><span class="nav-index">01</span> Design Lab</a>
+        <a href="{{ '/#work' | relative_url }}"><span class="nav-index">02</span> Work</a>
+        <a href="{{ '/#ai-ux-research' | relative_url }}"><span class="nav-index">03</span> AI+UX Research</a>
+        <a href="{{ '/#about' | relative_url }}"><span class="nav-index">04</span> About</a>
       </nav>
       <div class="header-cta">
-        <a href="{{ '/#contact' | relative_url }}" class="btn-pill-black btn-header-contact">Contact</a>
+        <a href="{{ '/#contact' | relative_url }}" class="btn-cyber-neon btn-header-contact">Contact_</a>
       </div>
     </div>
   </header>
@@ -36,19 +40,20 @@
     <div class="footer-inner">
       <div class="footer-top">
         <div>
-          <h2 class="footer-heading">Let’s build thoughtful AI + UX experiences together.</h2>
-          <p class="footer-subtext">Available for UX design, AI interaction research, and creative technology collaborations.</p>
+          <span class="cyber-eyebrow">// TRANSMISSION CHANNEL</span>
+          <h2 class="footer-heading">Let’s build next-gen AI + UX systems together.</h2>
+          <p class="footer-subtext">Available for UX architecture, computer-vision interfaces, and creative technology collaborations.</p>
         </div>
         <div class="footer-actions">
-          <a href="mailto:tongfangsun@gmail.com" class="btn-pill-white">Get in Touch →</a>
+          <a href="mailto:tongfangsun@gmail.com" class="btn-cyber-neon">Initiate Contact →</a>
         </div>
       </div>
       <div class="footer-bottom">
-        <span>&copy; {{ "now" | date: "%Y" }} {{ site.title }}. All rights reserved.</span>
+        <span class="mono-meta">&copy; {{ "now" | date: "%Y" }} {{ site.title }} // ALL RIGHTS RESERVED</span>
         <div class="footer-links">
+          <a href="{{ '/Hand%20detection/' | relative_url }}">Pikachu 6 Steps</a>
           <a href="{{ '/Art%20%26%20Explore/' | relative_url }}">Art &amp; Explore</a>
-          <a href="{{ '/Hand%20detection/' | relative_url }}">Origami Hand Detection</a>
-          <a href="https://github.com/tongfangsun-collab/tongfangsun.github.io" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://github.com/tongfangsun-collab/tongfangsun.github.io" target="_blank" rel="noopener noreferrer">GitHub // Repo</a>
         </div>
       </div>
     </div>

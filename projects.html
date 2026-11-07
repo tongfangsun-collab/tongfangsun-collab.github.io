@@ -1,36 +1,45 @@
 ---
 layout: default
-title: Projects
+title: Work & Design Lab
 ---
 
-<section class="featured-work">
-  <h2>All Work</h2>
-  <div class="projects-grid">
-    <a href="{{ '/Hand%20detection/' | relative_url }}" class="project-card">
-      <div class="project-image" style="background-image: url('{{ '/Hand%20detection/side-project-preview.png' | relative_url }}'); background-size: cover; background-position: center; background-color: #8c6239;"></div>
-      <div class="project-info">
-        <h3>Origami Hand Detection (6-Step Pikachu)</h3>
-        <p>Interactive 6-step origami folding experience controlled in real time by Google MediaPipe HandLandmarker finger gestures.</p>
+<section class="framer-section" style="border-bottom: none;">
+  <div class="section-header-row">
+    <span class="cyber-eyebrow">// ALL PROJECTS &amp; DESIGN LAB</span>
+    <h1 class="section-display-title">Work &amp; Design Lab</h1>
+    <p class="section-subtitle">Interactive prototypes, computer-vision experiments, and UX case studies.</p>
+  </div>
+
+  <div class="framer-cards-grid">
+    <a href="{{ '/Hand%20detection/' | relative_url }}" class="framer-work-card">
+      <div class="work-card-thumb" style="background: #141821;">
+        <img src="{{ '/Hand%20detection/origami_steps_grid.jpg' | relative_url }}" alt="Pikachu 6 Steps Origami Hand Detection" class="work-thumb-cover" />
+      </div>
+      <div class="work-card-body">
+        <span class="work-card-tag">Design Lab · Computer Vision · 2026</span>
+        <h3>Pikachu 6 Steps — Origami Hand Detection</h3>
+        <p>Interactive 6-step origami folding experience controlled in real time by Google MediaPipe HandLandmarker finger gestures (0–5 fingers).</p>
       </div>
     </a>
-    <a href="{{ '/Hand%20detection/pokemon-trio.html' | relative_url }}" class="project-card">
-      <div class="project-image" style="background-image: url('{{ '/Hand%20detection/pikachu.jpg' | relative_url }}'); background-size: cover; background-position: center; background-color: #7c532d;"></div>
-      <div class="project-info">
-        <h3>Origami Pokémon Trio (Rock · Paper · Scissors)</h3>
-        <p>Real-time hand gesture recognition &amp; two-hand zoom prototype folding Pikachu, Raichu, and Eevee.</p>
+
+    <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="framer-work-card">
+      <div class="work-card-thumb" style="background: #171a24;">
+        <img src="{{ '/Art%20%26%20Explore/assets/artists/van-gogh.png' | relative_url }}" alt="Art & Explore — The Met Gallery" class="work-thumb-contain" />
       </div>
-    </a>
-    <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="project-card">
-      <div class="project-image" style="background-image: url('{{ '/Art%20%26%20Explore/assets/artists/van-gogh.png' | relative_url }}'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: #f4efe6;"></div>
-      <div class="project-info">
+      <div class="work-card-body">
+        <span class="work-card-tag">Design Lab · Spatial Curation · 2026</span>
         <h3>Art &amp; Explore — The Met Gallery</h3>
         <p>Interactive museum gallery featuring the Top 10 artists &amp; 61 masterpieces from The Metropolitan Museum of Art with hand gesture navigation.</p>
       </div>
     </a>
+
     {% for project in site.projects %}
-      <a href="{{ project.url | relative_url }}" class="project-card">
-        <div class="project-image" style="background-color: {{ project.color | default: '#f0f0f0' }}"></div>
-        <div class="project-info">
+      <a href="{{ project.url | relative_url }}" class="framer-work-card">
+        <div class="work-card-thumb">
+          <div class="work-thumb-placeholder">{{ project.title }}</div>
+        </div>
+        <div class="work-card-body">
+          <span class="work-card-tag">UX Case Study</span>
           <h3>{{ project.title }}</h3>
           <p>{{ project.excerpt }}</p>
         </div>
