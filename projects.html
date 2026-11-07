@@ -5,14 +5,13 @@ title: Work & Design Lab
 
 <section class="framer-section" style="border-bottom: none;">
   <div class="section-header-row">
-    <span class="cyber-eyebrow">// ALL PROJECTS &amp; DESIGN LAB</span>
     <h1 class="section-display-title">Work &amp; Design Lab</h1>
     <p class="section-subtitle">Interactive prototypes, computer-vision experiments, and UX case studies.</p>
   </div>
 
   <div class="framer-cards-grid">
     <a href="{{ '/Hand%20detection/' | relative_url }}" class="framer-work-card">
-      <div class="work-card-thumb" style="background: #141821;">
+      <div class="work-card-thumb" style="background: #7c532d;">
         <img src="{{ '/Hand%20detection/origami_steps_grid.jpg' | relative_url }}" alt="Pikachu 6 Steps Origami Hand Detection" class="work-thumb-cover" />
       </div>
       <div class="work-card-body">
@@ -23,7 +22,7 @@ title: Work & Design Lab
     </a>
 
     <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="framer-work-card">
-      <div class="work-card-thumb" style="background: #171a24;">
+      <div class="work-card-thumb" style="background: #f5f0e6;">
         <img src="{{ '/Art%20%26%20Explore/assets/artists/van-gogh.png' | relative_url }}" alt="Art & Explore — The Met Gallery" class="work-thumb-contain" />
       </div>
       <div class="work-card-body">
@@ -35,7 +34,7 @@ title: Work & Design Lab
 
     {% for project in site.projects %}
       <a href="{{ project.url | relative_url }}" class="framer-work-card">
-        <div class="work-card-thumb">
+        <div class="work-card-thumb" style="background-color: {{ project.color | default: '#f4f4f5' }};">
           <div class="work-thumb-placeholder">{{ project.title }}</div>
         </div>
         <div class="work-card-body">

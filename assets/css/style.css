@@ -1,18 +1,12 @@
 :root {
-  --bg-color: #07090e;
-  --bg-elevated: #0e131d;
-  --bg-panel: rgba(14, 19, 29, 0.82);
-  --text-color: #f0f6fc;
-  --secondary-text: #94a3b8;
-  --muted-text: #64748b;
-  --neon-lime: #a3ff12;
-  --neon-cyan: #00f0ff;
-  --neon-amber: #fcee0a;
-  --border-color: rgba(255, 255, 255, 0.11);
-  --border-hover: rgba(163, 255, 18, 0.55);
-  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-display: 'Space Grotesk', 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --bg-color: #ffffff;
+  --text-color: #0d0d0d;
+  --secondary-text: #6e6e73;
+  --muted-text: #86868b;
+  --accent-color: #000000;
+  --light-gray: #f5f5f7;
+  --border-color: #e8e8ed;
+  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --transition: all 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -30,48 +24,28 @@ body {
   margin: 0;
   padding: 0;
   background-color: var(--bg-color);
-  background-image:
-    radial-gradient(circle at 14% 12%, rgba(163, 255, 18, 0.08) 0%, transparent 38%),
-    radial-gradient(circle at 86% 24%, rgba(0, 240, 255, 0.08) 0%, transparent 42%),
-    radial-gradient(circle at 50% 85%, rgba(252, 238, 10, 0.05) 0%, transparent 45%);
   color: var(--text-color);
   font-family: var(--font-main);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-/* Subtle Cyberpunk Scanline Overlay */
-.cyber-scanlines {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 999;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 3px,
-    rgba(255, 255, 255, 0.012) 4px
-  );
+  line-height: 1.55;
 }
 
 /* ==========================================================================
-   Cyberpunk Top Navigation Bar
+   Framer Portfolio Top Navigation Bar
    ========================================================================== */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(7, 9, 14, 0.84);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border-color);
-  padding: 18px 0;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 24px 0;
 }
 
 .header-inner {
-  max-width: 1160px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 0 44px;
+  padding: 0 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -80,137 +54,124 @@ body {
 .brand-logo {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
   text-decoration: none;
   transition: transform 0.2s ease;
 }
 
 .brand-logo:hover {
-  transform: translateY(-1px);
+  transform: scale(1.04);
 }
 
 .brand-logo-img {
-  height: 40px;
+  height: 44px;
   width: auto;
   display: block;
-  filter: drop-shadow(0 0 10px rgba(163, 255, 18, 0.35));
-}
-
-.brand-status-tag {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--neon-lime);
-  background: rgba(163, 255, 18, 0.1);
-  border: 1px solid rgba(163, 255, 18, 0.3);
-  padding: 4px 10px;
-  border-radius: 4px;
 }
 
 .site-nav {
   display: flex;
   align-items: center;
-  gap: 36px;
+  gap: 42px;
 }
 
 .site-nav a {
   text-decoration: none;
   color: var(--text-color);
-  font-family: var(--font-display);
-  font-size: 0.98rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  transition: var(--transition);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  font-size: 1.02rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition: opacity 0.2s ease;
 }
 
-.nav-index {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--neon-cyan);
-  opacity: 0.85;
-}
-
-.site-nav a:hover,
-.site-nav a.nav-link-active {
-  color: var(--neon-lime);
-  text-shadow: 0 0 14px rgba(163, 255, 18, 0.4);
+.site-nav a:hover {
+  opacity: 0.6;
 }
 
 /* ==========================================================================
-   Cyberpunk Buttons (Clipped Corners & Neon Accents)
+   Framer Pill Buttons
    ========================================================================== */
-.btn-cyber-neon {
+.btn-pill-black {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--neon-lime);
-  color: #05070b;
-  font-family: var(--font-mono);
-  font-size: 0.92rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  background: #000000;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
   padding: 13px 26px;
+  border-radius: 999px;
   text-decoration: none;
-  border: none;
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
-  box-shadow: 0 0 22px rgba(163, 255, 18, 0.28);
+  border: 1.5px solid #000000;
   transition: var(--transition);
   cursor: pointer;
 }
 
-.btn-cyber-neon:hover {
-  background: var(--neon-cyan);
-  box-shadow: 0 0 28px rgba(0, 240, 255, 0.45);
-  transform: translateY(-2px);
+.btn-pill-black:hover {
+  background: #222222;
+  border-color: #222222;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
 .btn-header-contact {
-  padding: 10px 22px;
-  font-size: 0.84rem;
+  padding: 11px 24px;
+  font-size: 0.98rem;
 }
 
-.btn-cyber-outline {
+.btn-pill-outline {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 240, 255, 0.06);
-  color: var(--neon-cyan);
-  font-family: var(--font-mono);
-  font-size: 0.88rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  padding: 12px 22px;
-  border-radius: 6px;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 0.98rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  padding: 12px 24px;
+  border-radius: 999px;
   text-decoration: none;
-  border: 1px solid rgba(0, 240, 255, 0.4);
+  border: 1.5px solid #d2d2d7;
   transition: var(--transition);
 }
 
-.btn-cyber-outline:hover {
-  background: rgba(0, 240, 255, 0.16);
-  border-color: var(--neon-cyan);
-  color: #ffffff;
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
-  transform: translateY(-2px);
+.btn-pill-outline:hover {
+  border-color: #000000;
+  background: #fafafa;
+  transform: translateY(-1px);
+}
+
+.btn-pill-white {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  color: #000000;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 13px 28px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.btn-pill-white:hover {
+  background: #e8e8ed;
+  transform: translateY(-1px);
 }
 
 /* ==========================================================================
-   Main Container & Section Headers
+   Main Container & Framer Sections
    ========================================================================== */
 .main-container,
 .container {
-  max-width: 1160px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 0 44px;
+  padding: 0 48px;
 }
 
 .framer-section {
-  padding: 72px 0 68px 0;
+  padding: 72px 0 64px 0;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -218,46 +179,12 @@ body {
   border-bottom: none;
 }
 
-.cyber-section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 24px;
-  margin-bottom: 48px;
-}
-
-.cyber-eyebrow {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  color: var(--neon-cyan);
-  margin-bottom: 10px;
-  text-transform: uppercase;
-}
-
-.cyber-telemetry-readout {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--secondary-text);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-color);
-  padding: 10px 14px;
-  border-radius: 6px;
-}
-
 .section-display-title {
-  font-family: var(--font-display);
-  font-size: 3.35rem;
-  font-weight: 700;
+  font-size: 3.1rem;
+  font-weight: 600;
   letter-spacing: -0.03em;
-  line-height: 1.08;
-  margin: 0;
+  line-height: 1.12;
+  margin: 0 0 56px 0;
   color: var(--text-color);
 }
 
@@ -266,95 +193,47 @@ body {
 }
 
 .section-header-row .section-display-title {
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .section-subtitle {
-  font-size: 1.1rem;
+  font-size: 1.12rem;
   color: var(--secondary-text);
   margin: 0;
   max-width: 680px;
 }
 
 /* ==========================================================================
-   Design Lab HUD Panels
+   Design Lab Blocks (Framer Layout)
    ========================================================================== */
-.cyber-hud-panel {
-  position: relative;
+.framer-project-block {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
-  gap: 48px;
+  gap: 56px;
   align-items: center;
-  padding: 38px 40px;
-  margin-bottom: 36px;
-  background: var(--bg-panel);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-  transition: var(--transition);
+  padding: 20px 0 68px 0;
 }
 
-.cyber-hud-panel:hover {
-  border-color: rgba(0, 240, 255, 0.38);
-  box-shadow: 0 28px 68px rgba(0, 0, 0, 0.6), 0 0 32px rgba(0, 240, 255, 0.08);
-}
-
-.cyber-module-tag {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  color: var(--neon-amber);
-  background: rgba(252, 238, 10, 0.1);
-  border: 1px solid rgba(252, 238, 10, 0.3);
-  padding: 4px 10px;
-  border-radius: 4px;
-  margin-bottom: 16px;
+.framer-project-block + .framer-project-block {
+  border-top: 1px solid var(--border-color);
+  padding-top: 68px;
 }
 
 .project-headline {
-  font-family: var(--font-display);
-  font-size: 2.2rem;
-  font-weight: 700;
+  font-size: 2.15rem;
+  font-weight: 600;
   letter-spacing: -0.025em;
-  line-height: 1.18;
-  margin: 0 0 18px 0;
+  line-height: 1.2;
+  margin: 0 0 22px 0;
   color: var(--text-color);
 }
 
 .project-lead {
-  font-size: 1.06rem;
-  line-height: 1.65;
-  color: var(--secondary-text);
-  margin: 0 0 24px 0;
-  max-width: 620px;
-}
-
-/* Pikachu 6 Steps Telemetry Strip */
-.pikachu-steps-strip {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 28px;
-}
-
-.step-chip {
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 1.12rem;
+  line-height: 1.62;
   color: var(--text-color);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 7px 10px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.step-chip span {
-  color: var(--neon-amber);
-  font-weight: 700;
+  margin: 0 0 32px 0;
+  max-width: 640px;
 }
 
 .project-cta-group {
@@ -362,26 +241,13 @@ body {
   flex-wrap: wrap;
   align-items: center;
   gap: 14px;
-  margin-bottom: 22px;
+  margin-bottom: 26px;
 }
 
 .project-helper-note {
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: 0.98rem;
   color: var(--secondary-text);
   margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--neon-lime);
-  box-shadow: 0 0 10px var(--neon-lime);
-  display: inline-block;
 }
 
 /* Interactive Media Card on Right of Design Lab */
@@ -389,18 +255,17 @@ body {
   display: block;
   text-decoration: none;
   color: inherit;
-  border-radius: 14px;
+  border-radius: 22px;
   overflow: hidden;
-  background: #121722;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.4);
+  background: #7c532d;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.08);
   transition: var(--transition);
 }
 
 .framer-showcase-card:hover {
-  transform: translateY(-5px);
-  border-color: var(--neon-lime);
-  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.6), 0 0 24px rgba(163, 255, 18, 0.2);
+  transform: translateY(-6px);
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.14);
 }
 
 .showcase-media-wrap {
@@ -408,7 +273,7 @@ body {
   aspect-ratio: 16 / 10;
   width: 100%;
   overflow: hidden;
-  background: #141923;
+  background: #7c532d;
 }
 
 .showcase-video {
@@ -422,29 +287,22 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 12px 16px;
-  background: #090d14;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px 18px;
+  background: rgba(20, 16, 12, 0.86);
+  backdrop-filter: blur(10px);
 }
 
 .showcase-pill {
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   font-weight: 500;
-  color: var(--secondary-text);
-  background: rgba(255, 255, 255, 0.06);
-  padding: 5px 11px;
-  border-radius: 4px;
-}
-
-.showcase-pill.pill-neon {
-  color: var(--neon-cyan);
-  background: rgba(0, 240, 255, 0.1);
-  border: 1px solid rgba(0, 240, 255, 0.25);
+  color: #f5f5f7;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 5px 12px;
+  border-radius: 999px;
 }
 
 .met-showcase-card {
-  background: #121722;
+  background: #f6f1e7;
 }
 
 .met-avatar-parade-preview {
@@ -454,7 +312,7 @@ body {
   justify-content: center;
   gap: 10px;
   padding: 24px;
-  background: radial-gradient(circle at 50% 40%, #1e2638 0%, #0d111a 100%);
+  background: radial-gradient(circle at 50% 35%, #ffffff 0%, #efe6d5 100%);
 }
 
 .met-avatar-parade-preview img {
@@ -462,7 +320,7 @@ body {
   max-width: 84px;
   height: auto;
   object-fit: contain;
-  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.12));
   transition: transform 0.25s ease;
 }
 
@@ -480,8 +338,8 @@ body {
 .framer-cards-grid,
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 32px;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 36px;
 }
 
 .framer-work-card,
@@ -490,18 +348,17 @@ body {
   flex-direction: column;
   text-decoration: none;
   color: inherit;
-  border-radius: 14px;
+  border-radius: 18px;
   overflow: hidden;
   border: 1px solid var(--border-color);
-  background: var(--bg-elevated);
+  background: #ffffff;
   transition: var(--transition);
 }
 
 .framer-work-card:hover,
 .project-card:hover {
   transform: translateY(-6px);
-  border-color: var(--neon-cyan);
-  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.5), 0 0 24px rgba(0, 240, 255, 0.14);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.07);
 }
 
 .work-card-thumb,
@@ -512,8 +369,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #141924;
-  border-bottom: 1px solid var(--border-color);
+  background-color: var(--light-gray);
 }
 
 .work-thumb-cover {
@@ -526,14 +382,13 @@ body {
   width: 52%;
   height: 82%;
   object-fit: contain;
-  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.12));
 }
 
 .work-thumb-placeholder {
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-weight: 600;
-  color: var(--neon-cyan);
+  color: var(--secondary-text);
 }
 
 .work-card-body,
@@ -543,23 +398,20 @@ body {
 
 .work-card-tag {
   display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--neon-lime);
+  letter-spacing: 0.04em;
+  color: var(--secondary-text);
   margin-bottom: 8px;
 }
 
 .work-card-body h3,
 .project-info h3 {
-  font-family: var(--font-display);
   margin: 0 0 10px 0;
-  font-size: 1.24rem;
-  font-weight: 700;
+  font-size: 1.22rem;
+  font-weight: 600;
   letter-spacing: -0.015em;
-  color: var(--text-color);
 }
 
 .work-card-body p,
@@ -567,7 +419,7 @@ body {
   margin: 0;
   color: var(--secondary-text);
   font-size: 0.95rem;
-  line-height: 1.58;
+  line-height: 1.55;
 }
 
 /* ==========================================================================
@@ -576,38 +428,31 @@ body {
 .research-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .research-row {
   display: grid;
-  grid-template-columns: 220px 1fr auto;
+  grid-template-columns: 200px 1fr auto;
   gap: 32px;
   align-items: center;
-  padding: 28px 32px;
-  border-radius: 14px;
-  background: var(--bg-elevated);
+  padding: 30px 32px;
+  border-radius: 18px;
+  background: var(--light-gray);
   border: 1px solid var(--border-color);
-  transition: var(--transition);
-}
-
-.research-row:hover {
-  border-color: rgba(163, 255, 18, 0.4);
 }
 
 .research-meta {
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  color: var(--neon-amber);
-  letter-spacing: 0.04em;
+  color: var(--secondary-text);
+  letter-spacing: 0.02em;
 }
 
 .research-content h3 {
-  font-family: var(--font-display);
   margin: 0 0 8px 0;
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.015em;
 }
 
@@ -628,19 +473,14 @@ body {
 }
 
 .about-lead {
-  font-size: 1.35rem;
-  line-height: 1.52;
+  font-size: 1.38rem;
+  line-height: 1.5;
   letter-spacing: -0.015em;
   margin: 0 0 20px 0;
-  color: var(--text-color);
-}
-
-.about-lead strong {
-  color: var(--neon-lime);
 }
 
 .about-body {
-  font-size: 1.04rem;
+  font-size: 1.06rem;
   color: var(--secondary-text);
   margin: 0 0 28px 0;
   max-width: 680px;
@@ -653,31 +493,28 @@ body {
 }
 
 .skills-pills span {
-  font-family: var(--font-mono);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--light-gray);
   border: 1px solid var(--border-color);
-  color: var(--text-color);
   padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 0.82rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
   font-weight: 500;
 }
 
 /* ==========================================================================
-   Footer
+   Dark Footer Bar (Matching Framer Bottom Contrast Band)
    ========================================================================== */
 .site-footer {
-  background: #040609;
-  color: var(--text-color);
+  background: #0a0a0a;
+  color: #ffffff;
   padding: 64px 0 48px 0;
   margin-top: 64px;
-  border-top: 1px solid var(--border-color);
 }
 
 .footer-inner {
-  max-width: 1160px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 0 44px;
+  padding: 0 48px;
 }
 
 .footer-top {
@@ -686,19 +523,18 @@ body {
   align-items: center;
   gap: 32px;
   padding-bottom: 44px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .footer-heading {
-  font-family: var(--font-display);
-  font-size: 1.9rem;
-  font-weight: 700;
+  font-size: 1.85rem;
+  font-weight: 600;
   letter-spacing: -0.02em;
   margin: 0 0 10px 0;
 }
 
 .footer-subtext {
-  color: var(--secondary-text);
+  color: rgba(255, 255, 255, 0.68);
   margin: 0;
   font-size: 1rem;
 }
@@ -708,34 +544,29 @@ body {
   justify-content: space-between;
   align-items: center;
   padding-top: 28px;
-  font-size: 0.82rem;
-  color: var(--secondary-text);
-}
-
-.mono-meta {
-  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .footer-links {
   display: flex;
   gap: 24px;
-  font-family: var(--font-mono);
 }
 
 .footer-links a {
-  color: var(--secondary-text);
+  color: rgba(255, 255, 255, 0.82);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .footer-links a:hover {
-  color: var(--neon-lime);
+  color: #ffffff;
 }
 
 /* ==========================================================================
    Responsive Breakpoints
    ========================================================================== */
-@media (max-width: 960px) {
+@media (max-width: 920px) {
   .header-inner,
   .main-container,
   .container,
@@ -744,26 +575,12 @@ body {
   }
 
   .site-nav {
-    gap: 20px;
+    gap: 22px;
   }
 
-  .cyber-section-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .cyber-telemetry-readout {
-    align-items: flex-start;
-  }
-
-  .cyber-hud-panel {
+  .framer-project-block {
     grid-template-columns: 1fr;
-    padding: 28px 24px;
     gap: 32px;
-  }
-
-  .pikachu-steps-strip {
-    grid-template-columns: repeat(2, 1fr);
   }
 
   .research-row {
@@ -787,31 +604,24 @@ body {
 @media (max-width: 640px) {
   .header-inner {
     flex-wrap: wrap;
-    gap: 14px;
-  }
-
-  .brand-status-tag {
-    display: none;
+    gap: 16px;
   }
 
   .site-nav {
     order: 3;
     width: 100%;
     justify-content: space-between;
-    gap: 10px;
-    padding-top: 10px;
+    gap: 12px;
+    padding-top: 8px;
     border-top: 1px solid var(--border-color);
   }
 
   .section-display-title {
     font-size: 2.35rem;
+    margin-bottom: 36px;
   }
 
   .project-headline {
     font-size: 1.75rem;
-  }
-
-  .pikachu-steps-strip {
-    grid-template-columns: 1fr;
   }
 }

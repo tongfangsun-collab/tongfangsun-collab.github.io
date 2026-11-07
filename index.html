@@ -1,52 +1,29 @@
 ---
 layout: default
-title: Design Lab & UX Portfolio — Tong Fang Sun
+title: Portfolio — UX & AI Interaction Designer
 ---
 
 <!-- ====================================================================== -->
-<!-- 01 // DESIGN LAB (Placed in front of Work)                             -->
+<!-- DESIGN LAB SHOWCASE (Framer Style, placed in front of Work)            -->
 <!-- ====================================================================== -->
-<section class="framer-section cyber-lab-section" id="design-lab">
-  <div class="cyber-section-header">
-    <div class="cyber-title-cluster">
-      <span class="cyber-eyebrow">// SEC_01 · INTERACTIVE EXPERIMENTS</span>
-      <h1 class="section-display-title">Design Lab</h1>
-    </div>
-    <div class="cyber-telemetry-readout">
-      <span>ENGINE: MEDIAPIPE_VISION_V0.10</span>
-      <span>LATENCY: &lt;16.6MS (60FPS)</span>
-    </div>
-  </div>
+<section class="framer-section side-project-hero" id="design-lab">
+  <h1 class="section-display-title">Design Lab</h1>
 
-  <!-- Lab Experiment 01: Origami Hand Detection (Pikachu 6 Steps) -->
-  <div class="framer-project-block cyber-hud-panel" id="project-origami-hand">
+  <!-- Project 1: Origami Hand Detection (Pikachu 6 Steps) -->
+  <div class="framer-project-block" id="project-origami-hand">
     <div class="framer-project-copy">
-      <div class="cyber-module-tag">LAB_EXP // 01 · COMPUTER VISION</div>
       <h2 class="project-headline">Origami Hand Detection</h2>
       <p class="project-lead">
         An interactive origami experiment: use hand gestures to control a Pikachu folding animation and explore six folding steps.
       </p>
-
-      <!-- 6 Folding Steps Quick Telemetry Strip -->
-      <div class="pikachu-steps-strip" aria-label="Pikachu 6 Folding Steps">
-        <div class="step-chip"><span>✊ 0</span> Step 1: Sheet</div>
-        <div class="step-chip"><span>☝️ 1</span> Step 2: Base</div>
-        <div class="step-chip"><span>✌️ 2</span> Step 3: Ears</div>
-        <div class="step-chip"><span>🤟 3</span> Step 4: Cheeks</div>
-        <div class="step-chip"><span>🖖 4</span> Step 5: Tail</div>
-        <div class="step-chip"><span>🖐️ 5</span> Step 6: Pikachu!</div>
-      </div>
-
       <div class="project-cta-group">
-        <a href="{{ '/Hand%20detection/' | relative_url }}" class="btn-cyber-neon" id="try-origami-demo-btn">Try the demo</a>
-        <a href="{{ '/Hand%20detection/steps.html' | relative_url }}" class="btn-cyber-outline" id="try-pikachu-steps-btn">Pikachu 6 Steps</a>
+        <a href="{{ '/Hand%20detection/' | relative_url }}" class="btn-pill-black" id="try-origami-demo-btn">Try the demo</a>
+        <a href="{{ '/Hand%20detection/steps.html' | relative_url }}" class="btn-pill-outline" id="try-pikachu-steps-btn">Pikachu 6 Steps</a>
       </div>
-      <p class="project-helper-note">
-        <span class="status-dot"></span> Allow camera access to use hand gestures (0–5 fingers control Steps 1–6).
-      </p>
+      <p class="project-helper-note">Allow camera access to use hand gestures.</p>
     </div>
 
-    <a href="{{ '/Hand%20detection/' | relative_url }}" class="framer-showcase-card" aria-label="Launch Origami Hand Detection — Pikachu 6 Steps">
+    <a href="{{ '/Hand%20detection/' | relative_url }}" class="framer-showcase-card" aria-label="Launch Origami Hand Detection Demo">
       <div class="showcase-media-wrap">
         <video
           src="{{ '/Hand%20detection/origami_pikachu.mp4' | relative_url }}"
@@ -58,28 +35,25 @@ title: Design Lab & UX Portfolio — Tong Fang Sun
           class="showcase-video"
         ></video>
         <div class="showcase-badge-bar">
-          <span class="showcase-pill pill-neon">✋ MediaPipe HandLandmarker</span>
+          <span class="showcase-pill">✋ MediaPipe HandLandmarker</span>
           <span class="showcase-pill">⚡ Pikachu 6 Steps (0–5 Fingers)</span>
         </div>
       </div>
     </a>
   </div>
 
-  <!-- Lab Experiment 02: Art & Explore — The Metropolitan Museum of Art -->
-  <div class="framer-project-block cyber-hud-panel" id="project-art-explore">
+  <!-- Project 2: Art & Explore — The Metropolitan Museum of Art -->
+  <div class="framer-project-block" id="project-art-explore">
     <div class="framer-project-copy">
-      <div class="cyber-module-tag">LAB_EXP // 02 · SPATIAL CURATION</div>
       <h2 class="project-headline">Art &amp; Explore — The Met</h2>
       <p class="project-lead">
         An interactive museum gallery featuring the Top 10 master artists and 61 iconic artworks from The New York Metropolitan Museum of Art, complete with custom paper-cut artist docents, full-screen theatre, and MediaPipe hand gesture navigation.
       </p>
       <div class="project-cta-group">
-        <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="btn-cyber-neon" id="try-met-gallery-btn">Try the demo</a>
-        <a href="{{ '/Art-and-Explore.zip' | relative_url }}" class="btn-cyber-outline" id="download-met-zip-btn">Download Local Package (.zip)</a>
+        <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="btn-pill-black" id="try-met-gallery-btn">Try the demo</a>
+        <a href="{{ '/Art-and-Explore.zip' | relative_url }}" class="btn-pill-outline" id="download-met-zip-btn">Download Local Package (.zip)</a>
       </div>
-      <p class="project-helper-note">
-        <span class="status-dot"></span> Move hand to control cursor · Touch thumb + index finger to click.
-      </p>
+      <p class="project-helper-note">Move hand to control cursor · Touch thumb + index finger to click.</p>
     </div>
 
     <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="framer-showcase-card met-showcase-card" aria-label="Launch Art & Explore The Met Gallery">
@@ -91,7 +65,7 @@ title: Design Lab & UX Portfolio — Tong Fang Sun
         <img src="{{ '/Art%20%26%20Explore/assets/artists/hokusai.png' | relative_url }}" alt="Katsushika Hokusai" />
       </div>
       <div class="showcase-badge-bar">
-        <span class="showcase-pill pill-neon">🏛️ 10 Met Masters · 61 Masterpieces</span>
+        <span class="showcase-pill">🏛️ 10 Met Masters · 61 Masterpieces</span>
         <span class="showcase-pill">✋ Two-Finger Pinch Click</span>
       </div>
     </a>
@@ -99,29 +73,28 @@ title: Design Lab & UX Portfolio — Tong Fang Sun
 </section>
 
 <!-- ====================================================================== -->
-<!-- 02 // WORK SECTION                                                     -->
+<!-- WORK SECTION                                                           -->
 <!-- ====================================================================== -->
 <section class="framer-section" id="work">
   <div class="section-header-row">
-    <span class="cyber-eyebrow">// SEC_02 · SELECTED CASE STUDIES</span>
     <h2 class="section-display-title">Work</h2>
-    <p class="section-subtitle">Selected product design, human-centered AI, and interactive spatial experiences.</p>
+    <p class="section-subtitle">Selected product design, human-centered AI, and interactive case studies.</p>
   </div>
 
   <div class="framer-cards-grid">
     <a href="{{ '/Hand%20detection/' | relative_url }}" class="framer-work-card">
-      <div class="work-card-thumb" style="background: #141821;">
+      <div class="work-card-thumb" style="background: #7c532d;">
         <img src="{{ '/Hand%20detection/origami_steps_grid.jpg' | relative_url }}" alt="Pikachu 6 Steps Origami Hand Detection" class="work-thumb-cover" />
       </div>
       <div class="work-card-body">
         <span class="work-card-tag">Computer Vision &amp; Tangible UI · 2026</span>
         <h3>Pikachu 6 Steps — Origami Hand Detection</h3>
-        <p>Real-time finger counting (0–5 fingers) and two-hand zoom gestures mapped to smooth 60fps 6-step Pikachu origami folding.</p>
+        <p>Real-time finger counting (0–5 fingers) and two-hand zoom gestures mapped to smooth 60fps canvas frame scrubbing.</p>
       </div>
     </a>
 
     <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="framer-work-card">
-      <div class="work-card-thumb" style="background: #171a24;">
+      <div class="work-card-thumb" style="background: #f5f0e6;">
         <img src="{{ '/Art%20%26%20Explore/assets/artists/van-gogh.png' | relative_url }}" alt="Art & Explore" class="work-thumb-contain" />
       </div>
       <div class="work-card-body">
@@ -133,7 +106,7 @@ title: Design Lab & UX Portfolio — Tong Fang Sun
 
     {% for project in site.projects limit:3 %}
       <a href="{{ project.url | relative_url }}" class="framer-work-card">
-        <div class="work-card-thumb">
+        <div class="work-card-thumb" style="background-color: {{ project.color | default: '#f4f4f5' }};">
           <div class="work-thumb-placeholder">{{ project.title }}</div>
         </div>
         <div class="work-card-body">
@@ -147,56 +120,54 @@ title: Design Lab & UX Portfolio — Tong Fang Sun
 </section>
 
 <!-- ====================================================================== -->
-<!-- 03 // AI + UX RESEARCH SECTION                                         -->
+<!-- AI + UX RESEARCH SECTION                                               -->
 <!-- ====================================================================== -->
 <section class="framer-section" id="ai-ux-research">
   <div class="section-header-row">
-    <span class="cyber-eyebrow">// SEC_03 · R&amp;D PROTOCOLS</span>
     <h2 class="section-display-title">AI+UX Research</h2>
     <p class="section-subtitle">Exploring natural gesture interfaces, multimodal AI feedback loops, and human-centered interaction patterns.</p>
   </div>
 
   <div class="research-list">
     <article class="research-row">
-      <div class="research-meta">01 // GESTURE_VISION_UI</div>
+      <div class="research-meta">01 · Gesture &amp; Vision UI</div>
       <div class="research-content">
         <h3>Touchless Spatial Interaction with MediaPipe HandLandmarker</h3>
-        <p>Designing zero-latency cursor stabilization, 0–5 finger state machines for Pikachu 6-step folding, and palm-normalized two-finger pinch clicks.</p>
+        <p>Designing zero-latency cursor stabilization and palm-normalized two-finger pinch thresholds for reliable web clicking and 6-step origami folding without hardware controllers.</p>
       </div>
-      <a href="{{ '/Hand%20detection/' | relative_url }}" class="btn-cyber-outline">Explore Pikachu 6 Steps →</a>
+      <a href="{{ '/Hand%20detection/' | relative_url }}" class="btn-pill-outline">Pikachu 6 Steps →</a>
     </article>
 
     <article class="research-row">
-      <div class="research-meta">02 // PERSONA_CURATION</div>
+      <div class="research-meta">02 · Conversational Curation</div>
       <div class="research-content">
         <h3>Persona-Driven Museum Docents &amp; Visual Storytelling</h3>
         <p>Transforming static museum catalog metadata into approachable first-person narratives and interactive pigment exploration for 61 public-domain masterpieces at The Met.</p>
       </div>
-      <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="btn-cyber-outline">Open Gallery →</a>
+      <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="btn-pill-outline">Open Gallery →</a>
     </article>
   </div>
 </section>
 
 <!-- ====================================================================== -->
-<!-- 04 // ABOUT SECTION                                                    -->
+<!-- ABOUT SECTION                                                          -->
 <!-- ====================================================================== -->
 <section class="framer-section about-framer-section" id="about">
   <div class="about-grid">
     <div>
-      <span class="cyber-eyebrow">// SEC_04 · OPERATOR PROFILE</span>
       <h2 class="section-display-title">About</h2>
     </div>
     <div class="about-copy">
       <p class="about-lead">
-        Hello! I’m <strong>Tong Fang Sun</strong>, a UX Designer &amp; Creative Technologist focused on the intersection of human-centered AI, spatial gesture interfaces, and expressive interactive systems.
+        Hello! I’m <strong>Tong Fang Sun</strong>, a UX Designer &amp; Creative Technologist focused on the intersection of minimalism, human-centered AI, and expressive interactive web experiences.
       </p>
       <p class="about-body">
-        I believe great design strips away unnecessary friction until only intuitive, joyful interaction remains — whether crafting a precision product workflow, folding a 6-step origami Pikachu with hand gestures, or strolling through The Metropolitan Museum of Art after hours.
+        I believe great design strips away unnecessary complexity until only intuitive, joyful interaction remains — whether crafting a clean product workflow, folding a 6-step origami Pikachu with hand gestures, or strolling through The Metropolitan Museum of Art after hours.
       </p>
       <div class="skills-pills">
-        <span>UX / Product Architecture</span>
+        <span>UX / Product Design</span>
         <span>AI + UX Research</span>
-        <span>MediaPipe &amp; Computer Vision</span>
+        <span>MediaPipe &amp; Creative Coding</span>
         <span>Interactive Prototyping (Framer / Web)</span>
         <span>Design Systems</span>
       </div>
