@@ -221,21 +221,6 @@ title: Portfolio — UX & AI Interaction Designer
         <p>Reimagining museum curation with first-person artist storytelling, pigment filtering, and touchless hand-tracking navigation.</p>
       </div>
     </a>
-
-    {% for project in site.projects %}
-      {% unless project.url contains 'influcio' or project.url contains 'architecture-3d-motion' or project.url contains 'ubi' or project.url contains 'airbnb' %}
-      <a href="{{ project.url | relative_url }}" class="framer-work-card">
-        <div class="work-card-thumb" style="background-color: {{ project.color | default: '#f4f4f5' }};">
-          <div class="work-thumb-placeholder">{{ project.title }}</div>
-        </div>
-        <div class="work-card-body">
-          <span class="work-card-tag">UX Case Study</span>
-          <h3>{{ project.title }}</h3>
-          <p>{{ project.excerpt }}</p>
-        </div>
-      </a>
-      {% endunless %}
-    {% endfor %}
   </div>
 </section>
 
