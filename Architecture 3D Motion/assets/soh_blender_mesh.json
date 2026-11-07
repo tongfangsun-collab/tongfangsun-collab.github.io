@@ -1,0 +1,423 @@
+{
+  "version": "blender-4.5-soh",
+  "chunks": [
+    {
+      "layerId": 0,
+      "matKey": "harbour_bridge",
+      "vertexCount": 5018,
+      "triCount": 14064,
+      "vmin": [
+        -3.98483,
+        -0.15329,
+        -50.82559
+      ],
+      "vspan": [
+        16.1872,
+        35.40685,
+        123.7134
+      ],
+      "vByteOffset": 0,
+      "iByteOffset": 30108,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 1,
+      "matKey": "site_peninsula",
+      "vertexCount": 988,
+      "triCount": 653,
+      "vmin": [
+        -19.1453,
+        -5.8416,
+        -35.05391
+      ],
+      "vspan": [
+        43.92583,
+        7.19451,
+        61.05657
+      ],
+      "vByteOffset": 114492,
+      "iByteOffset": 120420,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 1,
+      "matKey": "site_seawall",
+      "vertexCount": 8131,
+      "triCount": 4376,
+      "vmin": [
+        -19.1453,
+        -5.8416,
+        -35.05391
+      ],
+      "vspan": [
+        43.92583,
+        7.5682,
+        61.05657
+      ],
+      "vByteOffset": 124340,
+      "iByteOffset": 173128,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 2,
+      "matKey": "podium_parapet",
+      "vertexCount": 32397,
+      "triCount": 16760,
+      "vmin": [
+        -18.96674,
+        -2.4746,
+        -35.02092
+      ],
+      "vspan": [
+        43.61032,
+        4.38992,
+        60.81373
+      ],
+      "vByteOffset": 199384,
+      "iByteOffset": 393768,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 2,
+      "matKey": "podium_terrace",
+      "vertexCount": 12095,
+      "triCount": 7668,
+      "vmin": [
+        -18.96567,
+        -2.5451,
+        -35.02396
+      ],
+      "vspan": [
+        43.60925,
+        4.45548,
+        60.81969
+      ],
+      "vByteOffset": 494328,
+      "iByteOffset": 566900,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 3,
+      "matKey": "bronze_mullion",
+      "vertexCount": 84508,
+      "triCount": 43618,
+      "vmin": [
+        -17.82543,
+        -1.14026,
+        -21.01745
+      ],
+      "vspan": [
+        31.30059,
+        8.3498,
+        40.63128
+      ],
+      "vByteOffset": 612908,
+      "iByteOffset": 1119956,
+      "idxType": "uint32"
+    },
+    {
+      "layerId": 3,
+      "matKey": "glass_internal",
+      "vertexCount": 38788,
+      "triCount": 12930,
+      "vmin": [
+        -11.08754,
+        0.27657,
+        0.41048
+      ],
+      "vspan": [
+        18.54168,
+        4.82081,
+        12.12576
+      ],
+      "vByteOffset": 1643372,
+      "iByteOffset": 1876100,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 3,
+      "matKey": "glass_pane",
+      "vertexCount": 4728,
+      "triCount": 3066,
+      "vmin": [
+        -17.80905,
+        -2.47262,
+        -21.01745
+      ],
+      "vspan": [
+        32.43257,
+        9.67615,
+        41.42338
+      ],
+      "vByteOffset": 1953680,
+      "iByteOffset": 1982048,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 4,
+      "matKey": "foyer_carpet",
+      "vertexCount": 755,
+      "triCount": 447,
+      "vmin": [
+        -2.27407,
+        -0.11447,
+        12.48433
+      ],
+      "vspan": [
+        13.4391,
+        0.79234,
+        6.27796
+      ],
+      "vByteOffset": 2000444,
+      "iByteOffset": 2004976,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 4,
+      "matKey": "foyer_concourse",
+      "vertexCount": 22010,
+      "triCount": 10842,
+      "vmin": [
+        -12.53714,
+        -0.03917,
+        -9.95556
+      ],
+      "vspan": [
+        22.76801,
+        5.99899,
+        26.02007
+      ],
+      "vByteOffset": 2007660,
+      "iByteOffset": 2139720,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 4,
+      "matKey": "foyer_teak",
+      "vertexCount": 3427,
+      "triCount": 1946,
+      "vmin": [
+        -12.47718,
+        0.17748,
+        -3.50142
+      ],
+      "vspan": [
+        23.64221,
+        2.03094,
+        17.71029
+      ],
+      "vByteOffset": 2204772,
+      "iByteOffset": 2225336,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 5,
+      "matKey": "auditorium_seats",
+      "vertexCount": 47014,
+      "triCount": 17164,
+      "vmin": [
+        -12.12566,
+        0.0,
+        -1.05932
+      ],
+      "vspan": [
+        21.51735,
+        5.593,
+        14.65437
+      ],
+      "vByteOffset": 2237012,
+      "iByteOffset": 2519096,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 5,
+      "matKey": "auditorium_timber",
+      "vertexCount": 24230,
+      "triCount": 14990,
+      "vmin": [
+        -12.53714,
+        -0.04603,
+        -4.69626
+      ],
+      "vspan": [
+        22.76801,
+        6.00585,
+        20.76077
+      ],
+      "vByteOffset": 2622080,
+      "iByteOffset": 2767460,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 5,
+      "matKey": "auditorium_walls",
+      "vertexCount": 6530,
+      "triCount": 3538,
+      "vmin": [
+        -12.342,
+        -0.0,
+        -4.69626
+      ],
+      "vspan": [
+        22.16043,
+        3.99973,
+        20.20475
+      ],
+      "vByteOffset": 2857400,
+      "iByteOffset": 2896580,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 6,
+      "matKey": "stage_deck",
+      "vertexCount": 4248,
+      "triCount": 3306,
+      "vmin": [
+        -12.2455,
+        -0.10218,
+        -3.49621
+      ],
+      "vspan": [
+        21.85691,
+        7.52728,
+        19.0047
+      ],
+      "vByteOffset": 2917808,
+      "iByteOffset": 2943296,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 6,
+      "matKey": "stage_vault",
+      "vertexCount": 4046,
+      "triCount": 2072,
+      "vmin": [
+        -14.80601,
+        1.40515,
+        0.3753
+      ],
+      "vspan": [
+        25.33078,
+        10.18795,
+        10.58055
+      ],
+      "vByteOffset": 2963132,
+      "iByteOffset": 2987408,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 6,
+      "matKey": "stage_wood_canopy",
+      "vertexCount": 43941,
+      "triCount": 23412,
+      "vmin": [
+        -12.33675,
+        1.18453,
+        -1.99607
+      ],
+      "vspan": [
+        22.20086,
+        4.80274,
+        17.50896
+      ],
+      "vByteOffset": 2999840,
+      "iByteOffset": 3263488,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 7,
+      "matKey": "ribs_fan",
+      "vertexCount": 64455,
+      "triCount": 34675,
+      "vmin": [
+        -16.41933,
+        -0.68657,
+        -20.67591
+      ],
+      "vspan": [
+        30.63882,
+        14.14125,
+        39.2006
+      ],
+      "vByteOffset": 3403960,
+      "iByteOffset": 3790692,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 7,
+      "matKey": "ribs_spine",
+      "vertexCount": 3475,
+      "triCount": 1663,
+      "vmin": [
+        -15.76352,
+        -0.0,
+        -9.62873
+      ],
+      "vspan": [
+        27.13132,
+        8.97456,
+        25.97917
+      ],
+      "vByteOffset": 3998744,
+      "iByteOffset": 4019596,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 8,
+      "matKey": "shell_chevron",
+      "vertexCount": 5561,
+      "triCount": 2920,
+      "vmin": [
+        -16.3391,
+        -0.68472,
+        -16.96922
+      ],
+      "vspan": [
+        30.51852,
+        9.05261,
+        30.72862
+      ],
+      "vByteOffset": 4029576,
+      "iByteOffset": 4062944,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 8,
+      "matKey": "shell_gloss",
+      "vertexCount": 11100,
+      "triCount": 5780,
+      "vmin": [
+        -16.33172,
+        -0.44875,
+        -20.67442
+      ],
+      "vspan": [
+        30.48155,
+        13.90343,
+        39.19534
+      ],
+      "vByteOffset": 4080464,
+      "iByteOffset": 4147064,
+      "idxType": "uint16"
+    },
+    {
+      "layerId": 8,
+      "matKey": "shell_ridge",
+      "vertexCount": 7297,
+      "triCount": 3757,
+      "vmin": [
+        -17.22497,
+        -0.69017,
+        -16.3957
+      ],
+      "vspan": [
+        31.4117,
+        8.59112,
+        35.18862
+      ],
+      "vByteOffset": 4181744,
+      "iByteOffset": 4225528,
+      "idxType": "uint16"
+    }
+  ]
+}
