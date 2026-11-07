@@ -6,7 +6,7 @@ title: Home
 <section class="hero">
   <h1>Designer, thinker, and creator.</h1>
   <p class="hero-subtext">I focus on creating clean, functional, and aesthetically balanced digital experiences.</p>
-  <div class="hero-links">
+  <div class="hero-links" style="flex-wrap: wrap;">
     <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="btn-primary">Explore The Met Gallery →</a>
     <a href="{{ '/Hand%20detection/' | relative_url }}" class="btn-primary">Origami Hand Detection →</a>
     <a href="{{ '/projects' | relative_url }}" class="btn-secondary">View Work</a>
@@ -17,6 +17,27 @@ title: Home
 <section class="featured-work">
   <h2>Selected Projects</h2>
   <div class="projects-grid">
+    <a href="{{ '/Hand%20detection/' | relative_url }}" class="project-card">
+      <div class="project-image" style="background-image: url('{{ '/Hand%20detection/side-project-preview.png' | relative_url }}'); background-size: cover; background-position: center; background-color: #8c6239;"></div>
+      <div class="project-info">
+        <h3>Origami Hand Detection (6-Step Pikachu)</h3>
+        <p>Interactive 6-step origami folding experience controlled in real time by Google MediaPipe HandLandmarker finger gestures.</p>
+      </div>
+    </a>
+    <a href="{{ '/Hand%20detection/pokemon-trio.html' | relative_url }}" class="project-card">
+      <div class="project-image" style="background-image: url('{{ '/Hand%20detection/pikachu.jpg' | relative_url }}'); background-size: cover; background-position: center; background-color: #7c532d;"></div>
+      <div class="project-info">
+        <h3>Origami Pokémon Trio (Rock · Paper · Scissors)</h3>
+        <p>Real-time hand gesture recognition &amp; two-hand zoom prototype folding Pikachu, Raichu, and Eevee.</p>
+      </div>
+    </a>
+    <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="project-card">
+      <div class="project-image" style="background-image: url('{{ '/Art%20%26%20Explore/assets/artists/van-gogh.png' | relative_url }}'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: #f4efe6;"></div>
+      <div class="project-info">
+        <h3>Art &amp; Explore — The Met Gallery</h3>
+        <p>Interactive museum gallery featuring the Top 10 artists &amp; 61 masterpieces from The Metropolitan Museum of Art with hand gesture navigation.</p>
+      </div>
+    </a>
     {% for project in site.projects limit:3 %}
       <a href="{{ project.url | relative_url }}" class="project-card">
         <div class="project-image" style="background-color: {{ project.color | default: '#f0f0f0' }}">

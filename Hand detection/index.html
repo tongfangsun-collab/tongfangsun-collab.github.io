@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6-Step Origami Pikachu — Fullscreen Hand Gesture Control</title>
+  <style>
+    :root {
+      --warm-bg: #8c6239;
+      --accent: #facc15;
+      --text-main: #ffffff;
+      --text-sub: rgba(255, 248, 235, 0.78);
+      --glass-bg: rgba(32, 22, 14, 0.62);
+      --glass-border: rgba(255, 235, 200, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+      background: var(--warm-bg);
+      color: var(--text-main);
+      user-select: none;
+    }
+
+    /* Hidden background video for MediaPipe webcam capture */
+    #webcam {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Fullscreen Immersive Stage */
+    .fullscreen-stage {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #7c532d;
+    }
+
+    #stage_canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Top-Left Floating Step & Finger Badges */
+    .stage-step-overlay {
+      position: fixed;
+      top: 20px;
+      left: 24px;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      pointer-events: none;
+      z-index: 20;
+      transition: opacity 0.3s ease;
+    }
+
+    body.pure-mode .stage-step-overlay {
+      opacity: 0;
+    }
+
+    .step-badge {
+      background: var(--glass-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(250, 204, 21, 0.45);
+      color: #fde047;
+      padding: 0.48rem 1.05rem;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    .finger-badge {
+      background: var(--glass-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      padding: 0.48rem 1rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Subtle progress bar along the very bottom of the screen */
+    .timeline-track {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.16);
+      z-index: 30;
+    }
+
+    .timeline-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #facc15, #f97316);
+      box-shadow: 0 0 12px #facc15;
+    }
+
+    /* Bottom 6-Step Interactive Dock */
+    .steps-dock {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--glass-bg);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--glass-border);
+      padding: 0.48rem 0.65rem;
+      border-radius: 1.25rem;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.38);
+      z-index: 25;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      max-width: 96vw;
+      overflow-x: auto;
+    }
+
+    body.pure-mode .steps-dock {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-50%) translateY(16px);
+    }
+
+    .step-card {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.36rem 0.72rem 0.36rem 0.4rem;
+      border-radius: 0.9rem;
+      border: 1px solid transparent;
+      background: rgba(255, 255, 255, 0.06);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+      flex-shrink: 0;
+    }
+
+    .step-card:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .step-card.active {
+      background: rgba(250, 204, 21, 0.22);
+      border-color: rgba(250, 204, 21, 0.75);
+      box-shadow: 0 0 18px rgba(250, 204, 21, 0.28);
+      transform: translateY(-2px);
+    }
+
+    .step-card.passed:not(.active) {
+      border-color: rgba(250, 204, 21, 0.28);
+    }
+
+    .step-thumb {
+      width: 40px;
+      height: 40px;
+      border-radius: 0.6rem;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: #8c6239;
+    }
+
+    .step-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .step-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .step-card.active .step-title {
+      color: #fde047;
+    }
+
+    .step-sub {
+      font-size: 0.68rem;
+      color: var(--text-sub);
+      font-weight: 500;
+    }
+
+    /* Top-right subtle controls */
+    .top-bar {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 30;
+      opacity: 0.45;
+      transition: opacity 0.25s ease;
+    }
+
+    .top-bar:hover {
+      opacity: 1;
+    }
+
+    .chip-btn {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    }
+
+    .chip-btn:hover {
+      border-color: rgba(250, 204, 21, 0.6);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f59e0b;
+    }
+
+    .status-dot.ready {
+      background: #22c55e;
+      box-shadow: 0 0 6px #22c55e;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden Webcam Element for MediaPipe -->
+  <video id="webcam" autoplay playsinline muted></video>
+
+  <!-- Top-Left Step & Gesture Badges -->
+  <div class="stage-step-overlay">
+    <span class="step-badge" id="stepBadge">Step 1 / 6 · Flat Origami Sheet</span>
+    <span class="finger-badge" id="fingerBadge">✊ 0 Fingers (Rock)</span>
+  </div>
+
+  <!-- Subtle Top-Right Controls -->
+  <div class="top-bar">
+    <div class="chip-btn" style="cursor: default;">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Loading MediaPipe...</span>
+    </div>
+    <button class="chip-btn" id="modeToggleBtn" title="Switch between Video Animation and 6-Step Image Panels">
+      Mode: Video Animation
+    </button>
+    <button class="chip-btn" id="zoomResetBtn" title="Use 2 hands to zoom in/out (Click to reset)">
+      🙌 Zoom: 100%
+    </button>
+    <button class="chip-btn" id="toggleHudBtn" title="Hide/Show UI (or press H)">
+      Hide HUD
+    </button>
+  </div>
+
+  <!-- Fullscreen Immersive Canvas Stage -->
+  <main class="fullscreen-stage" id="origamiStage">
+    <canvas id="stage_canvas"></canvas>
+    <div class="timeline-track">
+      <div class="timeline-fill" id="timelineFill"></div>
+    </div>
+  </main>
+
+  <!-- 6-Step Interactive Bar (0 Fingers to 5 Fingers) -->
+  <div class="steps-dock" id="stepsDock">
+    <div class="step-card active" data-step="0">
+      <img class="step-thumb" src="step1.jpg" alt="Step 1" />
+      <div class="step-info">
+        <div class="step-title"><span>✊</span><span>Step 1</span></div>
+        <div class="step-sub">0 Fingers (Rock)</div>
+      </div>
+    </div>
+
+    <div class="step-card" data-step="1">
+      <img class="step-thumb" src="step2.jpg" alt="Step 2" />
+      <div class="step-info">
+        <div class="step-title"><span>☝️</span><span>Step 2</span></div>
+        <div class="step-sub">1 Finger</div>
+      </div>
+    </div>
+
+    <div class="step-card" data-step="2">
+      <img class="step-thumb" src="step3.jpg" alt="Step 3" />
+      <div class="step-info">
+        <div class="step-title"><span>✌️</span><span>Step 3</span></div>
+        <div class="step-sub">2 Fingers</div>
+      </div>
+    </div>
+
+    <div class="step-card" data-step="3">
+      <img class="step-thumb" src="step4.jpg" alt="Step 4" />
+      <div class="step-info">
+        <div class="step-title"><span>🤟</span><span>Step 4</span></div>
+        <div class="step-sub">3 Fingers</div>
+      </div>
+    </div>
+
+    <div class="step-card" data-step="4">
+      <img class="step-thumb" src="step5.jpg" alt="Step 5" />
+      <div class="step-info">
+        <div class="step-title"><span>🖖</span><span>Step 5</span></div>
+        <div class="step-sub">4 Fingers</div>
+      </div>
+    </div>
+
+    <div class="step-card" data-step="5">
+      <img class="step-thumb" src="step6.jpg" alt="Step 6" />
+      <div class="step-info">
+        <div class="step-title"><span>🖐️</span><span>Step 6</span></div>
+        <div class="step-sub">5 Fingers (Paper)</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import {
+      HandLandmarker,
+      FilesetResolver
+    } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+
+    // =========================================================================
+    // 1. 6-Step Definition (0 Fingers = Step 1 ... 5 Fingers = Step 6)
+    // =========================================================================
+    const TOTAL_VIDEO_FRAMES = 120;
+
+    const STEPS = [
+      {
+        stepNum: 1,
+        fingers: 0,
+        icon: "✊",
+        gestureText: "0 Fingers (Rock)",
+        title: "Flat Origami Sheet",
+        targetFrame: 0,
+        stepImgSrc: "step1.jpg"
+      },
+      {
+        stepNum: 2,
+        fingers: 1,
+        icon: "☝️",
+        gestureText: "1 Finger",
+        title: "Geometric Base Fold",
+        targetFrame: 24,
+        stepImgSrc: "step2.jpg"
+      },
+      {
+        stepNum: 3,
+        fingers: 2,
+        icon: "✌️",
+        gestureText: "2 Fingers",
+        title: "Ears & Torso Fold",
+        targetFrame: 48,
+        stepImgSrc: "step3.jpg"
+      },
+      {
+        stepNum: 4,
+        fingers: 3,
+        icon: "🤟",
+        gestureText: "3 Fingers",
+        title: "Eyes & Red Cheeks",
+        targetFrame: 72,
+        stepImgSrc: "step4.jpg"
+      },
+      {
+        stepNum: 5,
+        fingers: 4,
+        icon: "🖖",
+        gestureText: "4 Fingers",
+        title: "Lightning Bolt Tail",
+        targetFrame: 92,
+        stepImgSrc: "step5.jpg"
+      },
+      {
+        stepNum: 6,
+        fingers: 5,
+        icon: "🖐️",
+        gestureText: "5 Fingers (Paper)",
+        title: "Pikachu Waving!",
+        targetFrame: 118,
+        stepImgSrc: "step6.jpg"
+      }
+    ];
+
+    // Preload all 120 video frames + 6 step panel images
+    const videoFrames = new Array(TOTAL_VIDEO_FRAMES);
+    for (let i = 0; i < TOTAL_VIDEO_FRAMES; i++) {
+      const img = new Image();
+      const padded = String(i).padStart(3, "0");
+      img.src = `frames/frame_${padded}.jpg`;
+      videoFrames[i] = img;
+    }
+
+    const stepImages = STEPS.map((s) => {
+      const img = new Image();
+      img.src = s.stepImgSrc;
+      return img;
+    });
+
+    // DOM Elements
+    const video = document.getElementById("webcam");
+    const statusDot = document.getElementById("statusDot");
+    const statusText = document.getElementById("statusText");
+    const modeToggleBtn = document.getElementById("modeToggleBtn");
+    const zoomResetBtn = document.getElementById("zoomResetBtn");
+    const toggleHudBtn = document.getElementById("toggleHudBtn");
+    const canvas = document.getElementById("stage_canvas");
+    const ctx = canvas.getContext("2d");
+    const stepBadge = document.getElementById("stepBadge");
+    const fingerBadge = document.getElementById("fingerBadge");
+    const timelineFill = document.getElementById("timelineFill");
+    const stepCards = document.querySelectorAll(".step-card");
+
+    // Offscreen canvas for seamless horizontal edge feathering onto the fullscreen wooden table
+    const subjectCanvas = document.createElement("canvas");
+    const subjectCtx = subjectCanvas.getContext("2d");
+
+    let displayMode = "video";
+    modeToggleBtn.addEventListener("click", () => {
+      displayMode = displayMode === "video" ? "grid" : "video";
+      modeToggleBtn.textContent =
+        displayMode === "video" ? "Mode: Video Animation" : "Mode: 6-Step Image Panels";
+    });
+
+    toggleHudBtn.addEventListener("click", () => {
+      const isPure = document.body.classList.toggle("pure-mode");
+      toggleHudBtn.textContent = isPure ? "Show HUD" : "Hide HUD";
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key.toLowerCase() === "h") {
+        toggleHudBtn.click();
+      } else if (e.key >= "0" && e.key <= "5") {
+        goToStep(parseInt(e.key, 10));
+      } else if (e.key === "6") {
+        goToStep(5);
+      }
+    });
+
+    let viewW = window.innerWidth;
+    let viewH = window.innerHeight;
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      viewW = window.innerWidth;
+      viewH = window.innerHeight;
+      canvas.width = Math.round(viewW * dpr);
+      canvas.height = Math.round(viewH * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    // =========================================================================
+    // 2. Fullscreen Immersive Renderer (Edge-to-Edge Wooden Table + Feathered Subject)
+    // =========================================================================
+    let currentStepIdx = 0;
+    let currentFrameFloat = 0;
+    let targetFrameFloat = 0;
+    let currentZoom = 1.0;
+    let targetZoom = 1.0;
+
+    function goToStep(stepIdx) {
+      const clampedIdx = Math.max(0, Math.min(5, stepIdx));
+      currentStepIdx = clampedIdx;
+      const stepInfo = STEPS[clampedIdx];
+      targetFrameFloat = stepInfo.targetFrame;
+
+      stepBadge.textContent = `Step ${stepInfo.stepNum} / 6 · ${stepInfo.title}`;
+      fingerBadge.textContent = `${stepInfo.icon} ${stepInfo.gestureText}`;
+
+      stepCards.forEach((card, idx) => {
+        card.classList.toggle("active", idx === clampedIdx);
+        card.classList.toggle("passed", idx < clampedIdx);
+      });
+    }
+
+    stepCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        const idx = parseInt(card.dataset.step, 10);
+        goToStep(idx);
+      });
+    });
+
+    /**
+     * Renders a single image or blended pair of images into the full-bleed viewport:
+     *  1) Extends the wooden tabletop & studio background edge-to-edge across 100vw x 100vh
+     *     at the exact same vertical horizon alignment so there is zero dark border anywhere.
+     *  2) Renders the crisp subject centered with soft horizontal edge feathering so the
+     *     wooden table merges invisibly into the full-screen backdrop while keeping Pikachu
+     *     100% visible from ear-tips to paws!
+     */
+    function drawImmersiveFrame(imgA, imgB, blendAlpha, zoomScale) {
+      if (!imgA || !imgA.complete || imgA.naturalWidth === 0) return;
+
+      const iw = imgA.naturalWidth;
+      const ih = imgA.naturalHeight;
+      const imgAspect = iw / ih;
+      const screenAspect = viewW / viewH;
+
+      // 1) Fullscreen Base Backdrop (always covers 100vw x 100vh edge-to-edge)
+      // We match the vertical horizon of the subject and stretch/blur horizontally so the
+      // wooden tabletop grain and studio lighting seamlessly span the entire screen width.
+      const baseH = Math.max(viewH, viewH * zoomScale);
+      const baseY = (viewH - baseH) / 2;
+      const pad = 48;
+
+      ctx.save();
+      ctx.filter = "blur(26px)";
+      ctx.drawImage(imgA, -pad, baseY - pad, viewW + pad * 2, baseH + pad * 2);
+      if (imgB && imgB.complete && imgB.naturalWidth > 0 && blendAlpha > 0.01) {
+        ctx.globalAlpha = blendAlpha;
+        ctx.drawImage(imgB, -pad, baseY - pad, viewW + pad * 2, baseH + pad * 2);
+      }
+      ctx.restore();
+
+      // 2) Calculate Subject Dimensions
+      // If screen is narrower than or close to image aspect, cover the screen directly.
+      // On wide screens, make the subject fill full height (plus a slight 1.06x immersion boost)
+      // and feather the left/right wooden table margins into the full-width backdrop.
+      let subH, subW;
+      if (screenAspect <= imgAspect * 1.15) {
+        const coverScale = Math.max(viewW / iw, viewH / ih) * zoomScale;
+        subW = iw * coverScale;
+        subH = ih * coverScale;
+      } else {
+        subH = viewH * 1.04 * zoomScale;
+        subW = subH * imgAspect;
+      }
+
+      const subX = (viewW - subW) / 2;
+      const subY = (viewH - subH) / 2;
+
+      // If subject already covers the entire width, draw directly without feathering
+      if (subW >= viewW * 0.99 && subH >= viewH * 0.99) {
+        ctx.save();
+        ctx.drawImage(imgA, subX, subY, subW, subH);
+        if (imgB && imgB.complete && imgB.naturalWidth > 0 && blendAlpha > 0.01) {
+          ctx.globalAlpha = blendAlpha;
+          ctx.drawImage(imgB, subX, subY, subW, subH);
+        }
+        ctx.restore();
+        return;
+      }
+
+      // Otherwise, draw subject to offscreen buffer and feather its edges into the wooden table backdrop
+      const cw = Math.max(1, Math.round(subW));
+      const ch = Math.max(1, Math.round(subH));
+      if (subjectCanvas.width !== cw || subjectCanvas.height !== ch) {
+        subjectCanvas.width = cw;
+        subjectCanvas.height = ch;
+      }
+
+      subjectCtx.clearRect(0, 0, cw, ch);
+      subjectCtx.globalCompositeOperation = "source-over";
+      subjectCtx.globalAlpha = 1;
+      subjectCtx.drawImage(imgA, 0, 0, cw, ch);
+
+      if (imgB && imgB.complete && imgB.naturalWidth > 0 && blendAlpha > 0.01) {
+        subjectCtx.globalAlpha = blendAlpha;
+        subjectCtx.drawImage(imgB, 0, 0, cw, ch);
+      }
+
+      // Feather left and right edges (and top/bottom if zoomed out < 1.0)
+      subjectCtx.globalCompositeOperation = "destination-in";
+      subjectCtx.globalAlpha = 1;
+
+      const hGrad = subjectCtx.createLinearGradient(0, 0, cw, 0);
+      const featherX = 0.14;
+      hGrad.addColorStop(0, "rgba(0,0,0,0)");
+      hGrad.addColorStop(featherX, "rgba(0,0,0,1)");
+      hGrad.addColorStop(1 - featherX, "rgba(0,0,0,1)");
+      hGrad.addColorStop(1, "rgba(0,0,0,0)");
+      subjectCtx.fillStyle = hGrad;
+      subjectCtx.fillRect(0, 0, cw, ch);
+
+      if (subH < viewH) {
+        const vGrad = subjectCtx.createLinearGradient(0, 0, 0, ch);
+        const featherY = 0.12;
+        vGrad.addColorStop(0, "rgba(0,0,0,0)");
+        vGrad.addColorStop(featherY, "rgba(0,0,0,1)");
+        vGrad.addColorStop(1 - featherY, "rgba(0,0,0,1)");
+        vGrad.addColorStop(1, "rgba(0,0,0,0)");
+        subjectCtx.fillStyle = vGrad;
+        subjectCtx.fillRect(0, 0, cw, ch);
+      }
+
+      ctx.drawImage(subjectCanvas, subX, subY, subW, subH);
+    }
+
+    function renderStage() {
+      ctx.clearRect(0, 0, viewW, viewH);
+
+      const diff = targetFrameFloat - currentFrameFloat;
+      if (Math.abs(diff) > 0.05) {
+        const maxStepPerTick = Math.max(0.42, Math.min(1.35, Math.abs(diff) * 0.055));
+        if (Math.abs(diff) <= maxStepPerTick) {
+          currentFrameFloat = targetFrameFloat;
+        } else {
+          currentFrameFloat += Math.sign(diff) * maxStepPerTick;
+        }
+      } else {
+        currentFrameFloat = targetFrameFloat;
+      }
+
+      const progressPct = (currentFrameFloat / (TOTAL_VIDEO_FRAMES - 1)) * 100;
+      timelineFill.style.width = `${progressPct.toFixed(1)}%`;
+
+      if (displayMode === "video") {
+        const fFloor = Math.max(0, Math.min(TOTAL_VIDEO_FRAMES - 1, Math.floor(currentFrameFloat)));
+        const fCeil = Math.max(0, Math.min(TOTAL_VIDEO_FRAMES - 1, Math.ceil(currentFrameFloat)));
+        const frac = currentFrameFloat - fFloor;
+
+        const imgA = videoFrames[fFloor];
+        const imgB = fCeil !== fFloor ? videoFrames[fCeil] : null;
+
+        if (imgA && imgA.complete && imgA.naturalWidth > 0) {
+          drawImmersiveFrame(imgA, imgB, frac, currentZoom);
+        } else {
+          drawImmersiveFrame(stepImages[currentStepIdx], null, 0, currentZoom);
+        }
+      } else {
+        let lowerStep = 0;
+        for (let i = 0; i < STEPS.length - 1; i++) {
+          if (currentFrameFloat >= STEPS[i].targetFrame) {
+            lowerStep = i;
+          }
+        }
+        const upperStep = Math.min(5, lowerStep + 1);
+        const span = Math.max(1, STEPS[upperStep].targetFrame - STEPS[lowerStep].targetFrame);
+        const localT = Math.max(0, Math.min(1, (currentFrameFloat - STEPS[lowerStep].targetFrame) / span));
+
+        drawImmersiveFrame(
+          stepImages[lowerStep],
+          upperStep !== lowerStep ? stepImages[upperStep] : null,
+          localT,
+          currentZoom
+        );
+      }
+    }
+
+    // =========================================================================
+    // 3. Finger Counting (0 Fingers [Rock] to 5 Fingers [Paper])
+    // =========================================================================
+    function dist2D(a, b) {
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    }
+
+    function isMainFingerExtended(landmarks, tipIdx, pipIdx, mcpIdx) {
+      const wrist = landmarks[0];
+      const dTip = dist2D(landmarks[tipIdx], wrist);
+      const dPip = dist2D(landmarks[pipIdx], wrist);
+      const dMcp = dist2D(landmarks[mcpIdx], wrist);
+      return dTip > dPip * 1.07 && dTip > dMcp * 1.18;
+    }
+
+    function countFingers0To5(landmarks) {
+      const indexExt = isMainFingerExtended(landmarks, 8, 6, 5);
+      const middleExt = isMainFingerExtended(landmarks, 12, 10, 9);
+      const ringExt = isMainFingerExtended(landmarks, 16, 14, 13);
+      const pinkyExt = isMainFingerExtended(landmarks, 20, 18, 17);
+
+      const mainCount = [indexExt, middleExt, ringExt, pinkyExt].filter(Boolean).length;
+
+      const palmWidth = Math.max(0.05, dist2D(landmarks[5], landmarks[17]));
+      const thumbToPinky = dist2D(landmarks[4], landmarks[17]);
+      const thumbMcpToPinky = dist2D(landmarks[2], landmarks[17]);
+      const thumbToIndexMcp = dist2D(landmarks[4], landmarks[5]);
+      const thumbToMiddleMcp = dist2D(landmarks[4], landmarks[9]);
+
+      const thumbExtended =
+        thumbToPinky > thumbMcpToPinky * 1.16 &&
+        thumbToIndexMcp > palmWidth * 0.52 &&
+        thumbToMiddleMcp > palmWidth * 0.62;
+
+      if (mainCount === 0) {
+        const thumbVeryOut =
+          thumbToPinky > thumbMcpToPinky * 1.32 && thumbToIndexMcp > palmWidth * 0.78;
+        return thumbVeryOut ? 1 : 0;
+      }
+
+      if (mainCount === 1 || mainCount === 2 || mainCount === 3) {
+        return mainCount;
+      }
+
+      return thumbExtended ? 5 : 4;
+    }
+
+    // =========================================================================
+    // 4. Two-Hand Zoom & MediaPipe HandLandmarker Loop
+    // =========================================================================
+    let twoHandAnchorDist = null;
+    let twoHandAnchorZoom = 1.0;
+    let twoHandActiveFrames = 0;
+    let lastTwoHandTimestamp = 0;
+
+    zoomResetBtn.addEventListener("click", () => {
+      targetZoom = 1.0;
+      twoHandAnchorDist = null;
+    });
+
+    let handLandmarker = null;
+    let lastVideoTime = -1;
+    let candidateStep = null;
+    let holdFrames = 0;
+    const REQUIRED_HOLD_FRAMES = 5;
+
+    async function initMediaPipe() {
+      try {
+        const vision = await FilesetResolver.forVisionTasks(
+          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+        );
+
+        handLandmarker = await HandLandmarker.createFromOptions(vision, {
+          baseOptions: {
+            modelAssetPath:
+              "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+            delegate: "GPU"
+          },
+          runningMode: "VIDEO",
+          numHands: 2,
+          minHandDetectionConfidence: 0.55,
+          minHandPresenceConfidence: 0.55,
+          minTrackingConfidence: 0.55
+        });
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: 640, height: 480, facingMode: "user" }
+        });
+        video.srcObject = stream;
+        statusDot.classList.add("ready");
+        statusText.textContent = "Camera Ready (0–5 Fingers: Steps 1–6)";
+      } catch (err) {
+        console.warn("Camera notice:", err);
+        statusText.textContent = "Click anywhere to enable camera";
+        document.body.addEventListener(
+          "click",
+          async () => {
+            if (!video.srcObject && handLandmarker) {
+              const stream = await navigator.mediaDevices.getUserMedia({
+                video: { width: 640, height: 480, facingMode: "user" }
+              });
+              video.srcObject = stream;
+              statusDot.classList.add("ready");
+              statusText.textContent = "Camera Ready (0–5 Fingers: Steps 1–6)";
+            }
+          },
+          { once: true }
+        );
+      }
+    }
+
+    function mainLoop(now) {
+      if (
+        handLandmarker &&
+        video.readyState >= 2 &&
+        lastVideoTime !== video.currentTime &&
+        video.videoWidth > 0
+      ) {
+        lastVideoTime = video.currentTime;
+        const results = handLandmarker.detectForVideo(video, now);
+        const hands = results.landmarks || [];
+
+        if (hands.length >= 2) {
+          const h1 = hands[0];
+          const h2 = hands[1];
+          const p1 = {
+            x: (h1[4].x + h1[8].x + h1[9].x) / 3,
+            y: (h1[4].y + h1[8].y + h1[9].y) / 3
+          };
+          const p2 = {
+            x: (h2[4].x + h2[8].x + h2[9].x) / 3,
+            y: (h2[4].y + h2[8].y + h2[9].y) / 3
+          };
+          const handDist = dist2D(p1, p2);
+
+          twoHandActiveFrames++;
+          lastTwoHandTimestamp = now;
+          holdFrames = 0;
+
+          if (twoHandActiveFrames === 2) {
+            twoHandAnchorDist = Math.max(0.12, handDist);
+            twoHandAnchorZoom = targetZoom;
+          } else if (twoHandActiveFrames > 2 && twoHandAnchorDist) {
+            const ratioZoom = twoHandAnchorZoom * Math.pow(handDist / twoHandAnchorDist, 1.25);
+            const absZoom = 0.55 + ((handDist - 0.14) / 0.48) * 1.15;
+            const blended = ratioZoom * 0.65 + absZoom * 0.35;
+            targetZoom = Math.max(0.6, Math.min(1.8, blended));
+          }
+        } else if (hands.length === 1) {
+          twoHandActiveFrames = 0;
+          twoHandAnchorDist = null;
+
+          if (now - lastTwoHandTimestamp > 400) {
+            const fingerCount = countFingers0To5(hands[0]);
+            if (candidateStep === fingerCount) {
+              holdFrames = Math.min(REQUIRED_HOLD_FRAMES, holdFrames + 1);
+            } else {
+              candidateStep = fingerCount;
+              holdFrames = 1;
+            }
+
+            if (holdFrames >= REQUIRED_HOLD_FRAMES) {
+              goToStep(fingerCount);
+            }
+          }
+        } else {
+          twoHandActiveFrames = 0;
+          twoHandAnchorDist = null;
+          holdFrames = 0;
+        }
+      }
+
+      currentZoom += (targetZoom - currentZoom) * 0.16;
+      zoomResetBtn.textContent = `🙌 Zoom: ${Math.round(currentZoom * 100)}%`;
+
+      renderStage();
+      requestAnimationFrame(mainLoop);
+    }
+
+    initMediaPipe();
+    requestAnimationFrame(mainLoop);
+  </script>
+</body>
+</html>
