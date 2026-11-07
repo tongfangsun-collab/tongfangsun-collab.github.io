@@ -7,13 +7,13 @@ title: Influcio AI Marketing Platform — 2025 MUSE Design Awards Gold Winner
   <!-- Header & Badges -->
   <header class="muse-detail-header">
     <div class="muse-award-pill-row">
-      <span class="award-gold-pill">🏆 2025 MUSE Design Awards · Gold Winner</span>
+      <span class="award-gold-pill">🏆 2025 Muse Gold Winner</span>
       <span class="award-cat-pill">Product Design — UX / UI / IxD</span>
-      <span class="award-role-pill">Role: Design Director</span>
+      <span class="award-role-pill">Non-Profit Design Mentor · Design Director</span>
     </div>
     <h1 class="muse-detail-title">Influcio AI Marketing Platform</h1>
     <p class="muse-detail-lead">
-      An AI-driven influencer marketing ecosystem designed to bridge brands and creators authentically, intelligently, and scalably through user-centered UX and responsive AI.
+      A non-profit design mentor project: an AI-driven influencer marketing ecosystem designed to bridge brands and creators authentically, intelligently, and scalably through user-centered UX and responsive AI.
     </p>
 
     <div class="muse-external-actions">
@@ -41,11 +41,13 @@ title: Influcio AI Marketing Platform — 2025 MUSE Design Awards Gold Winner
       <h3>Project Metadata</h3>
       <dl class="meta-list">
         <dt>Award</dt>
-        <dd>2025 MUSE Design Awards — Gold Winner</dd>
+        <dd>2025 Muse Gold Winner</dd>
+        <dt>Project Type</dt>
+        <dd>Non-Profit Design Mentor Project</dd>
         <dt>Category</dt>
         <dd>Product Design — UX / UI / IxD</dd>
         <dt>Role</dt>
-        <dd>Design Director (Tongfang Sun)</dd>
+        <dd>Design Director / Design Mentor (Tongfang Sun)</dd>
         <dt>Design Lead</dt>
         <dd>Amelia Yang Yang</dd>
         <dt>Product Founder</dt>

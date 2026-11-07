@@ -15,9 +15,9 @@ title: Work & Design Lab
         <img src="{{ '/Muse%20reward/muse_award_influcio_cover.jpg' | relative_url }}" alt="Influcio AI Marketing Platform — 2025 MUSE Design Awards Gold Winner" class="work-thumb-cover" />
       </div>
       <div class="work-card-body">
-        <span class="work-card-tag gold-badge">🏆 2025 MUSE Design Awards Gold Winner · Product Design (UX/UI/IxD)</span>
+        <span class="work-card-tag gold-badge">🏆 2025 Muse Gold Winner</span>
         <h3>Influcio AI Marketing Platform</h3>
-        <p>Human-centered, AI-enhanced influencer marketing ecosystem connecting 2.8M+ creators and top global brands (Temu, Luma.ai). Design Director.</p>
+        <p>A non-profit design mentor project: human-centered, AI-enhanced influencer marketing ecosystem connecting 2.8M+ creators and top global brands (Temu, Luma.ai). Design Director.</p>
         <div class="card-inline-links" style="margin-top: 12px; font-size: 0.9rem; font-weight: 600;">
           <span style="color: var(--text-color);">Read Case Study →</span>
           <span style="color: var(--secondary-text); margin-left: 14px;">influcio.io ↗</span>
@@ -48,6 +48,7 @@ title: Work & Design Lab
     </a>
 
     {% for project in site.projects %}
+      {% unless project.url contains 'influcio' %}
       <a href="{{ project.url | relative_url }}" class="framer-work-card">
         <div class="work-card-thumb" style="background-color: {{ project.color | default: '#f4f4f5' }};">
           <div class="work-thumb-placeholder">{{ project.title }}</div>
@@ -58,6 +59,7 @@ title: Work & Design Lab
           <p>{{ project.excerpt }}</p>
         </div>
       </a>
+      {% endunless %}
     {% endfor %}
   </div>
 </section>
