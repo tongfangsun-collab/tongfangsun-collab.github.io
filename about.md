@@ -5,7 +5,7 @@ title: About
 
 <section class="about-section">
   <h1>About Me</h1>
-  <p>Hello! I'm Tong Fang Sun, a designer focused on the intersection of minimalism and functionality.</p>
+  <p>Hello! I'm Tong Fang Sun, a Product Designer at Google focused on the intersection of minimalism, human-centered AI, and functionality.</p>
   <p>I believe that great design is not about adding more, but about stripping away everything that isn't essential until only the truth remains.</p>
   
   <h3>Skills</h3>
