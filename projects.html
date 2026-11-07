@@ -25,6 +25,17 @@ title: Work & Design Lab
       </div>
     </a>
 
+    <a href="{{ '/Architecture%203D%20Motion/' | relative_url }}" class="framer-work-card">
+      <div class="work-card-thumb" style="background: #0b0d11;">
+        <img src="{{ '/Architecture%203D%20Motion/assets/cover_architecture_3d_motion.jpg' | relative_url }}" alt="Architecture 3D Motion Sydney Opera House" class="work-thumb-cover" />
+      </div>
+      <div class="work-card-body">
+        <span class="work-card-tag">Design Lab · Architecture &amp; Creative Tech · 2026</span>
+        <h3>Architecture 3D Motion — Sydney Opera House</h3>
+        <p>Dynamic 8-layer exploded axonometric 3D deconstruction with scroll-driven assembly, Three.js WebGL rendering, and technical engineering analysis.</p>
+      </div>
+    </a>
+
     <a href="{{ '/Hand%20detection/' | relative_url }}" class="framer-work-card">
       <div class="work-card-thumb" style="background: #7c532d;">
         <img src="{{ '/Hand%20detection/origami_steps_grid.jpg' | relative_url }}" alt="Pikachu 6 Steps Origami Hand Detection" class="work-thumb-cover" />
@@ -48,7 +59,7 @@ title: Work & Design Lab
     </a>
 
     {% for project in site.projects %}
-      {% unless project.url contains 'influcio' %}
+      {% unless project.url contains 'influcio' or project.url contains 'architecture-3d-motion' %}
       <a href="{{ project.url | relative_url }}" class="framer-work-card">
         <div class="work-card-thumb" style="background-color: {{ project.color | default: '#f4f4f5' }};">
           <div class="work-thumb-placeholder">{{ project.title }}</div>

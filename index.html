@@ -62,6 +62,32 @@ title: Portfolio — UX & AI Interaction Designer
       </div>
     </a>
   </div>
+
+  <!-- Project 3: Architecture 3D Motion — Sydney Opera House -->
+  <div class="framer-project-block" id="project-architecture-3d-motion">
+    <div class="framer-project-copy">
+      <h2 class="project-headline">Architecture 3D Motion</h2>
+      <p class="project-lead">
+        Interactive 3D architectural deconstruction of Jørn Utzon’s Sydney Opera House. Scroll wheel up to deconstruct the structure into an 8-layer exploded view with dynamic load-path vectors; click each part for technical engineering analysis; scroll down to seamlessly reassemble the building into its complete form and Bennelong Point harbour environment.
+      </p>
+      <div class="project-cta-group">
+        <a href="{{ '/Architecture%203D%20Motion/' | relative_url }}" class="btn-pill-black" id="try-architecture-3d-btn">Try 3D Motion</a>
+        <a href="{{ '/projects/architecture-3d-motion/' | relative_url }}" class="btn-pill-outline" id="read-architecture-case-btn">Read Case Study</a>
+      </div>
+      <p class="project-helper-note">Scroll mouse wheel up to explode · Scroll down to assemble · Click parts to inspect.</p>
+    </div>
+
+    <a href="{{ '/Architecture%203D%20Motion/' | relative_url }}" class="framer-showcase-card" aria-label="Launch Architecture 3D Motion Demo">
+      <div class="showcase-media-wrap" style="background: #0b0d11; border-radius: 16px; overflow: hidden;">
+        <img
+          src="{{ '/Architecture%203D%20Motion/assets/cover_architecture_3d_motion.jpg' | relative_url }}"
+          alt="Sydney Opera House 3D Deconstruction"
+          class="showcase-video"
+          style="object-fit: cover;"
+        />
+      </div>
+    </a>
+  </div>
 </section>
 
 <!-- ====================================================================== -->
@@ -89,6 +115,17 @@ title: Portfolio — UX & AI Interaction Designer
       </div>
     </a>
 
+    <a href="{{ '/Architecture%203D%20Motion/' | relative_url }}" class="framer-work-card">
+      <div class="work-card-thumb" style="background: #0b0d11;">
+        <img src="{{ '/Architecture%203D%20Motion/assets/cover_architecture_3d_motion.jpg' | relative_url }}" alt="Architecture 3D Motion Sydney Opera House" class="work-thumb-cover" />
+      </div>
+      <div class="work-card-body">
+        <span class="work-card-tag">Architecture &amp; Creative Tech · 2026</span>
+        <h3>Architecture 3D Motion — Sydney Opera House</h3>
+        <p>Dynamic 8-layer exploded axonometric visualization with scroll-driven assembly, Three.js WebGL rendering, and technical engineering analysis.</p>
+      </div>
+    </a>
+
     <a href="{{ '/Hand%20detection/' | relative_url }}" class="framer-work-card">
       <div class="work-card-thumb" style="background: #7c532d;">
         <img src="{{ '/Hand%20detection/origami_steps_grid.jpg' | relative_url }}" alt="Pikachu 6 Steps Origami Hand Detection" class="work-thumb-cover" />
@@ -112,7 +149,7 @@ title: Portfolio — UX & AI Interaction Designer
     </a>
 
     {% for project in site.projects %}
-      {% unless project.url contains 'influcio' %}
+      {% unless project.url contains 'influcio' or project.url contains 'architecture-3d-motion' %}
       <a href="{{ project.url | relative_url }}" class="framer-work-card">
         <div class="work-card-thumb" style="background-color: {{ project.color | default: '#f4f4f5' }};">
           <div class="work-thumb-placeholder">{{ project.title }}</div>

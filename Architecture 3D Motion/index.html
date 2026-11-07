@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sydney Opera House — Interactive 3D Architectural Deconstruction</title>
+  <meta name="description" content="Dynamic 3D architectural deconstruction and exploded view of the Sydney Opera House by Jørn Utzon and Ove Arup. Scroll up to explode into 8 structural layers; scroll down to reassemble into a complete architectural whole.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=SF+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=20261107">
+</head>
+<body>
+
+  <!-- Three.js WebGL Canvas -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Floating 3D Layer Pin Labels projected into 2D -->
+  <div id="layer-pins-container" class="layer-pins-container"></div>
+
+  <!-- UI Overlay -->
+  <div class="ui-overlay">
+
+    <!-- Top Navigation Header -->
+    <header class="top-nav interactive">
+      <div class="brand-group">
+        <a href="../" class="btn-back" title="Return to Portfolio Home">
+          <span>←</span> Portfolio
+        </a>
+        <div class="header-title-block">
+          <h1 class="header-title">
+            Sydney Opera House
+            <span id="status-badge" class="status-badge assembled">
+              <span class="indicator-dot"></span> Assembled Building
+            </span>
+          </h1>
+          <p class="header-meta">Jørn Utzon &amp; Ove Arup · 1959–1973 · Bennelong Point, Sydney Harbour</p>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button id="btn-open-gallery" class="btn-icon-nav" title="View Historic Blueprints &amp; Section Drawings">
+          <span>📐</span> Blueprints
+        </button>
+        <button id="btn-fullscreen" class="btn-icon-nav" title="Toggle Fullscreen">
+          <span>⛶</span> Fullscreen
+        </button>
+      </div>
+    </header>
+
+    <!-- Center Floating Scroll Hint (Disappears gently as user interacts) -->
+    <div class="scroll-instruction-pill interactive" id="scroll-instruction-pill">
+      <div class="scroll-direction-indicator">
+        <span class="direction-item">
+          <span class="icon-arrow">▴</span> Scroll Wheel Up to <strong>Deconstruct &amp; Explode</strong>
+        </span>
+        <span class="direction-separator">|</span>
+        <span class="direction-item">
+          <span class="icon-arrow">▾</span> Scroll Wheel Down to <strong>Assemble &amp; Restore Context</strong>
+        </span>
+      </div>
+    </div>
+
+    <!-- Bottom Control Dock -->
+    <footer class="bottom-dock interactive">
+
+      <!-- 8 Layer Quick-Select Strip -->
+      <div class="layer-chips-bar" aria-label="Quick Select Architectural Layer">
+        <button class="chip-btn" data-layer-id="8"><span class="chip-num">08</span> Shell Roofs</button>
+        <button class="chip-btn" data-layer-id="7"><span class="chip-num">07</span> Rib Arches</button>
+        <button class="chip-btn" data-layer-id="6"><span class="chip-num">06</span> Stages &amp; Fly</button>
+        <button class="chip-btn" data-layer-id="5"><span class="chip-num">05</span> Auditoriums</button>
+        <button class="chip-btn" data-layer-id="4"><span class="chip-num">04</span> Foyers</button>
+        <button class="chip-btn" data-layer-id="3"><span class="chip-num">03</span> Bronze Glass</button>
+        <button class="chip-btn" data-layer-id="2"><span class="chip-num">02</span> Podium</button>
+        <button class="chip-btn" data-layer-id="1"><span class="chip-num">01</span> Harbour Site</button>
+      </div>
+
+      <!-- Main Scrub Console Bar -->
+      <div class="control-console-bar">
+
+        <!-- Left Controls: Presets -->
+        <div class="console-left">
+          <button id="btn-view-axo" class="btn-dock" title="45° Axonometric View">Axonometric</button>
+          <button id="btn-view-front" class="btn-dock" title="Harbour Waterfront Perspective">Waterfront</button>
+          <button id="btn-view-elevation" class="btn-dock" title="Side Cutaway Elevation">Elevation</button>
+          <button id="btn-view-top" class="btn-dock" title="Bird's Eye Plan View">Plan</button>
+        </div>
+
+        <!-- Center Scrub Slider (0% Assembled to 100% Exploded) -->
+        <div class="console-center">
+          <span class="slider-label">Assembled</span>
+          <input
+            type="range"
+            id="explosion-slider"
+            class="explosion-slider"
+            min="0"
+            max="100"
+            value="0"
+            aria-label="Explosion Separation Progress"
+          />
+          <span class="slider-label">Exploded</span>
+          <span id="slider-value" class="slider-value-display">0%</span>
+        </div>
+
+        <!-- Right Controls: Actions -->
+        <div class="console-right">
+          <button id="btn-explode" class="btn-dock primary" title="Separate All Components Vertically">
+            Explode ▴
+          </button>
+          <button id="btn-assemble" class="btn-dock" title="Assemble Back into Unified Building">
+            Assemble ▾
+          </button>
+          <button id="btn-xray" class="btn-dock" title="Toggle Translucent X-Ray Shells">
+            X-Ray
+          </button>
+          <button id="btn-auto-orbit" class="btn-dock" title="Toggle Smooth Turntable Rotation">
+            Auto Orbit
+          </button>
+        </div>
+
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- Slide-out Architectural Technical Detail Drawer (English)                -->
+  <!-- ======================================================================== -->
+  <aside id="detail-drawer" class="detail-drawer" aria-labelledby="drawer-title" aria-modal="true" role="dialog">
+    <div class="drawer-header">
+      <div class="drawer-title-group">
+        <span id="drawer-layer-badge" class="drawer-layer-badge">LAYER 08 · ROOF VAULT SYSTEM</span>
+        <h2 id="drawer-title" class="drawer-title">Precast Spherical Shell Roofs</h2>
+        <span id="drawer-title-zh" class="drawer-title-zh">贝壳形屋顶 (The Sails)</span>
+      </div>
+      <button id="btn-close-drawer" class="btn-close-drawer" aria-label="Close details panel">✕</button>
+    </div>
+
+    <div class="drawer-content">
+
+      <!-- Technical Diagram Card -->
+      <div class="drawer-image-card">
+        <img id="drawer-main-image" src="assets/layer_08_shells.jpg" alt="Architectural Layer Diagram" />
+        <div class="image-card-caption">
+          <span>Architectural Axonometric Deconstruction</span>
+          <span>Bennelong Point, Sydney</span>
+        </div>
+      </div>
+
+      <!-- Quick Architectural Metadata Grid -->
+      <div class="drawer-meta-grid">
+        <div class="meta-box">
+          <div class="meta-box-label">Elevation</div>
+          <div id="drawer-meta-elevation" class="meta-box-value">+67m Summit</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-box-label">Construction Stage</div>
+          <div id="drawer-meta-stage" class="meta-box-value">Stage II (1963–1967)</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-box-label">System Type</div>
+          <div id="drawer-meta-category" class="meta-box-value">Spherical Shell Vault</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-box-label">Fabrication Method</div>
+          <div id="drawer-meta-weight" class="meta-box-value">Precast Reinforced System</div>
+        </div>
+      </div>
+
+      <!-- Executive Architectural Summary -->
+      <div class="drawer-section">
+        <h3 class="drawer-section-heading">Architectural Overview</h3>
+        <p id="drawer-lead" class="drawer-prose">
+          The world-famous 'sails' are monumental precast concrete shell vaults formed from segments cut from a single imaginary sphere of 75-metre radius.
+        </p>
+      </div>
+
+      <!-- Utzon's Architectural Concept & Engineering -->
+      <div class="drawer-section">
+        <h3 class="drawer-section-heading">Utzon's Spherical Solution</h3>
+        <p id="drawer-concept" class="drawer-prose">
+          For four years after winning the 1957 competition, Utzon and Ove Arup struggled to find a buildable mathematical geometry for the free-form billowing shells. In 1961, Utzon had a flash of insight: every shell could be carved from the surface of one single sphere (radius ~75m).
+        </p>
+      </div>
+
+      <div class="drawer-section">
+        <h3 class="drawer-section-heading">Structural Engineering</h3>
+        <p id="drawer-engineering" class="drawer-prose">
+          The shell vaults act as thin-shell compression membranes. Each sail consists of symmetrical arched halves meeting along a central ridge beam, erected using an adjustable steel arch erection truss and post-tensioned with internal steel tendon cables.
+        </p>
+      </div>
+
+      <!-- Secondary Technical Blueprint Excerpt -->
+      <div class="drawer-image-card">
+        <img id="drawer-diagram-image" src="assets/diagram_shell_assembly.jpg" alt="Technical Engineering Schematic" />
+        <div class="image-card-caption">
+          <span>Structural Assembly &amp; Force Vector Schematic</span>
+        </div>
+      </div>
+
+      <!-- Materials & Construction Specifications -->
+      <div class="drawer-section">
+        <h3 class="drawer-section-heading">Materials &amp; Craftsmanship</h3>
+        <ul id="drawer-materials-list" class="materials-list">
+          <li>1,056,006 Swedish Höganäs ceramic tiles (120mm square) with crushed stone aggregate</li>
+          <li>Dual glaze finish: 4,228 chevron-shaped prefabricated tile lids combining gloss off-white and matte cream</li>
+          <li>High-strength precast concrete segments bonded with epoxy resin and post-tensioned steel tendons</li>
+        </ul>
+      </div>
+
+      <!-- Load Transmission Path -->
+      <div class="load-vector-card">
+        <div class="load-vector-title">
+          <span>⚡</span> Structural Load Path
+        </div>
+        <p id="drawer-load-desc" class="load-vector-desc">
+          Wind and gravitational dead loads travel down the spherical shells in membrane compression, transferring forces into the concrete rib arches below.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Drawer Footer Navigation -->
+    <div class="drawer-footer">
+      <button id="btn-drawer-prev" class="btn-drawer-nav">← Previous Layer</button>
+      <button id="btn-drawer-next" class="btn-drawer-nav">Next Layer →</button>
+    </div>
+  </aside>
+
+  <!-- ======================================================================== -->
+  <!-- Full Blueprint & Historic Cross-Section Gallery Modal                    -->
+  <!-- ======================================================================== -->
+  <div id="modal-gallery" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title">Historic Blueprints &amp; Architectural Schematics</h2>
+        <button id="btn-close-modal" class="btn-close-drawer" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="drawer-prose" style="margin-bottom: 8px;">
+          High-resolution engineering drawings and axonometric deconstructions documenting the structural evolution of the Sydney Opera House from Jørn Utzon's 1962 "Yellow Book" to modern technical cross-sections.
+        </p>
+
+        <div class="gallery-grid">
+          <!-- 1. Full Exploded Axonometric Diagram -->
+          <div class="gallery-card">
+            <a href="assets/sydney_opera_house_exploded_axonometric.jpg" target="_blank" rel="noopener">
+              <img src="assets/sydney_opera_house_exploded_axonometric.jpg" alt="Sydney Opera House Exploded Axonometric" class="gallery-card-img" />
+            </a>
+            <div class="gallery-card-info">
+              <h3 class="gallery-card-title">Exploded Axonometric Deconstruction</h3>
+              <p class="gallery-card-desc">Complete 8-layer structural breakdown from harbour bedrock and monumental podium up to the spherical precast roof shells.</p>
+            </div>
+          </div>
+
+          <!-- 2. Utzon 1962 Yellow Book Cross-Section -->
+          <div class="gallery-card">
+            <a href="assets/utzon_yellow_book_cross_section_1962.jpg" target="_blank" rel="noopener">
+              <img src="assets/utzon_yellow_book_cross_section_1962.jpg" alt="Utzon Yellow Book Cross Section 1962" class="gallery-card-img" />
+            </a>
+            <div class="gallery-card-info">
+              <h3 class="gallery-card-title">Utzon 1962 Yellow Book Section</h3>
+              <p class="gallery-card-desc">Original longitudinal cross-section submitted by Jørn Utzon to the NSW Government proving the feasibility of the Spherical Solution.</p>
+            </div>
+          </div>
+
+          <!-- 3. Shell Assembly & Geometry -->
+          <div class="gallery-card">
+            <a href="assets/diagram_shell_assembly.jpg" target="_blank" rel="noopener">
+              <img src="assets/diagram_shell_assembly.jpg" alt="Shell Assembly Schematic" class="gallery-card-img" />
+            </a>
+            <div class="gallery-card-info">
+              <h3 class="gallery-card-title">Spherical Shell Geometry</h3>
+              <p class="gallery-card-desc">Precast concrete segments derived from the uniform 75-metre radius sphere, forming continuous curved roof sails.</p>
+            </div>
+          </div>
+
+          <!-- 4. Load Transmission Paths -->
+          <div class="gallery-card">
+            <a href="assets/diagram_load_paths.jpg" target="_blank" rel="noopener">
+              <img src="assets/diagram_load_paths.jpg" alt="Load Transmission Paths" class="gallery-card-img" />
+            </a>
+            <div class="gallery-card-info">
+              <h3 class="gallery-card-title">Load Transmission Paths</h3>
+              <p class="gallery-card-desc">Vector analysis showing membrane compression, bending moments in radial rib arches, and load dissipation into concrete podium foundations.</p>
+            </div>
+          </div>
+
+          <!-- 5. Harbour Aerial Context -->
+          <div class="gallery-card">
+            <a href="assets/sydney_harbour_aerial.jpg" target="_blank" rel="noopener">
+              <img src="assets/sydney_harbour_aerial.jpg" alt="Sydney Harbour Aerial Context" class="gallery-card-img" />
+            </a>
+            <div class="gallery-card-info">
+              <h3 class="gallery-card-title">Bennelong Point Harbour Context</h3>
+              <p class="gallery-card-desc">Aerial photograph showing the Sydney Opera House crowned by Sydney Harbour waters, Circular Quay, and the Sydney skyline.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts: Local Vendor with CDN Fallback -->
+  <script src="assets/vendor/three.min.js"></script>
+  <script src="assets/vendor/OrbitControls.js"></script>
+  <script>
+    // Fallback if local vendor files fail to load
+    if (typeof THREE === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');
+      document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"><\/script>');
+    }
+  </script>
+  <script src="data.js?v=20261107"></script>
+  <script src="app.js?v=20261107"></script>
+</body>
+</html>
