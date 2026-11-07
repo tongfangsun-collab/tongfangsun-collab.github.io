@@ -39,6 +39,10 @@
       </div>
 
       <div class="top-actions">
+        <button id="btn-hand-toggle" class="btn-icon-nav active" title="Toggle MediaPipe Hand &amp; Holistic Gesture Control">
+          <span class="cam-dot" id="hand-cam-dot"></span>
+          <span>🖐️</span> Hand Control
+        </button>
         <button id="btn-open-gallery" class="btn-icon-nav" title="View Historic Blueprints &amp; Section Drawings">
           <span>📐</span> Blueprints
         </button>
@@ -48,15 +52,43 @@
       </div>
     </header>
 
-    <!-- Center Floating Scroll Hint (Disappears gently as user interacts) -->
+    <!-- Live MediaPipe Hand & Holistic Landmarker HUD Card -->
+    <div id="hand-hud-card" class="hand-hud-card interactive" aria-label="MediaPipe Hand &amp; Holistic Gesture Controller">
+      <div class="hand-hud-header">
+        <div class="hand-hud-title">
+          <span class="hud-dot" id="hud-status-dot"></span>
+          <span id="hud-status-title">MediaPipe Hand / Holistic</span>
+        </div>
+        <button id="btn-hud-minimize" class="btn-hud-min" title="Minimize Camera Preview">—</button>
+      </div>
+      <div class="hand-hud-Viewport" id="hand-hud-viewport">
+        <video id="webcam-video" autoplay playsinline muted></video>
+        <canvas id="landmark-canvas" width="320" height="240"></canvas>
+        <div class="hand-gesture-pill" id="hand-gesture-pill">
+          <span id="gesture-icon">🖐️</span>
+          <span id="gesture-label">Initializing Camera...</span>
+        </div>
+      </div>
+      <div class="hand-hud-footer">
+        <div class="gesture-meter-bar">
+          <div class="gesture-meter-fill" id="gesture-meter-fill" style="width: 0%;"></div>
+        </div>
+        <div class="gesture-legend">
+          <span>✊ <strong>Close Hands</strong>: Assemble</span>
+          <span>🖐️ <strong>Open Hands</strong>: Explode</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Floating Scroll & Hand Gesture Hint -->
     <div class="scroll-instruction-pill interactive" id="scroll-instruction-pill">
       <div class="scroll-direction-indicator">
         <span class="direction-item">
-          <span class="icon-arrow">▴</span> Scroll Wheel Up to <strong>Deconstruct &amp; Explode</strong>
+          <span class="icon-arrow">🖐️</span> <strong>Open Hands</strong> (or Scroll ▴) to <strong>Explode</strong>
         </span>
         <span class="direction-separator">|</span>
         <span class="direction-item">
-          <span class="icon-arrow">▾</span> Scroll Wheel Down to <strong>Assemble &amp; Restore Context</strong>
+          <span class="icon-arrow">✊</span> <strong>Close Hands</strong> (or Scroll ▾) to <strong>Assemble</strong>
         </span>
       </div>
     </div>
@@ -313,7 +345,7 @@
       document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"><\/script>');
     }
   </script>
-  <script src="data.js?v=20261107b"></script>
-  <script src="app.js?v=20261107b"></script>
+  <script src="data.js?v=20261107c"></script>
+  <script src="app.js?v=20261107c"></script>
 </body>
 </html>

@@ -1058,9 +1058,358 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   }
 
+  // =========================================================================
+  // MediaPipe Holistic Landmarker & Hand Landmarker Gesture Control
+  // "Hands Close = Assemble (0%)" | "Hands Open = Exploded (100%)"
+  // =========================================================================
+  let handControlEnabled = true;
+  let mpVision = null;
+  let holisticLandmarker = null;
+  let handLandmarker = null;
+  let lastVideoTime = -1;
+  let smoothedHandExplosion = 0.0;
+  let hasHandLock = false;
+
+  const webcamVideo = document.getElementById('webcam-video');
+  const landmarkCanvas = document.getElementById('landmark-canvas');
+  const landmarkCtx = landmarkCanvas ? landmarkCanvas.getContext('2d') : null;
+  const handHudCard = document.getElementById('hand-hud-card');
+  const btnHandToggle = document.getElementById('btn-hand-toggle');
+  const btnHudMinimize = document.getElementById('btn-hud-minimize');
+  const handCamDot = document.getElementById('hand-cam-dot');
+  const hudStatusDot = document.getElementById('hud-status-dot');
+  const hudStatusTitle = document.getElementById('hud-status-title');
+  const gestureIcon = document.getElementById('gesture-icon');
+  const gestureLabel = document.getElementById('gesture-label');
+  const gestureMeterFill = document.getElementById('gesture-meter-fill');
+
+  const HAND_CONNECTIONS = [
+    [0, 1], [1, 2], [2, 3], [3, 4],
+    [0, 5], [5, 6], [6, 7], [7, 8],
+    [5, 9], [9, 10], [10, 11], [11, 12],
+    [9, 13], [13, 14], [14, 15], [15, 16],
+    [13, 17], [17, 18], [18, 19], [19, 20],
+    [0, 17]
+  ];
+
+  function dist2D(a, b) {
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  }
+
+  /**
+   * Computes single-hand openness in [0.0, 1.0]:
+   *  - 0.0 = Closed fist / fingers pinched together (Assemble)
+   *  - 1.0 = Wide open palm with 5 fingers extended (Explode)
+   */
+  function computeSingleHandOpenness(lm) {
+    const wrist = lm[0];
+    const palmScale = Math.max(0.04, dist2D(wrist, lm[9]));
+
+    // Average fingertip distance to wrist normalized by palm scale
+    const tips = [4, 8, 12, 16, 20];
+    let tipSum = 0;
+    for (let i = 0; i < tips.length; i++) {
+      tipSum += dist2D(lm[tips[i]], wrist) / palmScale;
+    }
+    const avgTipRatio = tipSum / tips.length; // ~0.95 when fist closed, ~2.05 when palm spread open
+
+    // Check extended finger count (index, middle, ring, pinky, thumb)
+    const f8  = dist2D(lm[8], wrist)  > dist2D(lm[6], wrist)  * 1.06;
+    const f12 = dist2D(lm[12], wrist) > dist2D(lm[10], wrist) * 1.06;
+    const f16 = dist2D(lm[16], wrist) > dist2D(lm[14], wrist) * 1.06;
+    const f20 = dist2D(lm[20], wrist) > dist2D(lm[18], wrist) * 1.06;
+    const f4  = dist2D(lm[4], lm[17]) > dist2D(lm[2], lm[17]) * 1.14;
+    const extCount = (f8 ? 1 : 0) + (f12 ? 1 : 0) + (f16 ? 1 : 0) + (f20 ? 1 : 0) + (f4 ? 1 : 0);
+
+    const ratioScore = THREE.MathUtils.clamp((avgTipRatio - 1.08) / 0.86, 0.0, 1.0);
+    const countScore = extCount / 5.0;
+
+    let openness = ratioScore * 0.65 + countScore * 0.35;
+    if (extCount === 0) openness = Math.min(openness, 0.05);
+    if (extCount === 5 && ratioScore > 0.72) openness = Math.max(openness, 0.96);
+    return THREE.MathUtils.clamp(openness, 0.0, 1.0);
+  }
+
+  /**
+   * Computes gesture explosion target from 1 or 2 detected hands:
+   *  - If 2 hands are visible: combines two-hand spread distance (hands close together = 0% assemble,
+   *    hands spread apart = 100% explode) AND individual palm openness so either opening both palms
+   *    or spreading two hands apart explodes the Opera House, and closing hands together or closing fists assembles it.
+   *  - If 1 hand is visible: uses single-hand openness (closed fist = 0% assemble, open hand = 100% explode).
+   */
+  function evaluateHandsExplosion(hands) {
+    if (!hands || hands.length === 0) return null;
+
+    if (hands.length >= 2) {
+      const h1 = hands[0];
+      const h2 = hands[1];
+      const open1 = computeSingleHandOpenness(h1);
+      const open2 = computeSingleHandOpenness(h2);
+      const avgOpenness = (open1 + open2) * 0.5;
+
+      // Palm centers (average of wrist 0, index MCP 5, middle MCP 9)
+      const c1 = { x: (h1[0].x + h1[5].x + h1[9].x) / 3, y: (h1[0].y + h1[5].y + h1[9].y) / 3 };
+      const c2 = { x: (h2[0].x + h2[5].x + h2[9].x) / 3, y: (h2[0].y + h2[5].y + h2[9].y) / 3 };
+      const palmDist = dist2D(c1, c2);
+
+      // palmDist <= 0.19 -> hands close together (0.0); palmDist >= 0.54 -> hands wide apart (1.0)
+      const spreadScore = THREE.MathUtils.clamp((palmDist - 0.19) / 0.35, 0.0, 1.0);
+
+      // If both fists are closed (< 0.2) OR palms are brought close together (< 0.18), assemble!
+      if (avgOpenness < 0.18 || palmDist < 0.17) {
+        return Math.min(avgOpenness, spreadScore) * 0.5;
+      }
+      // Otherwise blend two-hand spread distance and palm openness
+      return THREE.MathUtils.clamp( Math.max(spreadScore, avgOpenness * 0.92), 0.0, 1.0 );
+    }
+
+    return computeSingleHandOpenness(hands[0]);
+  }
+
+  function drawHandLandmarks(hands, poseLandmarks, opennessVal) {
+    if (!landmarkCtx || !landmarkCanvas) return;
+    const w = landmarkCanvas.width;
+    const h = landmarkCanvas.height;
+    landmarkCtx.clearRect(0, 0, w, h);
+
+    // Optional Holistic upper-body shoulder/arm lines if available
+    if (poseLandmarks && poseLandmarks.length > 16) {
+      const posePairs = [[11, 12], [11, 13], [13, 15], [12, 14], [14, 16]];
+      landmarkCtx.strokeStyle = 'rgba(247, 183, 49, 0.45)';
+      landmarkCtx.lineWidth = 2;
+      posePairs.forEach(([a, b]) => {
+        const pa = poseLandmarks[a];
+        const pb = poseLandmarks[b];
+        if (pa && pb) {
+          landmarkCtx.beginPath();
+          landmarkCtx.moveTo(pa.x * w, pa.y * h);
+          landmarkCtx.lineTo(pb.x * w, pb.y * h);
+          landmarkCtx.stroke();
+        }
+      });
+    }
+
+    if (!hands || hands.length === 0) return;
+
+    const strokeCol = opennessVal > 0.5 ? '#00e5ff' : '#10b981';
+
+    // If 2 hands are detected, draw a glowing distance line between the two palms
+    if (hands.length >= 2) {
+      const p1 = hands[0][9];
+      const p2 = hands[1][9];
+      landmarkCtx.save();
+      landmarkCtx.strokeStyle = 'rgba(0, 229, 255, 0.75)';
+      landmarkCtx.setLineDash([4, 4]);
+      landmarkCtx.lineWidth = 2;
+      landmarkCtx.beginPath();
+      landmarkCtx.moveTo(p1.x * w, p1.y * h);
+      landmarkCtx.lineTo(p2.x * w, p2.y * h);
+      landmarkCtx.stroke();
+      landmarkCtx.restore();
+    }
+
+    hands.forEach(lm => {
+      landmarkCtx.strokeStyle = strokeCol;
+      landmarkCtx.lineWidth = 2.2;
+      HAND_CONNECTIONS.forEach(([i, j]) => {
+        landmarkCtx.beginPath();
+        landmarkCtx.moveTo(lm[i].x * w, lm[i].y * h);
+        landmarkCtx.lineTo(lm[j].x * w, lm[j].y * h);
+        landmarkCtx.stroke();
+      });
+
+      for (let i = 0; i < lm.length; i++) {
+        const isTip = (i === 4 || i === 8 || i === 12 || i === 16 || i === 20);
+        landmarkCtx.fillStyle = isTip ? '#ffffff' : strokeCol;
+        landmarkCtx.beginPath();
+        landmarkCtx.arc(lm[i].x * w, lm[i].y * h, isTip ? 3.6 : 2.3, 0, Math.PI * 2);
+        landmarkCtx.fill();
+      }
+    });
+  }
+
+  async function initMediaPipeControl() {
+    if (!webcamVideo) return;
+
+    if (btnHandToggle) {
+      btnHandToggle.addEventListener('click', () => {
+        handControlEnabled = !handControlEnabled;
+        btnHandToggle.classList.toggle('active', handControlEnabled);
+        if (handHudCard) handHudCard.classList.toggle('hidden', !handControlEnabled);
+        if (handCamDot) {
+          handCamDot.classList.toggle('off', !handControlEnabled);
+        }
+        if (handControlEnabled && !webcamVideo.srcObject) {
+          startCameraStream();
+        }
+      });
+    }
+
+    if (btnHudMinimize && handHudCard) {
+      btnHudMinimize.addEventListener('click', () => {
+        const isMin = handHudCard.classList.toggle('minimized');
+        btnHudMinimize.textContent = isMin ? '+' : '—';
+      });
+    }
+
+    try {
+      const visionModule = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14');
+      const FilesetResolver = visionModule.FilesetResolver;
+      const HolisticLandmarker = visionModule.HolisticLandmarker;
+      const HandLandmarker = visionModule.HandLandmarker;
+
+      mpVision = await FilesetResolver.forVisionTasks(
+        'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm'
+      );
+
+      // Load HandLandmarker (2 hands) as primary ultra-responsive hand detector,
+      // and HolisticLandmarker if available for holistic pose + dual-hand tracking
+      handLandmarker = await HandLandmarker.createFromOptions(mpVision, {
+        baseOptions: {
+          modelAssetPath:
+            'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',
+          delegate: 'GPU'
+        },
+        runningMode: 'VIDEO',
+        numHands: 2,
+        minHandDetectionConfidence: 0.5,
+        minHandPresenceConfidence: 0.5,
+        minTrackingConfidence: 0.5
+      });
+
+      if (HolisticLandmarker) {
+        try {
+          holisticLandmarker = await HolisticLandmarker.createFromOptions(mpVision, {
+            baseOptions: {
+              modelAssetPath:
+                'https://storage.googleapis.com/mediapipe-models/holistic_landmarker/holistic_landmarker/float16/1/holistic_landmarker.task',
+              delegate: 'GPU'
+            },
+            runningMode: 'VIDEO'
+          });
+          if (hudStatusTitle) hudStatusTitle.textContent = 'MediaPipe Holistic + Hands';
+        } catch (_) {
+          // HandLandmarker is already active and handles 1 & 2 hands
+        }
+      }
+
+      await startCameraStream();
+    } catch (err) {
+      console.warn('MediaPipe initialization notice:', err);
+      if (gestureLabel) gestureLabel.textContent = 'Click to Enable Camera';
+    }
+  }
+
+  async function startCameraStream() {
+    if (!webcamVideo || webcamVideo.srcObject) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 320, height: 240, facingMode: 'user' }
+      });
+      webcamVideo.srcObject = stream;
+      if (handCamDot) handCamDot.classList.add('ready');
+      if (hudStatusDot) hudStatusDot.classList.add('ready');
+      if (gestureLabel) gestureLabel.textContent = 'Show Hand: Close ✊ / Open 🖐️';
+    } catch (err) {
+      if (gestureLabel) gestureLabel.textContent = 'Click HUD to Enable Camera';
+      if (handHudCard) {
+        handHudCard.addEventListener('click', () => startCameraStream(), { once: true });
+      }
+    }
+  }
+
+  function processMediaPipeFrame(now) {
+    if (
+      !handControlEnabled ||
+      !webcamVideo ||
+      webcamVideo.readyState < 2 ||
+      webcamVideo.videoWidth === 0 ||
+      lastVideoTime === webcamVideo.currentTime
+    ) {
+      return;
+    }
+
+    lastVideoTime = webcamVideo.currentTime;
+    let detectedHands = [];
+    let detectedPose = null;
+
+    if (handLandmarker) {
+      const handRes = handLandmarker.detectForVideo(webcamVideo, now);
+      if (handRes && handRes.landmarks && handRes.landmarks.length > 0) {
+        detectedHands = handRes.landmarks;
+      }
+    }
+
+    if (holisticLandmarker) {
+      try {
+        const holRes = holisticLandmarker.detectForVideo(webcamVideo, now);
+        if (holRes) {
+          if (holRes.poseLandmarks && holRes.poseLandmarks.length > 0) {
+            detectedPose = holRes.poseLandmarks[0];
+          }
+          if (detectedHands.length === 0) {
+            if (holRes.leftHandLandmarks && holRes.leftHandLandmarks.length > 0) {
+              detectedHands.push(holRes.leftHandLandmarks[0]);
+            }
+            if (holRes.rightHandLandmarks && holRes.rightHandLandmarks.length > 0) {
+              detectedHands.push(holRes.rightHandLandmarks[0]);
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    if (detectedHands.length > 0) {
+      const rawOpenness = evaluateHandsExplosion(detectedHands);
+      if (rawOpenness !== null) {
+        if (!hasHandLock) {
+          smoothedHandExplosion = rawOpenness;
+          hasHandLock = true;
+        } else {
+          smoothedHandExplosion += (rawOpenness - smoothedHandExplosion) * 0.22;
+        }
+
+        // Snap cleanly to 0.0 (Assembled) when hands are closed and 1.0 (Exploded) when hands are wide open
+        let mappedTarget = smoothedHandExplosion;
+        if (mappedTarget < 0.08) mappedTarget = 0.0;
+        else if (mappedTarget > 0.90) mappedTarget = 1.0;
+
+        targetExplosion = mappedTarget;
+        if (slider) slider.value = Math.round(targetExplosion * 100);
+        updateAssemblyUI(targetExplosion);
+
+        const pct = Math.round(targetExplosion * 100);
+        if (gestureMeterFill) gestureMeterFill.style.width = `${pct}%`;
+
+        if (targetExplosion <= 0.12) {
+          if (gestureIcon) gestureIcon.textContent = '✊';
+          if (gestureLabel) gestureLabel.textContent = `Hands Closed · Assemble (${pct}%)`;
+        } else if (targetExplosion >= 0.85) {
+          if (gestureIcon) gestureIcon.textContent = '🖐️';
+          if (gestureLabel) gestureLabel.textContent = `Hands Open · Exploded (${pct}%)`;
+        } else {
+          if (gestureIcon) gestureIcon.textContent = '🙌';
+          if (gestureLabel) gestureLabel.textContent = `Hand Opening · ${pct}% Exploded`;
+        }
+
+        drawHandLandmarks(detectedHands, detectedPose, targetExplosion);
+      }
+    } else {
+      hasHandLock = false;
+      drawHandLandmarks([], detectedPose, targetExplosion);
+      if (webcamVideo.srcObject && gestureLabel) {
+        gestureLabel.textContent = 'Raise Hand: ✊ Assemble · 🖐️ Explode';
+      }
+    }
+  }
+
+  initMediaPipeControl();
+
   // --- Animation Render Loop ---
-  function animate() {
+  function animate(now) {
     requestAnimationFrame(animate);
+
+    processMediaPipeFrame(now || performance.now());
 
     const lerpFactor = 0.1;
     currentExplosion += (targetExplosion - currentExplosion) * lerpFactor;
