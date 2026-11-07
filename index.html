@@ -1,53 +1,176 @@
 ---
 layout: default
-title: Home
+title: Portfolio — UX & AI Interaction Designer
 ---
 
-<section class="hero">
-  <h1>Designer, thinker, and creator.</h1>
-  <p class="hero-subtext">I focus on creating clean, functional, and aesthetically balanced digital experiences.</p>
-  <div class="hero-links" style="flex-wrap: wrap;">
-    <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="btn-primary">Explore The Met Gallery →</a>
-    <a href="{{ '/Hand%20detection/' | relative_url }}" class="btn-primary">Origami Hand Detection →</a>
-    <a href="{{ '/projects' | relative_url }}" class="btn-secondary">View Work</a>
-    <a href="{{ '/about' | relative_url }}" class="btn-secondary">About Me</a>
+<!-- ====================================================================== -->
+<!-- SIDE PROJECT SHOWCASE (Exact Framer Layout + Interactive Preview)      -->
+<!-- ====================================================================== -->
+<section class="framer-section side-project-hero" id="side-project">
+  <h1 class="section-display-title">Side Project</h1>
+
+  <!-- Project 1: Origami Hand Detection -->
+  <div class="framer-project-block" id="project-origami-hand">
+    <div class="framer-project-copy">
+      <h2 class="project-headline">Origami Hand Detection</h2>
+      <p class="project-lead">
+        An interactive origami experiment: use hand gestures to control a Pikachu folding animation and explore six folding steps.
+      </p>
+      <div class="project-cta-group">
+        <a href="{{ '/Hand%20detection/' | relative_url }}" class="btn-pill-black" id="try-origami-demo-btn">Try the demo</a>
+        <a href="{{ '/Hand%20detection/pokemon-trio.html' | relative_url }}" class="btn-pill-outline" id="try-pokemon-trio-btn">Pokémon Trio (Rock · Paper · Scissors)</a>
+      </div>
+      <p class="project-helper-note">Allow camera access to use hand gestures.</p>
+    </div>
+
+    <a href="{{ '/Hand%20detection/' | relative_url }}" class="framer-showcase-card" aria-label="Launch Origami Hand Detection Demo">
+      <div class="showcase-media-wrap">
+        <video
+          src="{{ '/Hand%20detection/origami_pikachu.mp4' | relative_url }}"
+          poster="{{ '/Hand%20detection/origami_steps_grid.jpg' | relative_url }}"
+          autoplay
+          loop
+          muted
+          playsinline
+          class="showcase-video"
+        ></video>
+        <div class="showcase-badge-bar">
+          <span class="showcase-pill">✋ MediaPipe HandLandmarker</span>
+          <span class="showcase-pill">⚡ 6 Folding Steps (0–5 Fingers)</span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Project 2: Art & Explore — The Metropolitan Museum of Art -->
+  <div class="framer-project-block" id="project-art-explore">
+    <div class="framer-project-copy">
+      <h2 class="project-headline">Art &amp; Explore — The Met</h2>
+      <p class="project-lead">
+        An interactive museum gallery featuring the Top 10 master artists and 61 iconic artworks from The New York Metropolitan Museum of Art, complete with custom paper-cut artist docents, full-screen theatre, and MediaPipe hand gesture navigation.
+      </p>
+      <div class="project-cta-group">
+        <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="btn-pill-black" id="try-met-gallery-btn">Try the demo</a>
+        <a href="{{ '/Art-and-Explore.zip' | relative_url }}" class="btn-pill-outline" id="download-met-zip-btn">Download Local Package (.zip)</a>
+      </div>
+      <p class="project-helper-note">Move hand to control cursor · Touch thumb + index finger to click.</p>
+    </div>
+
+    <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="framer-showcase-card met-showcase-card" aria-label="Launch Art & Explore The Met Gallery">
+      <div class="met-avatar-parade-preview">
+        <img src="{{ '/Art%20%26%20Explore/assets/artists/van-gogh.png' | relative_url }}" alt="Vincent van Gogh" />
+        <img src="{{ '/Art%20%26%20Explore/assets/artists/monet.png' | relative_url }}" alt="Claude Monet" />
+        <img src="{{ '/Art%20%26%20Explore/assets/artists/rembrandt.png' | relative_url }}" alt="Rembrandt" />
+        <img src="{{ '/Art%20%26%20Explore/assets/artists/vermeer.png' | relative_url }}" alt="Johannes Vermeer" />
+        <img src="{{ '/Art%20%26%20Explore/assets/artists/hokusai.png' | relative_url }}" alt="Katsushika Hokusai" />
+      </div>
+      <div class="showcase-badge-bar">
+        <span class="showcase-pill">🏛️ 10 Met Masters · 61 Masterpieces</span>
+        <span class="showcase-pill">✋ Two-Finger Pinch Click</span>
+      </div>
+    </a>
   </div>
 </section>
 
-<section class="featured-work">
-  <h2>Selected Projects</h2>
-  <div class="projects-grid">
-    <a href="{{ '/Hand%20detection/' | relative_url }}" class="project-card">
-      <div class="project-image" style="background-image: url('{{ '/Hand%20detection/side-project-preview.png' | relative_url }}'); background-size: cover; background-position: center; background-color: #8c6239;"></div>
-      <div class="project-info">
-        <h3>Origami Hand Detection (6-Step Pikachu)</h3>
-        <p>Interactive 6-step origami folding experience controlled in real time by Google MediaPipe HandLandmarker finger gestures.</p>
+<!-- ====================================================================== -->
+<!-- WORK SECTION                                                           -->
+<!-- ====================================================================== -->
+<section class="framer-section" id="work">
+  <div class="section-header-row">
+    <h2 class="section-display-title">Work</h2>
+    <p class="section-subtitle">Selected product design, human-centered AI, and interactive case studies.</p>
+  </div>
+
+  <div class="framer-cards-grid">
+    <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="framer-work-card">
+      <div class="work-card-thumb" style="background: #f5f0e6;">
+        <img src="{{ '/Art%20%26%20Explore/assets/artists/van-gogh.png' | relative_url }}" alt="Art & Explore" class="work-thumb-contain" />
+      </div>
+      <div class="work-card-body">
+        <span class="work-card-tag">Interactive Cultural Experience · 2026</span>
+        <h3>Art &amp; Explore — The Met Fifth Avenue After Hours</h3>
+        <p>Reimagining museum curation with first-person artist storytelling, pigment filtering, and touchless hand-tracking navigation.</p>
       </div>
     </a>
-    <a href="{{ '/Hand%20detection/pokemon-trio.html' | relative_url }}" class="project-card">
-      <div class="project-image" style="background-image: url('{{ '/Hand%20detection/pikachu.jpg' | relative_url }}'); background-size: cover; background-position: center; background-color: #7c532d;"></div>
-      <div class="project-info">
-        <h3>Origami Pokémon Trio (Rock · Paper · Scissors)</h3>
-        <p>Real-time hand gesture recognition &amp; two-hand zoom prototype folding Pikachu, Raichu, and Eevee.</p>
+
+    <a href="{{ '/Hand%20detection/' | relative_url }}" class="framer-work-card">
+      <div class="work-card-thumb" style="background: #7c532d;">
+        <img src="{{ '/Hand%20detection/origami_steps_grid.jpg' | relative_url }}" alt="Origami Hand Detection" class="work-thumb-cover" />
+      </div>
+      <div class="work-card-body">
+        <span class="work-card-tag">Computer Vision &amp; Tangible UI · 2026</span>
+        <h3>6-Step Origami Pikachu &amp; Pokémon Trio</h3>
+        <p>Real-time finger counting and two-hand zoom gestures mapped to smooth 60fps canvas frame scrubbing.</p>
       </div>
     </a>
-    <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="project-card">
-      <div class="project-image" style="background-image: url('{{ '/Art%20%26%20Explore/assets/artists/van-gogh.png' | relative_url }}'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: #f4efe6;"></div>
-      <div class="project-info">
-        <h3>Art &amp; Explore — The Met Gallery</h3>
-        <p>Interactive museum gallery featuring the Top 10 artists &amp; 61 masterpieces from The Metropolitan Museum of Art with hand gesture navigation.</p>
-      </div>
-    </a>
+
     {% for project in site.projects limit:3 %}
-      <a href="{{ project.url | relative_url }}" class="project-card">
-        <div class="project-image" style="background-color: {{ project.color | default: '#f0f0f0' }}">
-           <!-- Placeholder for image -->
+      <a href="{{ project.url | relative_url }}" class="framer-work-card">
+        <div class="work-card-thumb" style="background-color: {{ project.color | default: '#f4f4f5' }};">
+          <div class="work-thumb-placeholder">{{ project.title }}</div>
         </div>
-        <div class="project-info">
+        <div class="work-card-body">
+          <span class="work-card-tag">UX Case Study</span>
           <h3>{{ project.title }}</h3>
           <p>{{ project.excerpt }}</p>
         </div>
       </a>
     {% endfor %}
+  </div>
+</section>
+
+<!-- ====================================================================== -->
+<!-- AI + UX RESEARCH SECTION                                               -->
+<!-- ====================================================================== -->
+<section class="framer-section" id="ai-ux-research">
+  <div class="section-header-row">
+    <h2 class="section-display-title">AI+UX Research</h2>
+    <p class="section-subtitle">Exploring natural gesture interfaces, multimodal AI feedback loops, and human-centered interaction patterns.</p>
+  </div>
+
+  <div class="research-list">
+    <article class="research-row">
+      <div class="research-meta">01 · Gesture &amp; Vision UI</div>
+      <div class="research-content">
+        <h3>Touchless Spatial Interaction with MediaPipe HandLandmarker</h3>
+        <p>Designing zero-latency cursor stabilization and palm-normalized two-finger pinch thresholds for reliable web clicking and 3D object manipulation without hardware controllers.</p>
+      </div>
+      <a href="{{ '/Hand%20detection/' | relative_url }}" class="btn-pill-outline">Explore Prototype →</a>
+    </article>
+
+    <article class="research-row">
+      <div class="research-meta">02 · Conversational Curation</div>
+      <div class="research-content">
+        <h3>Persona-Driven Museum Docents &amp; Visual Storytelling</h3>
+        <p>Transforming static museum catalog metadata into approachable first-person narratives and interactive pigment exploration for 61 public-domain masterpieces at The Met.</p>
+      </div>
+      <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="btn-pill-outline">Open Gallery →</a>
+    </article>
+  </div>
+</section>
+
+<!-- ====================================================================== -->
+<!-- ABOUT SECTION                                                          -->
+<!-- ====================================================================== -->
+<section class="framer-section about-framer-section" id="about">
+  <div class="about-grid">
+    <div>
+      <h2 class="section-display-title">About</h2>
+    </div>
+    <div class="about-copy">
+      <p class="about-lead">
+        Hello! I’m <strong>Tong Fang Sun</strong>, a UX Designer &amp; Creative Technologist focused on the intersection of minimalism, human-centered AI, and expressive interactive web experiences.
+      </p>
+      <p class="about-body">
+        I believe great design strips away unnecessary complexity until only intuitive, joyful interaction remains — whether crafting a clean product workflow, folding origami with hand gestures, or strolling through The Metropolitan Museum of Art after hours.
+      </p>
+      <div class="skills-pills">
+        <span>UX / Product Design</span>
+        <span>AI + UX Research</span>
+        <span>MediaPipe &amp; Creative Coding</span>
+        <span>Interactive Prototyping (Framer / Web)</span>
+        <span>Design Systems</span>
+      </div>
+    </div>
   </div>
 </section>

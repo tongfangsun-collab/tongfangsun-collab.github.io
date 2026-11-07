@@ -4,29 +4,53 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ page.title }} | {{ site.title }}</title>
+  <meta name="description" content="{{ site.description }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
 </head>
 <body>
   <header class="site-header">
-    <div class="container">
-      <a href="{{ '/' | relative_url }}" class="logo">{{ site.title }}</a>
-      <nav class="site-nav">
-        <a href="{{ '/Art%20%26%20Explore/' | relative_url }}">Art &amp; Explore</a>
-        <a href="{{ '/Hand%20detection/' | relative_url }}">Hand Detection</a>
-        <a href="{{ '/projects' | relative_url }}">Work</a>
-        <a href="{{ '/blog' | relative_url }}">Writing</a>
-        <a href="{{ '/about' | relative_url }}">About</a>
+    <div class="header-inner">
+      <a href="{{ '/' | relative_url }}" class="brand-logo" aria-label="{{ site.title }} Home">
+        <img src="{{ '/assets/images/logo-t.png' | relative_url }}" alt="T Logo" class="brand-logo-img" />
+      </a>
+      <nav class="site-nav" aria-label="Main Navigation">
+        <a href="{{ '/#work' | relative_url }}">Work</a>
+        <a href="{{ '/#ai-ux-research' | relative_url }}">AI+UX Research</a>
+        <a href="{{ '/#side-project' | relative_url }}">Side Project</a>
+        <a href="{{ '/#about' | relative_url }}">About</a>
       </nav>
+      <div class="header-cta">
+        <a href="{{ '/#contact' | relative_url }}" class="btn-pill-black btn-header-contact">Contact</a>
+      </div>
     </div>
   </header>
 
-  <main class="container">
+  <main class="main-container">
     {{ content }}
   </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      <p>&copy; {{ "now" | date: "%Y" }} {{ site.title }}. Built with Jekyll.</p>
+  <footer class="site-footer" id="contact">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <h2 class="footer-heading">Let’s build thoughtful AI + UX experiences together.</h2>
+          <p class="footer-subtext">Available for UX design, AI interaction research, and creative technology collaborations.</p>
+        </div>
+        <div class="footer-actions">
+          <a href="mailto:tongfangsun@gmail.com" class="btn-pill-white">Get in Touch →</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; {{ "now" | date: "%Y" }} {{ site.title }}. All rights reserved.</span>
+        <div class="footer-links">
+          <a href="{{ '/Art%20%26%20Explore/' | relative_url }}">Art &amp; Explore</a>
+          <a href="{{ '/Hand%20detection/' | relative_url }}">Origami Hand Detection</a>
+          <a href="https://github.com/tongfangsun-collab/tongfangsun.github.io" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </div>
     </div>
   </footer>
 </body>
