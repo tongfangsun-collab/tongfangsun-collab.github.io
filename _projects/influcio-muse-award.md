@@ -9,11 +9,11 @@ title: Influcio AI Marketing Platform — 2025 MUSE Design Awards Gold Winner
     <div class="muse-award-pill-row">
       <span class="award-gold-pill">🏆 2025 Muse Gold Winner</span>
       <span class="award-cat-pill">Product Design — UX / UI / IxD</span>
-      <span class="award-role-pill">Non-Profit Design Mentor · Design Director</span>
+      <span class="award-role-pill">Design Mentor</span>
     </div>
     <h1 class="muse-detail-title">Influcio AI Marketing Platform</h1>
     <p class="muse-detail-lead">
-      A non-profit design mentor project: an AI-driven influencer marketing ecosystem designed to bridge brands and creators authentically, intelligently, and scalably through user-centered UX and responsive AI.
+      A college mentorship project supporting design school students with their entrepreneurship venture: building a human-centered, AI-enhanced influencer marketing platform.
     </p>
 
     <div class="muse-external-actions">
@@ -43,21 +43,17 @@ title: Influcio AI Marketing Platform — 2025 MUSE Design Awards Gold Winner
         <dt>Award</dt>
         <dd>2025 Muse Gold Winner</dd>
         <dt>Project Type</dt>
-        <dd>Non-Profit Design Mentor Project</dd>
+        <dd>College Student Entrepreneurship Mentorship</dd>
         <dt>Category</dt>
         <dd>Product Design — UX / UI / IxD</dd>
         <dt>Role</dt>
-        <dd>Design Director / Design Mentor (Tongfang Sun)</dd>
-        <dt>Design Lead</dt>
+        <dd>Design Mentor (Tongfang Sun)</dd>
+        <dt>Student Design Lead</dt>
         <dd>Amelia Yang Yang</dd>
-        <dt>Product Founder</dt>
+        <dt>Student Founder</dt>
         <dd>Ally Liu</dd>
         <dt>Live Website</dt>
         <dd><a href="https://influcio.io/" target="_blank" rel="noopener noreferrer">influcio.io ↗</a></dd>
-        <dt>Scale</dt>
-        <dd>2.8M+ Influencers · Global Reach</dd>
-        <dt>Key Clients</dt>
-        <dd>Temu, Luma.ai, Shopline, Collov.ai, Brix.ai</dd>
       </dl>
     </div>
 
@@ -70,22 +66,22 @@ title: Influcio AI Marketing Platform — 2025 MUSE Design Awards Gold Winner
         Our core innovations include <strong>AI-powered campaign creation</strong>, where our proprietary engine analyzes product traits, audience trends, and influencer profiles to recommend optimized strategies; <strong>intelligent influencer matching</strong> that uses machine learning to align interests, engagement, and brand values; and <strong>ROI estimation models</strong> that forecast reach and performance before campaigns launch. We support multi-channel (Instagram, TikTok, and more) activation within one streamlined workflow.
       </p>
 
-      <h2>Design Director Leadership</h2>
+      <h2>Design Mentorship &amp; Guidance</h2>
       <p>
-        As Design Director, Tongfang Sun led the design team through a user-centered, AI-driven product development process:
+        As a design mentor, Tongfang Sun guided the student founding team through a user-centered, AI-driven product development process for their college entrepreneurship venture:
       </p>
       <ul>
         <li>
-          <strong>Qualitative User Research</strong>: Applied design thinking to uncover user needs by interviewing over <strong>50 influencers across Asia, Europe, and America</strong> on various social media platforms.
+          <strong>Qualitative User Research Mentorship</strong>: Guided students in applying design thinking to uncover creator needs by interviewing over <strong>50 influencers across Asia, Europe, and America</strong> on various social media platforms.
         </li>
         <li>
-          <strong>Cross-Functional AI Co-Creation</strong>: Facilitated deep collaboration with machine learning engineers and data scientists to co-create AI-powered features, ensuring UX research insights informed model behavior and interaction design.
+          <strong>Cross-Functional AI Co-Creation</strong>: Mentored students in collaborating with machine learning engineers and data scientists to co-create AI-powered features, ensuring UX research insights directly informed model behavior and interaction design.
         </li>
         <li>
-          <strong>Business &amp; User Alignment</strong>: Partnered with the marketing team to redefine business goals and align them with verified user value.
+          <strong>Entrepreneurship &amp; Product Strategy</strong>: Advised student founders on defining core product value propositions, aligning business strategy with verified user needs.
         </li>
         <li>
-          <strong>Modular Design System &amp; Responsive AI</strong>: Integrated a scalable, token-based design system and introduced the concept of <em>responsive AI</em> to enable adaptive, personalized creator experiences.
+          <strong>Modular Design System &amp; Responsive AI</strong>: Mentored students in establishing a scalable, token-based design system and introducing the concept of <em>responsive AI</em> to enable adaptive, personalized creator experiences.
         </li>
       </ul>
 
@@ -127,7 +123,7 @@ title: Influcio AI Marketing Platform — 2025 MUSE Design Awards Gold Winner
         />
         <figcaption>
           <strong>02 / Multi-Channel Campaign Execution &amp; Wallet Management</strong>
-          <p>End-to-end milestone workflow (e.g., Temu campaign affiliation) paired with real-time creator earnings, payout timelines, and brand leaderboards.</p>
+          <p>End-to-end campaign milestone workflow paired with real-time creator earnings, payout timelines, and performance tracking.</p>
         </figcaption>
       </figure>
 
