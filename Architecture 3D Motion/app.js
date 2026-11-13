@@ -1027,8 +1027,25 @@
     if (btn) btn.classList.toggle('active', isAutoOrbit);
   }
 
+  let currentCameraPreset = 'axo';
+
+  function updatePresetButtonsUI(activePreset) {
+    currentCameraPreset = activePreset;
+    const map = {
+      axo: document.getElementById('btn-view-axo'),
+      front: document.getElementById('btn-view-front'),
+      elevation: document.getElementById('btn-view-elevation'),
+      top: document.getElementById('btn-view-top')
+    };
+    Object.keys(map).forEach(k => {
+      if (map[k]) map[k].classList.toggle('active', k === activePreset);
+    });
+  }
+
   function setCameraPreset(preset) {
     if (!controls || !camera) return;
+
+    updatePresetButtonsUI(preset);
 
     const centerH = THREE.MathUtils.lerp(4.2, 14.5, currentExplosion);
     if (preset === 'axo') {
@@ -1060,7 +1077,8 @@
 
   // =========================================================================
   // MediaPipe Holistic Landmarker & Hand Landmarker Gesture Control
-  // "Hands Close = Assemble (0%)" | "Hands Open = Exploded (100%)"
+  // 1) "Hands Close = Assemble (0%)" | "Hands Open = Exploded (100%)"
+  // 2) "Hand Shift Left -> Right = Switch Camera from Waterfront to Elevation"
   // =========================================================================
   let handControlEnabled = true;
   let mpVision = null;
@@ -1068,6 +1086,7 @@
   let handLandmarker = null;
   let lastVideoTime = -1;
   let smoothedHandExplosion = 0.0;
+  let smoothedHandPanX = 0.5;
   let hasHandLock = false;
 
   const webcamVideo = document.getElementById('webcam-video');
@@ -1164,6 +1183,53 @@
     }
 
     return computeSingleHandOpenness(hands[0]);
+  }
+
+  /**
+   * Computes mirrored visual horizontal hand position in [0.0, 1.0]:
+   *  - 0.0 = Hand on the LEFT side of the mirrored preview -> "Waterfront" camera view
+   *  - 1.0 = Hand on the RIGHT side of the mirrored preview -> "Elevation" camera view
+   */
+  function computeVisualHandX(hands) {
+    if (!hands || hands.length === 0) return 0.5;
+    let sumX = 0;
+    for (let i = 0; i < hands.length; i++) {
+      const h = hands[i];
+      const palmX = (h[0].x + h[5].x + h[9].x + h[17].x) * 0.25;
+      // Because webcam is mirrored horizontally via scaleX(-1), visual X from left to right is (1 - rawX)
+      sumX += (1.0 - palmX);
+    }
+    return sumX / hands.length;
+  }
+
+  /**
+   * Smoothly interpolates the 3D camera along the circular arc from Waterfront (t = 0)
+   * to Axonometric (t = 0.5) to Side Cutaway Elevation (t = 1.0) as the user shifts their hand Left -> Right.
+   */
+  function applyHandHorizontalView(panT) {
+    if (!camera || !controls || selectedLayerId) return;
+
+    const clampedT = THREE.MathUtils.clamp(panT, 0.0, 1.0);
+    // Angle 0 = Waterfront (0, y, 56); Angle PI/2 = Elevation (58, y, 0)
+    const theta = clampedT * (Math.PI * 0.5);
+    const radius = THREE.MathUtils.lerp(56, 58, clampedT);
+    const camX = Math.sin(theta) * radius;
+    const camZ = Math.cos(theta) * radius;
+    // Slight mid-arc height lift passing through axonometric angle
+    const arcBoost = Math.sin(clampedT * Math.PI) * 8.0;
+    const camY = THREE.MathUtils.lerp(10, 9, clampedT) + currentExplosion * 10 + arcBoost;
+    const centerH = THREE.MathUtils.lerp(4.2, 14.5, currentExplosion);
+
+    camera.position.lerp(new THREE.Vector3(camX, camY, camZ), 0.18);
+    controls.target.lerp(new THREE.Vector3(0, centerH, 0), 0.18);
+
+    if (clampedT <= 0.35) {
+      updatePresetButtonsUI('front');
+    } else if (clampedT >= 0.65) {
+      updatePresetButtonsUI('elevation');
+    } else {
+      updatePresetButtonsUI('axo');
+    }
   }
 
   function drawHandLandmarks(hands, poseLandmarks, opennessVal) {
@@ -1309,7 +1375,7 @@
       webcamVideo.srcObject = stream;
       if (handCamDot) handCamDot.classList.add('ready');
       if (hudStatusDot) hudStatusDot.classList.add('ready');
-      if (gestureLabel) gestureLabel.textContent = 'Show Hand: Close ✊ / Open 🖐️';
+      if (gestureLabel) gestureLabel.textContent = 'Show Hand: ✊/🖐️ & Shift Left/Right';
     } catch (err) {
       if (gestureLabel) gestureLabel.textContent = 'Click HUD to Enable Camera';
       if (handHudCard) {
@@ -1361,15 +1427,21 @@
 
     if (detectedHands.length > 0) {
       const rawOpenness = evaluateHandsExplosion(detectedHands);
+      const visualX = computeVisualHandX(detectedHands);
+      // Map visualX from [0.22, 0.78] -> [0.0 (Waterfront), 1.0 (Elevation)]
+      const rawPanT = THREE.MathUtils.clamp((visualX - 0.22) / 0.56, 0.0, 1.0);
+
       if (rawOpenness !== null) {
         if (!hasHandLock) {
           smoothedHandExplosion = rawOpenness;
+          smoothedHandPanX = rawPanT;
           hasHandLock = true;
         } else {
           smoothedHandExplosion += (rawOpenness - smoothedHandExplosion) * 0.22;
+          smoothedHandPanX += (rawPanT - smoothedHandPanX) * 0.18;
         }
 
-        // Snap cleanly to 0.0 (Assembled) when hands are closed and 1.0 (Exploded) when hands are wide open
+        // 1. Vertical Explosion (Close Hand = Assemble 0%, Open Hand = Explode 100%)
         let mappedTarget = smoothedHandExplosion;
         if (mappedTarget < 0.08) mappedTarget = 0.0;
         else if (mappedTarget > 0.90) mappedTarget = 1.0;
@@ -1378,18 +1450,25 @@
         if (slider) slider.value = Math.round(targetExplosion * 100);
         updateAssemblyUI(targetExplosion);
 
+        // 2. Horizontal Camera Shift (Left = Waterfront, Right = Elevation)
+        let mappedPan = smoothedHandPanX;
+        if (mappedPan < 0.15) mappedPan = 0.0;
+        else if (mappedPan > 0.85) mappedPan = 1.0;
+        applyHandHorizontalView(mappedPan);
+
+        const viewName = mappedPan <= 0.35 ? 'Waterfront' : (mappedPan >= 0.65 ? 'Elevation' : 'Axonometric');
         const pct = Math.round(targetExplosion * 100);
         if (gestureMeterFill) gestureMeterFill.style.width = `${pct}%`;
 
         if (targetExplosion <= 0.12) {
           if (gestureIcon) gestureIcon.textContent = '✊';
-          if (gestureLabel) gestureLabel.textContent = `Hands Closed · Assemble (${pct}%)`;
+          if (gestureLabel) gestureLabel.textContent = `Assemble (${pct}%) · ${viewName}`;
         } else if (targetExplosion >= 0.85) {
           if (gestureIcon) gestureIcon.textContent = '🖐️';
-          if (gestureLabel) gestureLabel.textContent = `Hands Open · Exploded (${pct}%)`;
+          if (gestureLabel) gestureLabel.textContent = `Exploded (${pct}%) · ${viewName}`;
         } else {
           if (gestureIcon) gestureIcon.textContent = '🙌';
-          if (gestureLabel) gestureLabel.textContent = `Hand Opening · ${pct}% Exploded`;
+          if (gestureLabel) gestureLabel.textContent = `${pct}% Exploded · ${viewName}`;
         }
 
         drawHandLandmarks(detectedHands, detectedPose, targetExplosion);
@@ -1398,7 +1477,7 @@
       hasHandLock = false;
       drawHandLandmarks([], detectedPose, targetExplosion);
       if (webcamVideo.srcObject && gestureLabel) {
-        gestureLabel.textContent = 'Raise Hand: ✊ Assemble · 🖐️ Explode';
+        gestureLabel.textContent = '✊/🖐️ Assemble/Explode · ↔ Waterfront/Elevation';
       }
     }
   }
