@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ModRetro Tetris — Native Game Boy Color (.gbc) | Tong Fang Sun</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0c0e13;
+      --surface: #141821;
+      --border: #252b3b;
+      --text: #f4f4f6;
+      --muted: #98a2b3;
+      --shell-bg: #ea580c;
+      --shell-hi: #fb923c;
+      --shell-lo: #9a3412;
+      --shell-text: rgba(255, 255, 255, 0.85);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(12, 14, 19, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .top-bar-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .back-link {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0.85;
+      transition: opacity 0.18s ease;
+    }
+    .back-link:hover { opacity: 1; }
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+    }
+    .pill-btn:hover { transform: translateY(-1px); border-color: #4b5563; }
+    .pill-btn.primary {
+      background: #ffffff;
+      color: #0b0d11;
+      border-color: #ffffff;
+    }
+    .pill-btn.primary:hover { background: #e5e7eb; }
+
+    /* Main Stage */
+    .stage {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 40px 28px 72px;
+      display: grid;
+      grid-template-columns: minmax(320px, 410px) 1fr;
+      gap: 52px;
+      align-items: start;
+    }
+
+    /* =====================================================================
+       MODRETRO CHROMATIC HANDHELD SHELL
+       ===================================================================== */
+    .console-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .chromatic-shell {
+      width: 100%;
+      max-width: 392px;
+      background: linear-gradient(160deg, var(--shell-hi) 0%, var(--shell-bg) 38%, var(--shell-lo) 100%);
+      border-radius: 26px 26px 64px 26px; /* Iconic asymmetrical Game Boy / Chromatic corner */
+      padding: 20px 22px 30px;
+      box-shadow:
+        0 30px 70px rgba(0, 0, 0, 0.55),
+        inset 0 2px 2px rgba(255, 255, 255, 0.35),
+        inset 0 -4px 10px rgba(0, 0, 0, 0.32);
+      position: relative;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    .screen-bezel {
+      background: #0d0f14;
+      border-radius: 16px 16px 34px 16px;
+      padding: 16px 18px 18px;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.2);
+      position: relative;
+    }
+
+    .bezel-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: #7c8598;
+    }
+    .power-led-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .power-led {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+    }
+
+    .lcd-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 160 / 144;
+      background: #0f141e;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 2px #050608;
+    }
+    #gbc-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+    .lcd-grid-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.22;
+      background-image:
+        linear-gradient(to right, rgba(0,0,0,0.65) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,0.65) 1px, transparent 1px);
+      background-size: calc(100% / 160) calc(100% / 144);
+    }
+    .lcd-grid-overlay.off { opacity: 0; }
+
+    .bezel-brand {
+      margin-top: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .chromatic-wordmark {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: #cbd5e1;
+    }
+    .chromatic-stripes {
+      display: flex;
+      gap: 4px;
+    }
+    .chromatic-stripes span {
+      width: 16px;
+      height: 5px;
+      border-radius: 2px;
+    }
+
+    /* Controls Deck */
+    .controls-deck {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 6px;
+    }
+
+    /* Tactile D-Pad */
+    .dpad {
+      position: relative;
+      width: 108px;
+      height: 108px;
+    }
+    .dpad-btn {
+      position: absolute;
+      background: #1b1e26;
+      border: none;
+      color: #7c8496;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #0b0d12, inset 0 1px 1px rgba(255,255,255,0.12);
+      transition: transform 0.06s ease, box-shadow 0.06s ease;
+    }
+    .dpad-btn:active, .dpad-btn.active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #0b0d12;
+      background: #272c38;
+      color: #ffffff;
+    }
+    .dpad-up    { top: 0; left: 36px; width: 36px; height: 38px; border-radius: 7px 7px 0 0; }
+    .dpad-down  { bottom: 0; left: 36px; width: 36px; height: 38px; border-radius: 0 0 7px 7px; }
+    .dpad-left  { top: 36px; left: 0; width: 38px; height: 36px; border-radius: 7px 0 0 7px; }
+    .dpad-right { top: 36px; right: 0; width: 38px; height: 36px; border-radius: 0 7px 7px 0; }
+    .dpad-center {
+      position: absolute;
+      top: 36px; left: 36px;
+      width: 36px; height: 36px;
+      background: #1b1e26;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .dpad-center::after {
+      content: "";
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #2c3140, #12141a);
+    }
+
+    /* A / B Face Buttons */
+    .ab-cluster {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      transform: rotate(-22deg);
+      margin-right: 4px;
+    }
+    .ab-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .ab-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(145deg, #2b303d, #151820);
+      color: #e5e7eb;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 5px 0 #090b0f, 0 8px 14px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.2);
+      transition: transform 0.06s ease, box-shadow 0.06s ease;
+    }
+    .ab-btn:active, .ab-btn.active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #090b0f;
+    }
+    .ab-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--shell-text);
+      letter-spacing: 0.08em;
+    }
+
+    /* Start / Select Pills */
+    .sys-row {
+      margin-top: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+    }
+    .sys-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .sys-btn {
+      width: 46px;
+      height: 14px;
+      border-radius: 999px;
+      border: none;
+      background: #1b1e26;
+      cursor: pointer;
+      transform: rotate(-20deg);
+      box-shadow: 0 3px 0 #0a0c10, inset 0 1px 1px rgba(255,255,255,0.14);
+    }
+    .sys-btn:active, .sys-btn.active {
+      transform: rotate(-20deg) translateY(2px);
+      box-shadow: 0 1px 0 #0a0c10;
+    }
+    .sys-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--shell-text);
+    }
+
+    /* Speaker grille */
+    .speaker-grille {
+      position: absolute;
+      right: 26px;
+      bottom: 22px;
+      display: flex;
+      gap: 5px;
+      transform: rotate(-26deg);
+    }
+    .speaker-grille span {
+      width: 4px;
+      height: 26px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.34);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
+    }
+
+    /* Quick Console Toolbar beneath handheld */
+    .console-toolbar {
+      width: 100%;
+      max-width: 392px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .toolbar-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .swatch-group {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .shell-swatch {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .shell-swatch:hover { transform: scale(1.12); }
+    .shell-swatch.active { border-color: #ffffff; transform: scale(1.12); }
+
+    .mini-chip {
+      background: #0c0e13;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .mini-chip.active {
+      background: #ffffff;
+      color: #0c0e13;
+      border-color: #ffffff;
+    }
+
+    /* =====================================================================
+       RIGHT SIDE: HARDWARE INFO, DOWNLOAD & CONTROLS
+       ===================================================================== */
+    .info-column {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: rgba(234, 88, 12, 0.14);
+      color: #fb923c;
+      border: 1px solid rgba(251, 146, 60, 0.3);
+    }
+    .badge.cyan {
+      background: rgba(0, 229, 255, 0.12);
+      color: #22d3ee;
+      border-color: rgba(34, 211, 238, 0.3);
+    }
+    .badge.green {
+      background: rgba(16, 185, 129, 0.12);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.3);
+    }
+
+    h1.hero-title {
+      font-size: 2.65rem;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin: 0;
+    }
+    .hero-desc {
+      margin: 0;
+      font-size: 1.04rem;
+      line-height: 1.65;
+      color: var(--muted);
+      max-width: 580px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px 24px;
+    }
+    .card h2 {
+      margin: 0 0 14px 0;
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .spec-item {
+      background: #0c0e13;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .spec-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+    .spec-val {
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .controls-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .controls-table td {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .controls-table tr:last-child td { border-bottom: none; }
+    .kbd {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: #0c0e13;
+      border: 1px solid #374151;
+      color: #f3f4f6;
+      margin-right: 4px;
+    }
+
+    .steps-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.65;
+    }
+    .steps-list li + li { margin-top: 8px; }
+    .steps-list strong { color: var(--text); }
+    .steps-list code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: #0c0e13;
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: #22d3ee;
+    }
+
+    @media (max-width: 900px) {
+      .stage {
+        grid-template-columns: 1fr;
+        gap: 36px;
+        padding: 24px 18px 56px;
+      }
+      h1.hero-title { font-size: 2.1rem; }
+      .specs-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <a href="../" class="back-link">← Back to Portfolio</a>
+      <div class="top-actions">
+        <a href="./rom/modretro-tetris.gbc" download="modretro-tetris.gbc" class="pill-btn primary">
+          ⬇ Download .gbc ROM (32 KB)
+        </a>
+        <a href="./src/main.c" target="_blank" rel="noopener noreferrer" class="pill-btn">
+          View GBDK C Source ↗
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="stage">
+    <!-- LEFT: PLAYABLE MODRETRO CHROMATIC CONSOLE -->
+    <section class="console-column" aria-label="Playable ModRetro Chromatic Console">
+      <div class="chromatic-shell" id="chromatic-shell">
+        <div class="screen-bezel">
+          <div class="bezel-top">
+            <span class="power-led-wrap"><span class="power-led"></span>POWER</span>
+            <span>160×144 GBC LCD</span>
+          </div>
+
+          <div class="lcd-frame">
+            <canvas id="gbc-canvas" width="160" height="144"></canvas>
+            <div class="lcd-grid-overlay" id="lcd-grid"></div>
+          </div>
+
+          <div class="bezel-brand">
+            <span class="chromatic-wordmark">CHROMATIC</span>
+            <div class="chromatic-stripes" aria-hidden="true">
+              <span style="background:#ff3b5c"></span>
+              <span style="background:#ff7a00"></span>
+              <span style="background:#ffd600"></span>
+              <span style="background:#00e676"></span>
+              <span style="background:#00e5ff"></span>
+              <span style="background:#ce42ff"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls-deck">
+          <div class="dpad" aria-label="D-Pad">
+            <button class="dpad-btn dpad-up" data-btn="up" aria-label="Hard Drop">▲</button>
+            <button class="dpad-btn dpad-down" data-btn="down" aria-label="Soft Drop">▼</button>
+            <button class="dpad-btn dpad-left" data-btn="left" aria-label="Move Left">◀</button>
+            <button class="dpad-btn dpad-right" data-btn="right" aria-label="Move Right">▶</button>
+            <div class="dpad-center"></div>
+          </div>
+
+          <div class="ab-cluster">
+            <div class="ab-wrap">
+              <button class="ab-btn" data-btn="b" aria-label="Rotate CCW">B</button>
+              <span class="ab-label">B</span>
+            </div>
+            <div class="ab-wrap" style="margin-top:-22px;">
+              <button class="ab-btn" data-btn="a" aria-label="Rotate CW">A</button>
+              <span class="ab-label">A</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sys-row">
+          <div class="sys-wrap">
+            <button class="sys-btn" data-btn="select" aria-label="Hold Piece"></button>
+            <span class="sys-label">SELECT</span>
+          </div>
+          <div class="sys-wrap">
+            <button class="sys-btn" data-btn="start" aria-label="Start / Pause"></button>
+            <span class="sys-label">START</span>
+          </div>
+        </div>
+
+        <div class="speaker-grille" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <!-- Shell Colorway + LCD Mode + Audio Toolbar -->
+      <div class="console-toolbar">
+        <div class="toolbar-row">
+          <span>Shell</span>
+          <div class="swatch-group" id="shell-swatches">
+            <button class="shell-swatch active" title="Inferno Orange" style="background:#ea580c" data-shell="inferno"></button>
+            <button class="shell-swatch" title="Midnight Graphite" style="background:#1f2430" data-shell="midnight"></button>
+            <button class="shell-swatch" title="Cloud White" style="background:#e5e7eb" data-shell="cloud"></button>
+            <button class="shell-swatch" title="Wave Teal" style="background:#0891b2" data-shell="wave"></button>
+            <button class="shell-swatch" title="Volt Yellow" style="background:#eab308" data-shell="volt"></button>
+            <button class="shell-swatch" title="Leaf Green" style="background:#16a34a" data-shell="leaf"></button>
+          </div>
+        </div>
+        <div class="toolbar-row">
+          <span>LCD Mode</span>
+          <div class="swatch-group" id="lcd-modes">
+            <button class="mini-chip active" data-lcd="gbc">GBC Color</button>
+            <button class="mini-chip" data-lcd="dmg1">DMG-1</button>
+            <button class="mini-chip" data-lcd="dmg2">DMG-2</button>
+            <button class="mini-chip" id="btn-grid">Grid: ON</button>
+          </div>
+        </div>
+        <div class="toolbar-row">
+          <span>Chiptune Audio</span>
+          <div class="swatch-group">
+            <button class="mini-chip active" id="btn-sfx">SFX: ON</button>
+            <button class="mini-chip active" id="btn-bgm">BGM: ON</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: DOCUMENTATION & MODRETRO HARDWARE GUIDE -->
+    <section class="info-column">
+      <div class="badge-row">
+        <span class="badge">ModRetro Chromatic Ready</span>
+        <span class="badge cyan">Game Boy Color (.gbc) · 32 KB</span>
+        <span class="badge green">Hardware Checksums Verified</span>
+      </div>
+
+      <h1 class="hero-title">ModRetro Tetris</h1>
+      <p class="hero-desc">
+        A native 8-bit <strong>Game Boy Color / ModRetro Chromatic</strong> cartridge ROM written in C with GBDK-2020 — compiled to a 32 KB <code>.gbc</code> binary with all 8 GBC hardware background palettes, ghost piece, 7-bag randomizer, hold swap, wall kicks, and 4-channel APU chiptune audio. Play it live on the interactive Chromatic handheld or flash the ROM straight onto real hardware.
+      </p>
+
+      <!-- Hardware Specs -->
+      <div class="card">
+        <h2>Cartridge Hardware Specification</h2>
+        <div class="specs-grid">
+          <div class="spec-item">
+            <div class="spec-label">Target Hardware</div>
+            <div class="spec-val">ModRetro Chromatic · GBC · DMG</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">ROM Format &amp; Size</div>
+            <div class="spec-val">modretro-tetris.gbc · 32 KB</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Display &amp; Palettes</div>
+            <div class="spec-val">160×144 px · 8 GBC BG Palettes</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Cartridge Header</div>
+            <div class="spec-val">0x80 Dual CGB+DMG · ROM-Only</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="card">
+        <h2>Controls (Keyboard &amp; Chromatic Hardware)</h2>
+        <table class="controls-table">
+          <tr>
+            <td><strong>Move Left / Right</strong></td>
+            <td><span class="kbd">←</span><span class="kbd">→</span> or <span class="kbd">A</span><span class="kbd">D</span> · D-Pad ◀ ▶</td>
+          </tr>
+          <tr>
+            <td><strong>Soft Drop / Hard Drop</strong></td>
+            <td><span class="kbd">↓</span> Soft · <span class="kbd">↑</span> or <span class="kbd">Space</span> Hard Drop</td>
+          </tr>
+          <tr>
+            <td><strong>Rotate CW / CCW</strong></td>
+            <td><span class="kbd">X</span> / <span class="kbd">K</span> (A) · <span class="kbd">Z</span> / <span class="kbd">J</span> (B)</td>
+          </tr>
+          <tr>
+            <td><strong>Hold Piece</strong></td>
+            <td><span class="kbd">Shift</span> / <span class="kbd">C</span> · SELECT button</td>
+          </tr>
+          <tr>
+            <td><strong>Start / Pause</strong></td>
+            <td><span class="kbd">Enter</span> · START button</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Running on Real ModRetro Chromatic -->
+      <div class="card">
+        <h2>How to Run on a ModRetro Chromatic</h2>
+        <ol class="steps-list">
+          <li>Download the uncompressed 32 KB ROM: <strong><a href="./rom/modretro-tetris.gbc" download style="color:#fb923c;">modretro-tetris.gbc</a></strong>.</li>
+          <li><strong>Via Flashcart (EverDrive-GB X7 / EZ-Flash Jr.):</strong> Copy <code>modretro-tetris.gbc</code> directly onto your FAT32 microSD card (uncompressed) and boot it on your ModRetro Chromatic.</li>
+          <li><strong>Via Dedicated GBC Cartridge:</strong> Flash <code>modretro-tetris.gbc</code> onto any 32 KB+ reflashable Game Boy Color cart using <strong>GBxCart RW</strong> or <strong>Joey Jr.</strong>, then insert into your Chromatic.</li>
+          <li><strong>Via Desktop / Mobile Emulator:</strong> Open <code>modretro-tetris.gbc</code> directly in SameBoy, mGBA, BGB, OpenEmu, or Delta.</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+<script>
+(() => {
+  // =========================================================================
+  // 1. EXACT 160x144 GBC PIXEL-FOR-PIXEL RENDERER & ENGINE
+  //    Mirrors modretro-tetris/src/main.c + tiles.h
+  // =========================================================================
+  const canvas = document.getElementById('gbc-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+
+  const BOARD_W = 10;
+  const BOARD_H = 17;
+  const WELL_X = 1;
+  const WELL_Y = 0;
+
+  // 8 Hardware GBC Palettes [bg, shadow, main, highlight]
+  const GBC_PALETTES = [
+    ['#101828', '#485878', '#a0b8d8', '#ffffff'], // 0: UI Chrome
+    ['#101828', '#0078a0', '#00e0ff', '#b0ffff'], // 1: I Cyan
+    ['#101828', '#a07000', '#ffd010', '#ffffa0'], // 2: O Gold
+    ['#101828', '#6820a0', '#c850ff', '#f0b8ff'], // 3: T Purple
+    ['#101828', '#187838', '#20e870', '#b0ffc8'], // 4: S Emerald
+    ['#101828', '#901828', '#ff3858', '#ffb0c0'], // 5: Z Crimson
+    ['#101828', '#1848a0', '#3888ff', '#b0d0ff'], // 6: J Cobalt
+    ['#101828', '#a04000', '#ff8010', '#ffd098']  // 7: L ModRetro Orange
+  ];
+
+  const DMG1_PAL = ['#0f380f', '#306230', '#8bac0f', '#9bbc0f'];
+  const DMG2_PAL = ['#181c18', '#4c544c', '#98a098', '#d8e0d8'];
+
+  let lcdMode = 'gbc';
+  function getPal(idx) {
+    if (lcdMode === 'dmg1') return DMG1_PAL;
+    if (lcdMode === 'dmg2') return DMG2_PAL;
+    return GBC_PALETTES[idx % 8];
+  }
+
+  // Exact 1bpp pixel font matching tiles.h
+  const FONT = {
+    '0':[0x3C,0x66,0x6E,0x76,0x66,0x66,0x3C,0],'1':[0x18,0x38,0x18,0x18,0x18,0x18,0x7E,0],
+    '2':[0x3C,0x66,0x06,0x1C,0x30,0x60,0x7E,0],'3':[0x3C,0x66,0x06,0x1C,0x06,0x66,0x3C,0],
+    '4':[0x0C,0x1C,0x3C,0x6C,0x7E,0x0C,0x0C,0],'5':[0x7E,0x60,0x7C,0x06,0x06,0x66,0x3C,0],
+    '6':[0x3C,0x60,0x7C,0x66,0x66,0x66,0x3C,0],'7':[0x7E,0x66,0x0C,0x18,0x18,0x18,0x18,0],
+    '8':[0x3C,0x66,0x66,0x3C,0x66,0x66,0x3C,0],'9':[0x3C,0x66,0x66,0x3E,0x06,0x0C,0x38,0],
+    'A':[0x3C,0x66,0x66,0x7E,0x66,0x66,0x66,0],'B':[0x7C,0x66,0x66,0x7C,0x66,0x66,0x7C,0],
+    'C':[0x3C,0x66,0x60,0x60,0x60,0x66,0x3C,0],'D':[0x78,0x6C,0x66,0x66,0x66,0x6C,0x78,0],
+    'E':[0x7E,0x60,0x60,0x78,0x60,0x60,0x7E,0],'F':[0x7E,0x60,0x60,0x78,0x60,0x60,0x60,0],
+    'G':[0x3C,0x66,0x60,0x6E,0x66,0x66,0x3E,0],'H':[0x66,0x66,0x66,0x7E,0x66,0x66,0x66,0],
+    'I':[0x3C,0x18,0x18,0x18,0x18,0x18,0x3C,0],'J':[0x1E,0x0C,0x0C,0x0C,0x6C,0x6C,0x38,0],
+    'K':[0x66,0x6C,0x78,0x70,0x78,0x6C,0x66,0],'L':[0x60,0x60,0x60,0x60,0x60,0x60,0x7E,0],
+    'M':[0x63,0x77,0x7F,0x6B,0x63,0x63,0x63,0],'N':[0x66,0x76,0x7E,0x7E,0x6E,0x66,0x66,0],
+    'O':[0x3C,0x66,0x66,0x66,0x66,0x66,0x3C,0],'P':[0x7C,0x66,0x66,0x7C,0x60,0x60,0x60,0],
+    'Q':[0x3C,0x66,0x66,0x66,0x6A,0x6C,0x36,0],'R':[0x7C,0x66,0x66,0x7C,0x6C,0x66,0x66,0],
+    'S':[0x3C,0x66,0x60,0x3C,0x06,0x66,0x3C,0],'T':[0x7E,0x18,0x18,0x18,0x18,0x18,0x18,0],
+    'U':[0x66,0x66,0x66,0x66,0x66,0x66,0x3C,0],'V':[0x66,0x66,0x66,0x66,0x66,0x3C,0x18,0],
+    'W':[0x63,0x63,0x63,0x6B,0x7F,0x77,0x63,0],'X':[0x66,0x66,0x3C,0x18,0x3C,0x66,0x66,0],
+    'Y':[0x66,0x66,0x66,0x3C,0x18,0x18,0x18,0],'Z':[0x7E,0x06,0x0C,0x18,0x30,0x60,0x7E,0],
+    ':':[0x00,0x18,0x18,0x00,0x18,0x18,0x00,0],'-':[0x00,0x00,0x00,0x7E,0x00,0x00,0x00,0],
+    '!':[0x18,0x18,0x18,0x18,0x18,0x00,0x18,0],' ':[0,0,0,0,0,0,0,0]
+  };
+
+  const SHAPES = [
+    [[[0,1],[1,1],[2,1],[3,1]],[[2,0],[2,1],[2,2],[2,3]],[[0,2],[1,2],[2,2],[3,2]],[[1,0],[1,1],[1,2],[1,3]]], // I
+    [[[1,0],[2,0],[1,1],[2,1]],[[1,0],[2,0],[1,1],[2,1]],[[1,0],[2,0],[1,1],[2,1]],[[1,0],[2,0],[1,1],[2,1]]], // O
+    [[[1,0],[0,1],[1,1],[2,1]],[[1,0],[1,1],[2,1],[1,2]],[[0,1],[1,1],[2,1],[1,2]],[[1,0],[0,1],[1,1],[1,2]]], // T
+    [[[1,0],[2,0],[0,1],[1,1]],[[1,0],[1,1],[2,1],[2,2]],[[1,1],[2,1],[0,2],[1,2]],[[0,0],[0,1],[1,1],[1,2]]], // S
+    [[[0,0],[1,0],[1,1],[2,1]],[[2,0],[1,1],[2,1],[1,2]],[[0,1],[1,1],[1,2],[2,2]],[[1,0],[0,1],[1,1],[0,2]]], // Z
+    [[[0,0],[0,1],[1,1],[2,1]],[[1,0],[2,0],[1,1],[1,2]],[[0,1],[1,1],[2,1],[2,2]],[[1,0],[1,1],[0,2],[1,2]]], // J
+    [[[2,0],[0,1],[1,1],[2,1]],[[1,0],[1,1],[1,2],[2,2]],[[0,1],[1,1],[2,1],[0,2]],[[0,0],[1,0],[1,1],[1,2]]]  // L
+  ];
+
+  const GRAVITY = [44, 38, 33, 28, 24, 20, 16, 13, 10, 8, 7, 6, 5, 4, 3];
+  const KICKS = [[0,0],[-1,0],[1,0],[-2,0],[2,0],[0,-1]];
+  const BGM_HZ = [
+    659,0,494,523,587,0,523,494,
+    440,0,440,523,659,0,587,523,
+    494,0,523,587,659,0,523,0,
+    440,0,440,0,0,0,0,0
+  ];
+
+  // =========================================================================
+  // 2. WEB AUDIO 8-BIT CHIPTUNE SYNTH (GBC APU EMULATION)
+  // =========================================================================
+  let audioCtx = null;
+  let sfxOn = true;
+  let bgmOn = true;
+
+  function ensureAudio() {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function tone(freq, dur, type = 'square', vol = 0.08, sweepTo = null) {
+    if (!sfxOn || !audioCtx) return;
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    if (sweepTo) osc.frequency.exponentialRampToValueAtTime(sweepTo, now + dur);
+    gain.gain.setValueAtTime(vol, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + dur);
+  }
+
+  function sfxMove()     { tone(520, 0.035, 'square', 0.04); }
+  function sfxRotate()   { tone(440, 0.06, 'square', 0.055, 760); }
+  function sfxLock()     { tone(135, 0.075, 'triangle', 0.11, 58); }
+  function sfxClear(n)   {
+    const base = n >= 4 ? 523 : 440;
+    tone(base, 0.09, 'square', 0.08, base * 1.5);
+    setTimeout(() => tone(base * 1.5, 0.14, 'square', 0.08, base * 2), 75);
+  }
+  function sfxGameOver() { tone(360, 0.35, 'sawtooth', 0.09, 110); }
+
+  // =========================================================================
+  // 3. TILE DRAWING PRIMITIVES (8x8 PIXEL EXACT)
+  // =========================================================================
+  function fillTile(tx, ty, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(tx * 8, ty * 8, 8, 8);
+  }
+
+  function drawWellEmpty(tx, ty) {
+    const p = getPal(0);
+    fillTile(tx, ty, p[0]);
+    ctx.fillStyle = p[1];
+    ctx.fillRect(tx * 8 + 7, ty * 8 + 7, 1, 1);
+  }
+
+  function drawBlock(tx, ty, palIdx) {
+    const p = getPal(palIdx);
+    const x = tx * 8, y = ty * 8;
+    ctx.fillStyle = p[0]; ctx.fillRect(x, y, 8, 8);
+    ctx.fillStyle = p[2]; ctx.fillRect(x, y, 7, 7);
+    ctx.fillStyle = p[3]; ctx.fillRect(x, y, 6, 1); ctx.fillRect(x, y, 1, 6);
+    ctx.fillRect(x + 2, y + 2, 2, 1); ctx.fillRect(x + 2, y + 3, 1, 1);
+    ctx.fillStyle = p[1]; ctx.fillRect(x + 6, y, 1, 7); ctx.fillRect(x, y + 6, 7, 1);
+  }
+
+  function drawGhost(tx, ty, palIdx) {
+    const p = getPal(palIdx);
+    const x = tx * 8, y = ty * 8;
+    drawWellEmpty(tx, ty);
+    ctx.fillStyle = p[2];
+    ctx.fillRect(x + 1, y, 5, 1);
+    ctx.fillRect(x + 1, y + 6, 5, 1);
+    ctx.fillRect(x, y + 1, 1, 5);
+    ctx.fillRect(x + 6, y + 1, 1, 5);
+  }
+
+  function drawWall(tx, ty) {
+    const p = getPal(0);
+    const x = tx * 8, y = ty * 8;
+    ctx.fillStyle = p[0]; ctx.fillRect(x, y, 8, 8);
+    ctx.fillStyle = p[1]; ctx.fillRect(x + 1, y, 6, 4); ctx.fillRect(x, y + 1, 8, 2);
+    ctx.fillRect(x + 1, y + 4, 6, 4); ctx.fillRect(x, y + 5, 8, 2);
+    ctx.fillStyle = p[3]; ctx.fillRect(x + 2, y, 4, 1); ctx.fillRect(x + 1, y + 1, 2, 1); ctx.fillRect(x + 5, y + 1, 2, 1);
+    ctx.fillRect(x + 2, y + 4, 4, 1); ctx.fillRect(x + 1, y + 5, 2, 1); ctx.fillRect(x + 5, y + 5, 2, 1);
+  }
+
+  function drawFloor(tx, ty) {
+    const p = getPal(0);
+    const x = tx * 8, y = ty * 8;
+    ctx.fillStyle = p[0]; ctx.fillRect(x, y, 8, 8);
+    ctx.fillStyle = p[3]; ctx.fillRect(x, y, 8, 1); ctx.fillRect(x + 1, y + 1, 6, 1);
+    ctx.fillStyle = p[1]; ctx.fillRect(x, y + 2, 8, 4); ctx.fillRect(x + 1, y + 6, 6, 1);
+    ctx.fillStyle = p[0]; ctx.fillRect(x + 2, y + 3, 1, 2); ctx.fillRect(x + 5, y + 3, 1, 2);
+  }
+
+  function drawBox(tx, ty, w, h) {
+    const p = getPal(0);
+    ctx.fillStyle = p[0];
+    ctx.fillRect(tx * 8, ty * 8, w * 8, h * 8);
+    const x1 = tx * 8 + 3, y1 = ty * 8 + 3;
+    const x2 = (tx + w - 1) * 8 + 4, y2 = (ty + h - 1) * 8 + 3;
+    ctx.fillStyle = p[3];
+    ctx.fillRect(x1, y1, x2 - x1 + 1, 1);
+    ctx.fillRect(x1, y2, x2 - x1 + 1, 1);
+    ctx.fillRect(x1, y1, 1, y2 - y1 + 1);
+    ctx.fillRect(x2, y1, 1, y2 - y1 + 1);
+  }
+
+  function drawText(tx, ty, str, palIdx = 0) {
+    const p = getPal(palIdx);
+    for (let i = 0; i < str.length; i++) {
+      const ch = str[i].toUpperCase();
+      const glyph = FONT[ch] || FONT[' '];
+      const ox = (tx + i) * 8, oy = ty * 8;
+      ctx.fillStyle = p[0]; ctx.fillRect(ox, oy, 8, 8);
+      ctx.fillStyle = p[3];
+      for (let r = 0; r < 8; r++) {
+        const bits = glyph[r];
+        for (let c = 0; c < 8; c++) {
+          if (bits & (1 << (7 - c))) ctx.fillRect(ox + c, oy + r, 1, 1);
+        }
+      }
+    }
+  }
+
+  function drawMiniPiece(piece, bx, by) {
+    const p0 = getPal(0);
+    for (let r = 0; r < 2; r++)
+      for (let c = 0; c < 4; c++)
+        fillTile(bx + c, by + r, p0[0]);
+    if (piece < 0 || piece > 6) return;
+    for (const [dx, rawDy] of SHAPES[piece][0]) {
+      const dy = (piece === 0 && rawDy > 0) ? 0 : rawDy;
+      if (dy < 2) drawBlock(bx + dx, by + dy, piece + 1);
+    }
+  }
+
+  // =========================================================================
+  // 4. GAME STATE & LOOP (60 FPS FIXED STEP)
+  // =========================================================================
+  let board = Array.from({ length: BOARD_H }, () => Array(BOARD_W).fill(0));
+  let state = 'TITLE'; // TITLE | PLAYING | FLASH | PAUSED | GAMEOVER
+  let curPiece = 0, curRot = 0, curX = 3, curY = 0;
+  let nextPiece = 1, holdPiece = -1, holdUsed = false;
+  let bag = [];
+  let score = 0, hiScore = 0, lines = 0, level = 1;
+  let gravTimer = 0, softTimer = 0, dasDir = 0, dasTimer = 0;
+  let flashRows = [], flashTimer = 0;
+  let bgmStep = 0, bgmTimer = 0;
+
+  const held = { left: false, right: false, down: false };
+
+  function popBag() {
+    if (!bag.length) {
+      bag = [0, 1, 2, 3, 4, 5, 6];
+      for (let i = 6; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [bag[i], bag[j]] = [bag[j], bag[i]];
+      }
+    }
+    return bag.pop();
+  }
+
+  function collides(piece, rot, px, py) {
+    for (const [dx, dy] of SHAPES[piece][rot]) {
+      const nx = px + dx, ny = py + dy;
+      if (nx < 0 || nx >= BOARD_W || ny >= BOARD_H) return true;
+      if (ny >= 0 && board[ny][nx] !== 0) return true;
+    }
+    return false;
+  }
+
+  function ghostY() {
+    let gy = curY;
+    while (!collides(curPiece, curRot, curX, gy + 1)) gy++;
+    return gy;
+  }
+
+  function startGame() {
+    ensureAudio();
+    board = Array.from({ length: BOARD_H }, () => Array(BOARD_W).fill(0));
+    score = 0; lines = 0; level = 1;
+    holdPiece = -1; holdUsed = false;
+    bag = [];
+    curPiece = popBag();
+    nextPiece = popBag();
+    curRot = 0; curX = 3; curY = 0;
+    gravTimer = 0; bgmStep = 0; bgmTimer = 0;
+    state = 'PLAYING';
+    sfxRotate();
+  }
+
+  function spawnNext() {
+    curPiece = nextPiece;
+    nextPiece = popBag();
+    curRot = 0; curX = 3; curY = 0;
+    gravTimer = 0;
+    if (collides(curPiece, curRot, curX, curY)) {
+      state = 'GAMEOVER';
+      if (score > hiScore) hiScore = score;
+      sfxGameOver();
+    }
+  }
+
+  function lockPiece() {
+    for (const [dx, dy] of SHAPES[curPiece][curRot]) {
+      const nx = curX + dx, ny = curY + dy;
+      if (ny >= 0 && ny < BOARD_H && nx >= 0 && nx < BOARD_W) {
+        board[ny][nx] = curPiece + 1;
+      }
+    }
+    sfxLock();
+    holdUsed = false;
+
+    const full = [];
+    for (let y = 0; y < BOARD_H; y++) {
+      if (board[y].every(v => v !== 0)) full.push(y);
+    }
+    if (full.length) {
+      flashRows = full;
+      flashTimer = 14;
+      state = 'FLASH';
+      sfxClear(full.length);
+    } else {
+      spawnNext();
+    }
+  }
+
+  function finishLineClear() {
+    const count = flashRows.length;
+    for (const ry of flashRows) {
+      board.splice(ry, 1);
+      board.unshift(Array(BOARD_W).fill(0));
+    }
+    const pts = [0, 100, 300, 500, 800][count] || 800;
+    score = Math.min(999999, score + pts * level);
+    if (score > hiScore) hiScore = score;
+    lines += count;
+    level = Math.min(15, Math.floor(lines / 10) + 1);
+    state = 'PLAYING';
+    spawnNext();
+  }
+
+  function tryRotate(dir) {
+    const nr = (curRot + (dir > 0 ? 1 : 3)) & 3;
+    for (const [kx, ky] of KICKS) {
+      if (!collides(curPiece, nr, curX + kx, curY + ky)) {
+        curRot = nr; curX += kx; curY += ky;
+        sfxRotate();
+        return;
+      }
+    }
+  }
+
+  function doHold() {
+    if (holdUsed) return;
+    holdUsed = true;
+    if (holdPiece < 0) {
+      holdPiece = curPiece;
+      curPiece = nextPiece;
+      nextPiece = popBag();
+    } else {
+      [holdPiece, curPiece] = [curPiece, holdPiece];
+    }
+    curRot = 0; curX = 3; curY = 0; gravTimer = 0;
+    sfxRotate();
+  }
+
+  function doHardDrop() {
+    const gy = ghostY();
+    score = Math.min(999999, score + (gy - curY) * 2);
+    curY = gy;
+    lockPiece();
+  }
+
+  function triggerButton(btn, isDown) {
+    const el = document.querySelector(`[data-btn="${btn}"]`);
+    if (el) el.classList.toggle('active', isDown);
+    if (isDown) ensureAudio();
+
+    if (btn === 'left' || btn === 'right' || btn === 'down') {
+      held[btn] = isDown;
+    }
+
+    if (!isDown) {
+      if ((btn === 'left' && dasDir === -1) || (btn === 'right' && dasDir === 1)) dasDir = 0;
+      return;
+    }
+
+    if (state === 'TITLE' || state === 'GAMEOVER') {
+      if (btn === 'start' || btn === 'a') startGame();
+      return;
+    }
+    if (state === 'PAUSED') {
+      if (btn === 'start') state = 'PLAYING';
+      return;
+    }
+    if (state !== 'PLAYING') return;
+
+    if (btn === 'start') { state = 'PAUSED'; return; }
+    if (btn === 'select') { doHold(); return; }
+    if (btn === 'a') { tryRotate(1); return; }
+    if (btn === 'b') { tryRotate(-1); return; }
+    if (btn === 'up') { doHardDrop(); return; }
+    if (btn === 'left') {
+      dasDir = -1; dasTimer = 11;
+      if (!collides(curPiece, curRot, curX - 1, curY)) { curX--; sfxMove(); }
+    } else if (btn === 'right') {
+      dasDir = 1; dasTimer = 11;
+      if (!collides(curPiece, curRot, curX + 1, curY)) { curX++; sfxMove(); }
+    }
+  }
+
+  // Keyboard bindings
+  const KEY_MAP = {
+    ArrowLeft: 'left', KeyA: 'left',
+    ArrowRight: 'right', KeyD: 'right',
+    ArrowDown: 'down', KeyS: 'down',
+    ArrowUp: 'up', Space: 'up', KeyW: 'up',
+    KeyX: 'a', KeyK: 'a',
+    KeyZ: 'b', KeyJ: 'b',
+    ShiftLeft: 'select', ShiftRight: 'select', KeyC: 'select',
+    Enter: 'start', KeyP: 'start'
+  };
+
+  window.addEventListener('keydown', e => {
+    const btn = KEY_MAP[e.code];
+    if (!btn) return;
+    e.preventDefault();
+    if (!e.repeat) triggerButton(btn, true);
+  });
+  window.addEventListener('keyup', e => {
+    const btn = KEY_MAP[e.code];
+    if (btn) triggerButton(btn, false);
+  });
+
+  // On-screen handheld button pointer events
+  document.querySelectorAll('[data-btn]').forEach(btnEl => {
+    const name = btnEl.dataset.btn;
+    const down = e => { e.preventDefault(); triggerButton(name, true); };
+    const up = e => { e.preventDefault(); triggerButton(name, false); };
+    btnEl.addEventListener('pointerdown', down);
+    btnEl.addEventListener('pointerup', up);
+    btnEl.addEventListener('pointerleave', up);
+    btnEl.addEventListener('pointercancel', up);
+  });
+
+  // Shell & LCD customization toolbar
+  const SHELLS = {
+    inferno:  ['#ea580c', '#fb923c', '#9a3412', 'rgba(255,255,255,0.88)'],
+    midnight: ['#1f2430', '#343c4e', '#11141b', 'rgba(255,255,255,0.75)'],
+    cloud:    ['#e5e7eb', '#ffffff', '#b8bec9', 'rgba(20,24,33,0.78)'],
+    wave:     ['#0891b2', '#22d3ee', '#155e75', 'rgba(255,255,255,0.88)'],
+    volt:     ['#eab308', '#fde047', '#a16207', 'rgba(20,24,33,0.82)'],
+    leaf:     ['#16a34a', '#4ade80', '#166534', 'rgba(255,255,255,0.88)']
+  };
+  document.querySelectorAll('[data-shell]').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('[data-shell]').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      const [bg, hi, lo, txt] = SHELLS[el.dataset.shell];
+      const root = document.documentElement.style;
+      root.setProperty('--shell-bg', bg);
+      root.setProperty('--shell-hi', hi);
+      root.setProperty('--shell-lo', lo);
+      root.setProperty('--shell-text', txt);
+    });
+  });
+
+  document.querySelectorAll('[data-lcd]').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('[data-lcd]').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      lcdMode = el.dataset.lcd;
+    });
+  });
+
+  const gridEl = document.getElementById('lcd-grid');
+  document.getElementById('btn-grid').addEventListener('click', e => {
+    const isOff = gridEl.classList.toggle('off');
+    e.target.textContent = isOff ? 'Grid: OFF' : 'Grid: ON';
+    e.target.classList.toggle('active', !isOff);
+  });
+  document.getElementById('btn-sfx').addEventListener('click', e => {
+    sfxOn = !sfxOn;
+    e.target.textContent = sfxOn ? 'SFX: ON' : 'SFX: OFF';
+    e.target.classList.toggle('active', sfxOn);
+  });
+  document.getElementById('btn-bgm').addEventListener('click', e => {
+    bgmOn = !bgmOn;
+    e.target.textContent = bgmOn ? 'BGM: ON' : 'BGM: OFF';
+    e.target.classList.toggle('active', bgmOn);
+  });
+
+  // =========================================================================
+  // 5. FRAME UPDATE + RENDER (60Hz)
+  // =========================================================================
+  function tick() {
+    if (state === 'FLASH') {
+      flashTimer--;
+      if (flashTimer <= 0) finishLineClear();
+      return;
+    }
+    if (state !== 'PLAYING') return;
+
+    // BGM step
+    if (bgmOn && audioCtx) {
+      if (bgmTimer > 0) bgmTimer--;
+      else {
+        bgmTimer = level > 8 ? 7 : Math.max(7, 12 - (level >> 1));
+        const hz = BGM_HZ[bgmStep];
+        bgmStep = (bgmStep + 1) & 31;
+        if (hz > 0) tone(hz, 0.11, 'square', 0.024);
+      }
+    }
+
+    // DAS horizontal repeat
+    if (dasDir !== 0 && ((dasDir === -1 && held.left) || (dasDir === 1 && held.right))) {
+      if (dasTimer > 0) dasTimer--;
+      else {
+        dasTimer = 3;
+        if (!collides(curPiece, curRot, curX + dasDir, curY)) { curX += dasDir; sfxMove(); }
+      }
+    }
+
+    // Soft drop + Gravity
+    let dropNow = false, soft = false;
+    if (held.down) {
+      if (softTimer === 0) { dropNow = true; soft = true; softTimer = 2; }
+      else softTimer--;
+    } else softTimer = 0;
+
+    gravTimer++;
+    if (gravTimer >= GRAVITY[Math.min(14, level - 1)]) {
+      gravTimer = 0;
+      dropNow = true;
+    }
+    if (dropNow) {
+      if (!collides(curPiece, curRot, curX, curY + 1)) {
+        curY++;
+        if (soft) score = Math.min(999999, score + 1);
+      } else {
+        lockPiece();
+      }
+    }
+  }
+
+  function render() {
+    const p0 = getPal(0);
+    ctx.fillStyle = p0[0];
+    ctx.fillRect(0, 0, 160, 144);
+
+    if (state === 'TITLE') {
+      for (let x = 1; x < 19; x++) {
+        const pal = ((x - 1) % 7) + 1;
+        drawBlock(x, 1, pal);
+        drawBlock(x, 16, pal);
+      }
+      drawBox(2, 3, 16, 6);
+      drawText(6, 4, 'MODRETRO', 7);
+      drawText(5, 5, 'T E T R I S', 1);
+      drawText(5, 7, 'CHROMATIC!', 2);
+      drawMiniPiece(0, 3, 10);
+      drawMiniPiece(2, 8, 10);
+      drawMiniPiece(4, 13, 10);
+      drawText(4, 13, 'PRESS START!', 3);
+      drawText(2, 14, 'UP:DROP SEL:HOLD', 0);
+      if (hiScore > 0) {
+        drawText(3, 15, 'BEST:' + String(hiScore).padStart(6, '0'), 2);
+      }
+      return;
+    }
+
+    // Playfield walls & floor
+    for (let y = 0; y < BOARD_H; y++) { drawWall(0, y); drawWall(11, y); }
+    for (let x = 0; x <= 11; x++) drawFloor(x, 17);
+
+    // Locked blocks + empty dots
+    for (let y = 0; y < BOARD_H; y++) {
+      const isFlashing = state === 'FLASH' && flashRows.includes(y) && (Math.floor(flashTimer / 3) % 2 === 0);
+      for (let x = 0; x < BOARD_W; x++) {
+        if (isFlashing) fillTile(WELL_X + x, WELL_Y + y, p0[3]);
+        else if (board[y][x]) drawBlock(WELL_X + x, WELL_Y + y, board[y][x]);
+        else drawWellEmpty(WELL_X + x, WELL_Y + y);
+      }
+    }
+
+    // Active & Ghost piece
+    if (state === 'PLAYING' || state === 'PAUSED') {
+      const gy = ghostY();
+      if (gy !== curY) {
+        for (const [dx, dy] of SHAPES[curPiece][curRot]) {
+          const gx = curX + dx, cy = gy + dy;
+          if (cy >= 0 && cy < BOARD_H && board[cy][gx] === 0) drawGhost(WELL_X + gx, WELL_Y + cy, curPiece + 1);
+        }
+      }
+      for (const [dx, dy] of SHAPES[curPiece][curRot]) {
+        const ax = curX + dx, ay = curY + dy;
+        if (ay >= 0 && ay < BOARD_H) drawBlock(WELL_X + ax, WELL_Y + ay, curPiece + 1);
+      }
+    }
+
+    // HUD Sidebar
+    drawText(13, 1, 'SCORE', 0);
+    drawText(13, 2, String(score).padStart(6, '0'), 0);
+    drawText(13, 4, 'LV', 0);
+    drawText(17, 4, String(level).padStart(2, '0'), 7);
+    drawText(13, 5, 'LN', 0);
+    drawText(16, 5, String(lines).padStart(3, '0'), 1);
+
+    drawText(13, 7, 'NEXT', 1);
+    drawBox(13, 8, 6, 4);
+    drawMiniPiece(nextPiece, 14, 9);
+
+    drawText(13, 12, 'HOLD', 7);
+    drawBox(13, 13, 6, 4);
+    drawMiniPiece(holdPiece, 14, 14);
+
+    drawText(12, 17, 'MODRETRO', 7);
+
+    // Overlays
+    if (state === 'PAUSED') {
+      drawBox(2, 6, 8, 5);
+      drawText(3, 7, 'PAUSED', 2);
+      drawText(3, 9, 'START!', 0);
+    } else if (state === 'GAMEOVER') {
+      drawBox(2, 5, 8, 7);
+      drawText(4, 6, 'GAME', 5);
+      drawText(4, 7, 'OVER', 5);
+      drawText(3, 9, 'START:', 0);
+      drawText(3, 10, 'RETRY!', 2);
+    }
+  }
+
+  let acc = 0, lastTs = 0;
+  function loop(ts) {
+    if (!lastTs) lastTs = ts;
+    acc += Math.min(100, ts - lastTs);
+    lastTs = ts;
+    const step = 1000 / 60;
+    while (acc >= step) {
+      tick();
+      acc -= step;
+    }
+    render();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

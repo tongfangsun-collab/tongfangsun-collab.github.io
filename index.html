@@ -9,6 +9,32 @@ title: Portfolio — UX & AI Interaction Designer
 <section class="framer-section side-project-hero" id="design-lab">
   <h1 class="section-display-title">Design Lab</h1>
 
+  <!-- Project 0: ModRetro Chromatic Tetris (Native .gbc ROM + Web Handheld) -->
+  <div class="framer-project-block" id="project-modretro-tetris">
+    <div class="framer-project-copy">
+      <h2 class="project-headline">ModRetro Tetris (.gbc)</h2>
+      <p class="project-lead">
+        A native 8-bit Game Boy Color cartridge ROM built in C (GBDK-2020) for the <strong>ModRetro Chromatic</strong> handheld. Features all 8 GBC hardware color palettes, ghost piece, 7-bag randomizer, hold swap, wall kicks, and 4-channel APU chiptune audio—playable right in the browser or downloadable as a 32 KB <code>.gbc</code> ROM for real hardware.
+      </p>
+      <div class="project-cta-group">
+        <a href="{{ '/modretro-tetris/' | relative_url }}" class="btn-pill-black" id="try-modretro-tetris-btn">Play on Chromatic</a>
+        <a href="{{ '/modretro-tetris/rom/modretro-tetris.gbc' | relative_url }}" download="modretro-tetris.gbc" class="btn-pill-outline" id="download-modretro-rom-btn">Download .gbc ROM (32 KB)</a>
+      </div>
+      <p class="project-helper-note">Hardware-verified 32 KB CGB+DMG ROM · Ready for ModRetro Chromatic flashcarts &amp; GBC emulators.</p>
+    </div>
+
+    <a href="{{ '/modretro-tetris/' | relative_url }}" class="framer-showcase-card" aria-label="Launch ModRetro Chromatic Tetris">
+      <div class="showcase-media-wrap" style="background: #101218;">
+        <img
+          src="{{ '/modretro-tetris/cover.png' | relative_url }}"
+          alt="ModRetro Chromatic Tetris — Native Game Boy Color Cartridge ROM"
+          class="showcase-video"
+          style="object-fit: cover;"
+        />
+      </div>
+    </a>
+  </div>
+
   <!-- Project 1: Origami Hand Detection (Pikachu 6 Steps) -->
   <div class="framer-project-block" id="project-origami-hand">
     <div class="framer-project-copy">
@@ -219,6 +245,17 @@ title: Portfolio — UX & AI Interaction Designer
         <span class="work-card-tag">Interactive Cultural Experience · 2026</span>
         <h3>Art &amp; Explore — The Met Fifth Avenue After Hours</h3>
         <p>Reimagining museum curation with first-person artist storytelling, pigment filtering, and touchless hand-tracking navigation.</p>
+      </div>
+    </a>
+
+    <a href="{{ '/modretro-tetris/' | relative_url }}" class="framer-work-card">
+      <div class="work-card-thumb" style="background: #101218;">
+        <img src="{{ '/modretro-tetris/cover.png' | relative_url }}" alt="ModRetro Chromatic Tetris" class="work-thumb-cover" />
+      </div>
+      <div class="work-card-body">
+        <span class="work-card-tag">Embedded C · ModRetro Chromatic / GBC · 2026</span>
+        <h3>ModRetro Tetris — Native .gbc Cartridge ROM</h3>
+        <p>Hardware-verified 32 KB Game Boy Color ROM built with GBDK-2020 featuring 8 CGB palettes, APU chiptune audio, and an interactive browser handheld.</p>
       </div>
     </a>
   </div>
