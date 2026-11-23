@@ -98,7 +98,8 @@ title: Portfolio — UX & AI Interaction Designer
       </p>
       <div class="project-cta-group">
         <a href="{{ '/Architecture%203D%20Motion/' | relative_url }}" class="btn-pill-black" id="try-architecture-3d-btn">Try 3D Motion</a>
-        <a href="{{ '/projects/architecture-3d-motion/' | relative_url }}" class="btn-pill-outline" id="read-architecture-case-btn">Read Case Study</a>
+        <a href="{{ '/2026/11/22/building-architecture-3d-motion-with-antigravity.html' | relative_url }}" class="btn-pill-outline" id="read-architecture-article-btn">Read Making-Of Story →</a>
+        <a href="{{ '/projects/architecture-3d-motion/' | relative_url }}" class="btn-pill-outline" id="read-architecture-case-btn">Case Study</a>
       </div>
       <p class="project-helper-note">Scroll mouse wheel up to explode · Scroll down to assemble · Click parts to inspect.</p>
     </div>
@@ -340,6 +341,37 @@ title: Portfolio — UX & AI Interaction Designer
         <a href="{{ '/Art%20%26%20Explore/' | relative_url }}" class="btn-pill-outline" style="padding: 10px 18px; font-size: 0.88rem; text-align: center;">Open Gallery →</a>
       </div>
     </article>
+  </div>
+</section>
+
+<!-- ====================================================================== -->
+<!-- WRITING SECTION (Medium-Style Articles)                                -->
+<!-- ====================================================================== -->
+<section class="framer-section" id="writing">
+  <div class="section-header-row" style="display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap;">
+    <div>
+      <h2 class="section-display-title">Writing</h2>
+      <p class="section-subtitle">Behind-the-scenes build stories and reflections on designing with AI and Antigravity.</p>
+    </div>
+    <a href="{{ '/blog/' | relative_url }}" class="btn-pill-outline">All Articles →</a>
+  </div>
+
+  <div class="research-list">
+    {% for post in site.posts limit:3 %}
+    <article class="research-row">
+      <div class="research-meta">
+        <span class="research-tag">{{ post.kicker | default: "Article" }}</span>
+        <span class="research-venue">{{ post.date | date: "%b %d, %Y" }}{% if post.read_time %} · {{ post.read_time }}{% endif %}</span>
+      </div>
+      <div class="research-content">
+        <h3><a href="{{ post.url | relative_url }}" style="color: inherit; text-decoration: none;">{{ post.title }}</a></h3>
+        <p>{{ post.subtitle | default: post.excerpt | strip_html | truncate: 190 }}</p>
+      </div>
+      <div class="research-actions">
+        <a href="{{ post.url | relative_url }}" class="btn-pill-black" style="padding: 10px 18px; font-size: 0.88rem; text-align: center;">Read Article →</a>
+      </div>
+    </article>
+    {% endfor %}
   </div>
 </section>
 

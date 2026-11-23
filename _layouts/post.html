@@ -1,30 +1,636 @@
 ---
 layout: default
-title: Post
 ---
-<article class="post-content">
-  <h1>{{ page.title }}</h1>
-  <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
-  <div class="entry">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Medium-style Reading Progress Bar -->
+<div class="medium-progress-track" aria-hidden="true">
+  <div class="medium-progress-bar" id="medium-progress-bar"></div>
+</div>
+
+<article class="medium-article">
+  <!-- Article Header -->
+  <header class="medium-header">
+    {% if page.kicker or page.tags %}
+    <div class="medium-kicker-row">
+      {% if page.kicker %}<span class="medium-kicker">{{ page.kicker }}</span>{% endif %}
+      {% if page.tags %}
+        {% for tag in page.tags limit:3 %}
+          <span class="medium-tag-pill">{{ tag }}</span>
+        {% endfor %}
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <h1 class="medium-title">{{ page.title }}</h1>
+
+    {% if page.subtitle %}
+    <p class="medium-subtitle">{{ page.subtitle }}</p>
+    {% endif %}
+
+    <!-- Author Byline Row -->
+    <div class="medium-byline">
+      <div class="medium-author-left">
+        <div class="medium-avatar" aria-hidden="true">
+          <img src="{{ '/assets/images/logo-t.png' | relative_url }}" alt="Tong Fang Sun" />
+        </div>
+        <div class="medium-author-meta">
+          <div class="medium-author-name">
+            {{ page.author | default: "Tong Fang Sun" }}
+            <span class="medium-author-role">· Product Designer at Google</span>
+          </div>
+          <div class="medium-post-meta">
+            <span>{{ page.read_time | default: "6 min read" }}</span>
+            <span aria-hidden="true">·</span>
+            <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%b %d, %Y" }}</time>
+          </div>
+        </div>
+      </div>
+
+      <div class="medium-byline-actions">
+        <button type="button" class="medium-clap-btn" id="medium-clap-top" aria-label="Applaud this article">
+          <span class="clap-icon">👏</span>
+          <span class="clap-count" data-clap-count>42</span>
+        </button>
+        <a href="{{ '/blog/' | relative_url }}" class="medium-all-posts-link">All Writing</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Optional Hero Cover Image -->
+  {% if page.cover_image %}
+  <figure class="medium-hero-figure">
+    <img src="{{ page.cover_image | relative_url }}" alt="{{ page.cover_alt | default: page.title }}" />
+    {% if page.cover_caption %}
+    <figcaption>{{ page.cover_caption }}</figcaption>
+    {% endif %}
+  </figure>
+  {% endif %}
+
+  <!-- Medium Editorial Body -->
+  <div class="medium-body">
     {{ content }}
   </div>
+
+  <!-- Tags & Bottom Clap Bar -->
+  <footer class="medium-article-footer">
+    {% if page.tags %}
+    <div class="medium-footer-tags">
+      {% for tag in page.tags %}
+        <span class="medium-footer-tag">{{ tag }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="medium-engagement-bar">
+      <button type="button" class="medium-clap-btn large" id="medium-clap-bottom" aria-label="Applaud this article">
+        <span class="clap-icon">👏</span>
+        <span>Clap</span>
+        <span class="clap-count" data-clap-count>42</span>
+      </button>
+      <div class="medium-footer-nav">
+        <a href="{{ '/blog/' | relative_url }}" class="btn-pill-outline">← Back to Writing</a>
+        {% if page.demo_url %}
+        <a href="{{ page.demo_url | relative_url }}" class="btn-pill-black">Launch Live Demo ↗</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Author Bio Card -->
+    <div class="medium-author-card">
+      <div class="medium-avatar large" aria-hidden="true">
+        <img src="{{ '/assets/images/logo-t.png' | relative_url }}" alt="Tong Fang Sun" />
+      </div>
+      <div>
+        <div class="medium-author-card-eyebrow">Written by</div>
+        <h3 class="medium-author-card-name">{{ page.author | default: "Tong Fang Sun" }}</h3>
+        <p class="medium-author-card-bio">
+          Product Designer at Google focused on minimalism, human-centered AI, and expressive interactive web experiences—building tangible prototypes with WebGL, MediaPipe, and agentic tools like Antigravity.
+        </p>
+      </div>
+    </div>
+  </footer>
 </article>
 
+<script>
+(function () {
+  // Reading progress bar
+  const bar = document.getElementById('medium-progress-bar');
+  function updateProgress() {
+    if (!bar) return;
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;
+    bar.style.width = pct.toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // Medium-style clap counter persisted per article
+  const key = 'medium-claps:' + window.location.pathname;
+  let claps = parseInt(localStorage.getItem(key) || '42', 10);
+  if (isNaN(claps)) claps = 42;
+  const counters = document.querySelectorAll('[data-clap-count]');
+  const buttons = document.querySelectorAll('.medium-clap-btn');
+
+  function renderClaps() {
+    counters.forEach(el => { el.textContent = claps; });
+  }
+  renderClaps();
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      claps += 1;
+      localStorage.setItem(key, String(claps));
+      renderClaps();
+      btn.classList.add('clapped');
+      setTimeout(() => btn.classList.remove('clapped'), 240);
+    });
+  });
+})();
+</script>
+
 <style>
-.post-content {
-  max-width: 700px;
-  padding: 80px 0;
+.medium-progress-track {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: transparent;
+  z-index: 200;
+  pointer-events: none;
 }
-.post-content h1 {
-  font-size: 3rem;
-  margin-bottom: 10px;
+.medium-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #0d0d0d 0%, #16a34a 100%);
+  transition: width 0.08s linear;
 }
-.post-date {
+
+.medium-article {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 56px 0 88px;
+}
+
+/* Header */
+.medium-kicker-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.medium-kicker {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #16a34a;
+  margin-right: 4px;
+}
+.medium-tag-pill {
+  font-size: 0.78rem;
+  font-weight: 500;
   color: var(--secondary-text);
+  background: var(--light-gray);
+  border: 1px solid var(--border-color);
+  padding: 3px 11px;
+  border-radius: 999px;
+}
+
+.medium-title {
+  font-family: var(--font-main);
+  font-size: clamp(2.15rem, 4.2vw, 2.85rem);
+  font-weight: 700;
+  letter-spacing: -0.032em;
+  line-height: 1.15;
+  color: var(--text-color);
+  margin: 0 0 16px 0;
+}
+
+.medium-subtitle {
+  font-family: var(--font-main);
+  font-size: 1.28rem;
+  font-weight: 400;
+  line-height: 1.48;
+  color: var(--secondary-text);
+  margin: 0 0 28px 0;
+}
+
+/* Byline */
+.medium-byline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 18px 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 40px;
 }
-.entry {
-  font-size: 1.1rem;
-  line-height: 1.8;
+.medium-author-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.medium-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--light-gray);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.medium-avatar.large {
+  width: 56px;
+  height: 56px;
+}
+.medium-avatar img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+.medium-author-name {
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: var(--text-color);
+  line-height: 1.3;
+}
+.medium-author-role {
+  font-weight: 400;
+  color: var(--secondary-text);
+}
+.medium-post-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.86rem;
+  color: var(--secondary-text);
+  margin-top: 2px;
+}
+.medium-byline-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.medium-all-posts-link {
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--secondary-text);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  transition: var(--transition);
+}
+.medium-all-posts-link:hover {
+  color: var(--text-color);
+  border-color: var(--text-color);
+}
+.medium-clap-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  border-radius: 999px;
+  padding: 6px 13px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+.medium-clap-btn:hover {
+  border-color: #16a34a;
+  background: #f0fdf4;
+}
+.medium-clap-btn.large {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+}
+.medium-clap-btn.clapped {
+  transform: scale(1.08);
+  border-color: #16a34a;
+  background: #dcfce7;
+}
+
+/* Wide Breakout Hero Image */
+.medium-hero-figure {
+  margin: 0 -64px 44px;
+}
+.medium-hero-figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08);
+}
+.medium-hero-figure figcaption {
+  text-align: center;
+  font-family: var(--font-main);
+  font-size: 0.88rem;
+  color: var(--secondary-text);
+  margin-top: 12px;
+  padding: 0 16px;
+}
+
+/* Medium Editorial Typography */
+.medium-body {
+  font-family: 'Source Serif 4', Charter, Georgia, Cambria, "Times New Roman", serif;
+  font-size: 1.24rem;
+  line-height: 1.78;
+  color: #1f1f22;
+  letter-spacing: -0.003em;
+}
+.medium-body p {
+  margin: 0 0 26px 0;
+}
+.medium-body h2 {
+  font-family: var(--font-main);
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  line-height: 1.25;
+  color: var(--text-color);
+  margin: 52px 0 16px 0;
+}
+.medium-body h3 {
+  font-family: var(--font-main);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--text-color);
+  margin: 34px 0 12px 0;
+}
+.medium-body a {
+  color: var(--text-color);
+  text-decoration: underline;
+  text-decoration-color: rgba(13, 13, 13, 0.35);
+  text-underline-offset: 3px;
+}
+.medium-body a:hover {
+  text-decoration-color: #0d0d0d;
+}
+.medium-body ul,
+.medium-body ol {
+  margin: 0 0 28px 0;
+  padding-left: 26px;
+}
+.medium-body li {
+  margin-bottom: 12px;
+}
+.medium-body strong {
+  color: #0d0d0d;
+  font-weight: 600;
+}
+
+/* Medium Pull Quote */
+.medium-body blockquote {
+  margin: 36px 0;
+  padding: 4px 0 4px 24px;
+  border-left: 3px solid #0d0d0d;
+  font-style: italic;
+  font-size: 1.32rem;
+  line-height: 1.62;
+  color: #2c2c30;
+}
+.medium-body blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Medium Three-Dot Section Divider */
+.medium-body hr {
+  border: none;
+  text-align: center;
+  margin: 46px 0;
+  height: auto;
+  overflow: visible;
+}
+.medium-body hr::before {
+  content: "·   ·   ·";
+  font-family: var(--font-main);
+  font-size: 1.5rem;
+  letter-spacing: 0.4em;
+  color: var(--secondary-text);
+}
+
+/* Inline & Block Code */
+.medium-body code {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.84em;
+  background: var(--light-gray);
+  border: 1px solid var(--border-color);
+  padding: 2px 6px;
+  border-radius: 5px;
+  color: #111827;
+}
+.medium-body pre {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  background: #0f1219;
+  color: #e5e7eb;
+  padding: 20px 22px;
+  border-radius: 12px;
+  overflow-x: auto;
+  margin: 28px 0;
+}
+.medium-body pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+/* Medium Editorial Figures & Diptychs */
+.medium-figure {
+  margin: 38px -32px;
+}
+.medium-figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+}
+.medium-figure figcaption {
+  text-align: center;
+  font-family: var(--font-main);
+  font-size: 0.86rem;
+  color: var(--secondary-text);
+  margin-top: 10px;
+}
+.medium-diptych {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 38px -32px;
+}
+.medium-diptych figure {
+  margin: 0;
+}
+.medium-diptych img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+.medium-diptych figcaption {
+  text-align: center;
+  font-family: var(--font-main);
+  font-size: 0.84rem;
+  color: var(--secondary-text);
+  margin-top: 8px;
+}
+
+/* Antigravity Prompt Callout Card */
+.prompt-callout {
+  font-family: var(--font-main);
+  background: var(--light-gray);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid #0d0d0d;
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin: 28px 0 32px;
+}
+.prompt-callout-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--secondary-text);
+  margin-bottom: 6px;
+}
+.prompt-callout p {
+  font-size: 0.98rem;
+  line-height: 1.58;
+  color: var(--text-color);
+  margin: 0;
+}
+
+/* Live Demo Banner inside Article */
+.medium-cta-card {
+  font-family: var(--font-main);
+  background: #0d0f14;
+  color: #ffffff;
+  border-radius: 18px;
+  padding: 30px 32px;
+  margin: 44px 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.medium-cta-card h3 {
+  color: #ffffff !important;
+  margin: 0 0 6px 0 !important;
+  font-size: 1.32rem !important;
+}
+.medium-cta-card p {
+  color: rgba(255, 255, 255, 0.72) !important;
+  font-size: 0.96rem !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+}
+
+/* Footer */
+.medium-article-footer {
+  margin-top: 56px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border-color);
+}
+.medium-footer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+.medium-footer-tag {
+  font-size: 0.84rem;
+  font-weight: 500;
+  background: var(--light-gray);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+.medium-engagement-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border-color);
+}
+.medium-footer-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.medium-author-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  margin-top: 32px;
+  padding: 26px 28px;
+  background: var(--light-gray);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+}
+.medium-author-card-eyebrow {
+  font-size: 0.76rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--secondary-text);
+  margin-bottom: 4px;
+}
+.medium-author-card-name {
+  margin: 0 0 8px 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+.medium-author-card-bio {
+  margin: 0;
+  font-size: 0.96rem;
+  line-height: 1.6;
+  color: var(--secondary-text);
+}
+
+@media (max-width: 860px) {
+  .medium-hero-figure,
+  .medium-figure,
+  .medium-diptych {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .medium-diptych {
+    grid-template-columns: 1fr;
+  }
+  .medium-body {
+    font-size: 1.12rem;
+  }
+  .medium-author-card {
+    flex-direction: column;
+  }
 }
 </style>
