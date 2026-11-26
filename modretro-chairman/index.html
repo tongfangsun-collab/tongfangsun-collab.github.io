@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chairman's Adventure — ModRetro Chromatic (.gbc) | Tong Fang Sun</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0c0e13;
+      --surface: #141821;
+      --border: #252b3b;
+      --text: #f4f4f6;
+      --muted: #98a2b3;
+      --shell-bg: #16a34a;
+      --shell-hi: #4ade80;
+      --shell-lo: #166534;
+      --shell-text: rgba(255, 255, 255, 0.88);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(12, 14, 19, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .top-bar-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .back-link {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      opacity: 0.85;
+    }
+    .back-link:hover { opacity: 1; }
+    .top-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+    }
+    .pill-btn:hover { transform: translateY(-1px); border-color: #4b5563; }
+    .pill-btn.primary { background: #ffffff; color: #0b0d11; border-color: #ffffff; }
+    .pill-btn.primary:hover { background: #e5e7eb; }
+
+    /* Main Stage */
+    .stage {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 40px 28px 72px;
+      display: grid;
+      grid-template-columns: minmax(320px, 410px) 1fr;
+      gap: 52px;
+      align-items: start;
+    }
+
+    /* ModRetro Chromatic Shell */
+    .console-column { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+    .chromatic-shell {
+      width: 100%;
+      max-width: 392px;
+      background: linear-gradient(160deg, var(--shell-hi) 0%, var(--shell-bg) 38%, var(--shell-lo) 100%);
+      border-radius: 26px 26px 64px 26px;
+      padding: 20px 22px 30px;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.55), inset 0 2px 2px rgba(255,255,255,0.35), inset 0 -4px 10px rgba(0,0,0,0.32);
+      position: relative;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .screen-bezel {
+      background: #0d0f14;
+      border-radius: 16px 16px 34px 16px;
+      padding: 16px 18px 18px;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.2);
+    }
+    .bezel-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: #7c8598;
+    }
+    .power-led-wrap { display: inline-flex; align-items: center; gap: 6px; }
+    .power-led { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+    .lcd-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 160 / 144;
+      background: #182030;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 2px #050608;
+    }
+    #gbc-canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
+    .lcd-grid-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.2;
+      background-image:
+        linear-gradient(to right, rgba(0,0,0,0.65) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,0.65) 1px, transparent 1px);
+      background-size: calc(100% / 160) calc(100% / 144);
+    }
+    .lcd-grid-overlay.off { opacity: 0; }
+    .bezel-brand { margin-top: 11px; display: flex; align-items: center; justify-content: space-between; }
+    .chromatic-wordmark { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.2em; color: #cbd5e1; }
+    .chromatic-stripes { display: flex; gap: 4px; }
+    .chromatic-stripes span { width: 16px; height: 5px; border-radius: 2px; }
+
+    .controls-deck { margin-top: 24px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px; }
+    .dpad { position: relative; width: 108px; height: 108px; }
+    .dpad-btn {
+      position: absolute; background: #1b1e26; border: none; color: #7c8496;
+      display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer;
+      box-shadow: 0 4px 0 #0b0d12, inset 0 1px 1px rgba(255,255,255,0.12);
+    }
+    .dpad-btn:active, .dpad-btn.active { transform: translateY(2px); box-shadow: 0 2px 0 #0b0d12; background: #272c38; color: #fff; }
+    .dpad-up    { top: 0; left: 36px; width: 36px; height: 38px; border-radius: 7px 7px 0 0; }
+    .dpad-down  { bottom: 0; left: 36px; width: 36px; height: 38px; border-radius: 0 0 7px 7px; }
+    .dpad-left  { top: 36px; left: 0; width: 38px; height: 36px; border-radius: 7px 0 0 7px; }
+    .dpad-right { top: 36px; right: 0; width: 38px; height: 36px; border-radius: 0 7px 7px 0; }
+    .dpad-center { position: absolute; top: 36px; left: 36px; width: 36px; height: 36px; background: #1b1e26; display: flex; align-items: center; justify-content: center; }
+    .dpad-center::after { content: ""; width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #2c3140, #12141a); }
+
+    .ab-cluster { display: flex; align-items: center; gap: 18px; transform: rotate(-22deg); margin-right: 4px; }
+    .ab-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .ab-btn {
+      width: 48px; height: 48px; border-radius: 50%; border: none;
+      background: linear-gradient(145deg, #2b303d, #151820); color: #e5e7eb; font-weight: 700; font-size: 14px; cursor: pointer;
+      box-shadow: 0 5px 0 #090b0f, 0 8px 14px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.2);
+    }
+    .ab-btn:active, .ab-btn.active { transform: translateY(3px); box-shadow: 0 2px 0 #090b0f; }
+    .ab-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--shell-text); }
+
+    .sys-row { margin-top: 26px; display: flex; align-items: center; justify-content: center; gap: 22px; }
+    .sys-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .sys-btn {
+      width: 46px; height: 14px; border-radius: 999px; border: none; background: #1b1e26; cursor: pointer;
+      transform: rotate(-20deg); box-shadow: 0 3px 0 #0a0c10, inset 0 1px 1px rgba(255,255,255,0.14);
+    }
+    .sys-btn:active, .sys-btn.active { transform: rotate(-20deg) translateY(2px); box-shadow: 0 1px 0 #0a0c10; }
+    .sys-label { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em; color: var(--shell-text); }
+    .speaker-grille { position: absolute; right: 26px; bottom: 22px; display: flex; gap: 5px; transform: rotate(-26deg); }
+    .speaker-grille span { width: 4px; height: 26px; border-radius: 999px; background: rgba(0,0,0,0.34); }
+
+    /* Toolbar */
+    .console-toolbar {
+      width: 100%; max-width: 392px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .toolbar-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+    .swatch-group { display: flex; align-items: center; gap: 7px; }
+    .shell-swatch { width: 20px; height: 20px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
+    .shell-swatch.active { border-color: #ffffff; transform: scale(1.12); }
+    .mini-chip {
+      background: #0c0e13; color: var(--muted); border: 1px solid var(--border); border-radius: 8px;
+      padding: 4px 9px; font-size: 11.5px; font-weight: 600; cursor: pointer;
+    }
+    .mini-chip.active { background: #ffffff; color: #0c0e13; border-color: #ffffff; }
+
+    /* Right Info Column */
+    .info-column { display: flex; flex-direction: column; gap: 22px; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 600; padding: 5px 11px; border-radius: 999px;
+      background: rgba(22, 163, 74, 0.16); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.35);
+    }
+    .badge.orange { background: rgba(234, 88, 12, 0.14); color: #fb923c; border-color: rgba(251, 146, 60, 0.3); }
+    .badge.cyan { background: rgba(0, 229, 255, 0.12); color: #22d3ee; border-color: rgba(34, 211, 238, 0.3); }
+    h1.hero-title { font-size: 2.55rem; line-height: 1.1; letter-spacing: -0.03em; margin: 0; }
+    .hero-desc { margin: 0; font-size: 1.02rem; line-height: 1.65; color: var(--muted); max-width: 580px; }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 20px 24px; }
+    .card h2 { margin: 0 0 14px 0; font-size: 1.04rem; font-weight: 600; }
+    .specs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .spec-item { background: #0c0e13; border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+    .spec-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+    .spec-val { margin-top: 4px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; color: var(--text); }
+
+    .controls-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .controls-table td { padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .controls-table tr:last-child td { border-bottom: none; }
+    .kbd {
+      display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+      padding: 2px 7px; border-radius: 6px; background: #0c0e13; border: 1px solid #374151; color: #f3f4f6; margin-right: 4px;
+    }
+
+    .steps-list { margin: 0; padding-left: 18px; color: var(--muted); font-size: 0.92rem; line-height: 1.65; }
+    .steps-list li + li { margin-top: 7px; }
+    .steps-list strong { color: var(--text); }
+    .steps-list code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: #0c0e13; padding: 2px 6px; border-radius: 5px; color: #4ade80; }
+
+    @media (max-width: 900px) {
+      .stage { grid-template-columns: 1fr; gap: 32px; padding: 24px 18px 56px; }
+      h1.hero-title { font-size: 2.05rem; }
+      .specs-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <a href="../" class="back-link">← Back to Portfolio</a>
+      <div class="top-actions">
+        <a href="./rom/chairman-adventure-rom.zip" download="chairman-adventure-rom.zip" class="pill-btn primary">
+          ⬇ Download ROM (.zip)
+        </a>
+        <a href="./rom/chairman-adventure.gbc" download="chairman-adventure.gbc" class="pill-btn">
+          Raw .gbc (32 KB)
+        </a>
+        <a href="./src/main.c" target="_blank" rel="noopener noreferrer" class="pill-btn">
+          View GBDK C Source ↗
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="stage">
+    <!-- LEFT: PLAYABLE MODRETRO CHROMATIC HANDHELD -->
+    <section class="console-column" aria-label="Playable ModRetro Chromatic Handheld">
+      <div class="chromatic-shell" id="chromatic-shell">
+        <div class="screen-bezel">
+          <div class="bezel-top">
+            <span class="power-led-wrap"><span class="power-led"></span>POWER</span>
+            <span>160×144 GBC LCD</span>
+          </div>
+
+          <div class="lcd-frame">
+            <canvas id="gbc-canvas" width="160" height="144"></canvas>
+            <div class="lcd-grid-overlay" id="lcd-grid"></div>
+          </div>
+
+          <div class="bezel-brand">
+            <span class="chromatic-wordmark">CHROMATIC</span>
+            <div class="chromatic-stripes" aria-hidden="true">
+              <span style="background:#ff3b5c"></span>
+              <span style="background:#ff7a00"></span>
+              <span style="background:#ffd600"></span>
+              <span style="background:#00e676"></span>
+              <span style="background:#00e5ff"></span>
+              <span style="background:#ce42ff"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls-deck">
+          <div class="dpad" aria-label="D-Pad">
+            <button class="dpad-btn dpad-up" data-btn="up" aria-label="Up">▲</button>
+            <button class="dpad-btn dpad-down" data-btn="down" aria-label="Down">▼</button>
+            <button class="dpad-btn dpad-left" data-btn="left" aria-label="Move Left">◀</button>
+            <button class="dpad-btn dpad-right" data-btn="right" aria-label="Move Right">▶</button>
+            <div class="dpad-center"></div>
+          </div>
+
+          <div class="ab-cluster">
+            <div class="ab-wrap">
+              <button class="ab-btn" data-btn="b" aria-label="Throw Bone Boomerang">B</button>
+              <span class="ab-label">B · BONE</span>
+            </div>
+            <div class="ab-wrap" style="margin-top:-22px;">
+              <button class="ab-btn" data-btn="a" aria-label="Jump">A</button>
+              <span class="ab-label">A · JUMP</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sys-row">
+          <div class="sys-wrap">
+            <button class="sys-btn" data-btn="select" aria-label="Select Stage"></button>
+            <span class="sys-label">SELECT</span>
+          </div>
+          <div class="sys-wrap">
+            <button class="sys-btn" data-btn="start" aria-label="Start / Pause"></button>
+            <span class="sys-label">START</span>
+          </div>
+        </div>
+
+        <div class="speaker-grille" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="console-toolbar">
+        <div class="toolbar-row">
+          <span>Shell</span>
+          <div class="swatch-group">
+            <button class="shell-swatch active" title="Leaf Green" style="background:#16a34a" data-shell="leaf"></button>
+            <button class="shell-swatch" title="Inferno Orange" style="background:#ea580c" data-shell="inferno"></button>
+            <button class="shell-swatch" title="Midnight Graphite" style="background:#1f2430" data-shell="midnight"></button>
+            <button class="shell-swatch" title="Cloud White" style="background:#e5e7eb" data-shell="cloud"></button>
+            <button class="shell-swatch" title="Wave Teal" style="background:#0891b2" data-shell="wave"></button>
+            <button class="shell-swatch" title="Volt Yellow" style="background:#eab308" data-shell="volt"></button>
+          </div>
+        </div>
+        <div class="toolbar-row">
+          <span>LCD Mode</span>
+          <div class="swatch-group">
+            <button class="mini-chip active" data-lcd="gbc">GBC Color</button>
+            <button class="mini-chip" data-lcd="dmg1">DMG-1</button>
+            <button class="mini-chip" data-lcd="dmg2">DMG-2</button>
+            <button class="mini-chip active" id="btn-grid">Grid: ON</button>
+          </div>
+        </div>
+        <div class="toolbar-row">
+          <span>Chiptune Audio</span>
+          <div class="swatch-group">
+            <button class="mini-chip active" id="btn-sfx">SFX: ON</button>
+            <button class="mini-chip active" id="btn-bgm">BGM: ON</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: GAME STORY, SPECS & HARDWARE GUIDE -->
+    <section class="info-column">
+      <div class="badge-row">
+        <span class="badge">ModRetro Chromatic Ready</span>
+        <span class="badge orange">Starring Chairman 🐾</span>
+        <span class="badge cyan">32 KB .gbc Cartridge ROM</span>
+      </div>
+
+      <h1 class="hero-title">Chairman's Adventure</h1>
+      <p class="hero-desc">
+        An Adventure Island / Super Mario-inspired side-scrolling platformer built natively in C (GBDK-2020) for the <strong>ModRetro Chromatic</strong> handheld — starring <strong>Chairman</strong> in his signature black quilted vest with red trim! Battle mischievous <strong>Cats &amp; Mice</strong>, bump <strong>?</strong> blocks to eat <strong>Treats (+HP)</strong>, throw spinning <strong>Bone Boomerangs</strong>, and defeat all 3 bosses: <strong>Stage 1 Lion 🦁</strong>, <strong>Stage 2 Tiger 🐯</strong>, and <strong>Stage 3 Elephant 🐘</strong>.
+      </p>
+
+      <div class="card">
+        <h2>Cartridge Hardware Specification</h2>
+        <div class="specs-grid">
+          <div class="spec-item">
+            <div class="spec-label">Target Hardware</div>
+            <div class="spec-val">ModRetro Chromatic · GBC · DMG</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">ROM Binary &amp; Zip</div>
+            <div class="spec-val">chairman-adventure.gbc · 32 KB</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">3 Stages &amp; Bosses</div>
+            <div class="spec-val">1:Lion · 2:Tiger · 3:Elephant</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Hero Dual-Palette Sprite</div>
+            <div class="spec-val">6-Color Chairman (Head + Vest)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Controls (Keyboard &amp; Chromatic Hardware)</h2>
+        <table class="controls-table">
+          <tr>
+            <td><strong>Run Left / Right</strong></td>
+            <td><span class="kbd">←</span><span class="kbd">→</span> or <span class="kbd">A</span><span class="kbd">D</span> · D-Pad ◀ ▶</td>
+          </tr>
+          <tr>
+            <td><strong>Jump / Double Jump</strong></td>
+            <td><span class="kbd">Space</span> / <span class="kbd">W</span> / <span class="kbd">X</span> · <strong>A</strong> Button</td>
+          </tr>
+          <tr>
+            <td><strong>Bone Boomerang 🦴</strong></td>
+            <td><span class="kbd">J</span> / <span class="kbd">Z</span> / <span class="kbd">K</span> · <strong>B</strong> Button</td>
+          </tr>
+          <tr>
+            <td><strong>Stage Select (Title)</strong></td>
+            <td><span class="kbd">Shift</span> / <span class="kbd">↓</span> · <strong>SELECT</strong> Button</td>
+          </tr>
+          <tr>
+            <td><strong>Start / Pause</strong></td>
+            <td><span class="kbd">Enter</span> · <strong>START</strong> Button</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2>How to Run on a Real ModRetro Chromatic</h2>
+        <ol class="steps-list">
+          <li>Download <strong><a href="./rom/chairman-adventure-rom.zip" download style="color:#4ade80;">chairman-adventure-rom.zip</a></strong> and unzip to get <code>chairman-adventure.gbc</code> (or download the raw <code>.gbc</code> directly).</li>
+          <li><strong>Via Flashcart (EverDrive-GB X7 / EZ-Flash Jr.):</strong> Copy <code>chairman-adventure.gbc</code> onto your FAT32 microSD card and boot on your ModRetro Chromatic.</li>
+          <li><strong>Via Dedicated GBC Cartridge:</strong> Flash <code>chairman-adventure.gbc</code> onto any 32 KB+ reflashable GBC cart via <strong>GBxCart RW</strong> or <strong>Joey Jr.</strong></li>
+          <li><strong>Via Emulator:</strong> Open <code>chairman-adventure.gbc</code> in SameBoy, mGBA, BGB, OpenEmu, or Delta.</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+<script>
+(() => {
+  // =========================================================================
+  // 160x144 GAME BOY COLOR SIMULATOR MIRRORING chairman-adventure.gbc
+  // =========================================================================
+  const canvas = document.getElementById('gbc-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+
+  const GROUND_Y = 112;
+  const LEVEL_PX = 512;
+  const ARENA_CAM_X = 352;
+
+  const STAGE_THEMES = [
+    { name: 'STG1', bossName: 'LION',  sky: '#70c0f8', grass: '#40e050', dirt: '#905020', brick: '#c06818', hudBg: '#182040' },
+    { name: 'STG2', bossName: 'TIGER', sky: '#f88838', grass: '#38c048', dirt: '#783818', brick: '#b05010', hudBg: '#201830' },
+    { name: 'STG3', bossName: 'ELEPH', sky: '#303890', grass: '#e0b028', dirt: '#585068', brick: '#a060d0', hudBg: '#101030' }
+  ];
+
+  const FONT = {
+    '0':[0x3C,0x66,0x6E,0x76,0x66,0x66,0x3C,0],'1':[0x18,0x38,0x18,0x18,0x18,0x18,0x7E,0],
+    '2':[0x3C,0x66,0x06,0x1C,0x30,0x60,0x7E,0],'3':[0x3C,0x66,0x06,0x1C,0x06,0x66,0x3C,0],
+    '4':[0x0C,0x1C,0x3C,0x6C,0x7E,0x0C,0x0C,0],'5':[0x7E,0x60,0x7C,0x06,0x06,0x66,0x3C,0],
+    '6':[0x3C,0x60,0x7C,0x66,0x66,0x66,0x3C,0],'7':[0x7E,0x66,0x0C,0x18,0x18,0x18,0x18,0],
+    '8':[0x3C,0x66,0x66,0x3C,0x66,0x66,0x3C,0],'9':[0x3C,0x66,0x66,0x3E,0x06,0x0C,0x38,0],
+    'A':[0x3C,0x66,0x66,0x7E,0x66,0x66,0x66,0],'B':[0x7C,0x66,0x66,0x7C,0x66,0x66,0x7C,0],
+    'C':[0x3C,0x66,0x60,0x60,0x60,0x66,0x3C,0],'D':[0x78,0x6C,0x66,0x66,0x66,0x6C,0x78,0],
+    'E':[0x7E,0x60,0x60,0x78,0x60,0x60,0x7E,0],'F':[0x7E,0x60,0x60,0x78,0x60,0x60,0x60,0],
+    'G':[0x3C,0x66,0x60,0x6E,0x66,0x66,0x3E,0],'H':[0x66,0x66,0x66,0x7E,0x66,0x66,0x66,0],
+    'I':[0x3C,0x18,0x18,0x18,0x18,0x18,0x3C,0],'J':[0x1E,0x0C,0x0C,0x0C,0x6C,0x6C,0x38,0],
+    'K':[0x66,0x6C,0x78,0x70,0x78,0x6C,0x66,0],'L':[0x60,0x60,0x60,0x60,0x60,0x60,0x7E,0],
+    'M':[0x63,0x77,0x7F,0x6B,0x63,0x63,0x63,0],'N':[0x66,0x76,0x7E,0x7E,0x6E,0x66,0x66,0],
+    'O':[0x3C,0x66,0x66,0x66,0x66,0x66,0x3C,0],'P':[0x7C,0x66,0x66,0x7C,0x60,0x60,0x60,0],
+    'Q':[0x3C,0x66,0x66,0x66,0x6A,0x6C,0x36,0],'R':[0x7C,0x66,0x66,0x7C,0x6C,0x66,0x66,0],
+    'S':[0x3C,0x66,0x60,0x3C,0x06,0x66,0x3C,0],'T':[0x7E,0x18,0x18,0x18,0x18,0x18,0x18,0],
+    'U':[0x66,0x66,0x66,0x66,0x66,0x66,0x3C,0],'V':[0x66,0x66,0x66,0x66,0x66,0x3C,0x18,0],
+    'W':[0x63,0x63,0x63,0x6B,0x7F,0x77,0x63,0],'X':[0x66,0x66,0x3C,0x18,0x3C,0x66,0x66,0],
+    'Y':[0x66,0x66,0x66,0x3C,0x18,0x18,0x18,0],'Z':[0x7E,0x06,0x0C,0x18,0x30,0x60,0x7E,0],
+    ':':[0x00,0x18,0x18,0x00,0x18,0x18,0x00,0],'!':[0x18,0x18,0x18,0x18,0x18,0x00,0x18,0],
+    '+':[0x00,0x18,0x18,0x7E,0x18,0x18,0x00,0],' ':[0,0,0,0,0,0,0,0]
+  };
+
+  let lcdMode = 'gbc', sfxOn = true, bgmOn = true, audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx && (window.AudioContext || window.webkitAudioContext)) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  }
+  function tone(f, d, type='square', v=0.06, end=null) {
+    if (!sfxOn || !audioCtx) return;
+    const now = audioCtx.currentTime, o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, now);
+    if (end) o.frequency.exponentialRampToValueAtTime(end, now + d);
+    g.gain.setValueAtTime(v, now); g.gain.exponentialRampToValueAtTime(0.001, now + d);
+    o.connect(g); g.connect(audioCtx.destination); o.start(now); o.stop(now + d);
+  }
+  const BGM_HZ = [523,659,784,659,880,784,659,523,587,698,880,784,659,0,587,0,523,659,784,1046,880,784,659,523,587,659,523,0,392,0,523,0];
+
+  function drawTxt(x, y, str, color='#ffffff') {
+    ctx.fillStyle = color;
+    for (let i = 0; i < str.length; i++) {
+      const g = FONT[str[i].toUpperCase()] || FONT[' '];
+      for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) if (g[r] & (1 << (7 - c))) ctx.fillRect(x + i * 8 + c, y + r, 1, 1);
+    }
+  }
+
+  function drawChairman(x, y, facing, step) {
+    ctx.save();
+    ctx.translate(Math.round(x) + 8, Math.round(y));
+    if (facing < 0) ctx.scale(-1, 1);
+    // Fluffy cream-white head
+    ctx.fillStyle = '#fff8e0';
+    ctx.fillRect(-4, 0, 9, 8);
+    ctx.fillRect(4, 2, 3, 5);
+    // Apricot floppy ear
+    ctx.fillStyle = '#e8a858';
+    ctx.fillRect(-6, 2, 3, 4);
+    // Dark eye & rosy-brown nose
+    ctx.fillStyle = '#382018';
+    ctx.fillRect(2, 2, 1, 2);
+    ctx.fillRect(6, 4, 1, 2);
+    // Black quilted vest
+    ctx.fillStyle = '#181828';
+    ctx.fillRect(-5, 8, 9, 4);
+    // Red trim on vest
+    ctx.fillStyle = '#f02028';
+    ctx.fillRect(-5, 12, 9, 1);
+    ctx.fillRect(3, 8, 1, 4);
+    // Fluffy white tail & running paws
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(-7, 9, 2, 2);
+    if (step) { ctx.fillRect(-4, 13, 2, 3); ctx.fillRect(2, 13, 2, 3); }
+    else { ctx.fillRect(-5, 13, 2, 3); ctx.fillRect(1, 13, 2, 3); }
+    ctx.restore();
+  }
+
+  function drawBone(x, y, spin) {
+    const rx = Math.round(x), ry = Math.round(y);
+    ctx.fillStyle = '#382018';
+    ctx.fillRect(rx + 1, ry + 1, 6, 6);
+    ctx.fillStyle = '#ffffff';
+    if (spin) { ctx.fillRect(rx + 2, ry + 1, 4, 6); ctx.fillRect(rx + 1, ry + 2, 6, 4); }
+    else { ctx.fillRect(rx + 1, ry + 2, 6, 4); ctx.fillRect(rx + 2, ry + 1, 4, 6); }
+  }
+
+  function drawTreat(x, y) {
+    const rx = Math.round(x), ry = Math.round(y);
+    ctx.fillStyle = '#602810'; ctx.fillRect(rx, ry + 1, 8, 6);
+    ctx.fillStyle = '#f89010'; ctx.fillRect(rx + 1, ry + 2, 6, 4);
+    ctx.fillStyle = '#fff0b0'; ctx.fillRect(rx + 3, ry + 3, 2, 2);
+  }
+
+  function drawEnemySpr(e, sx) {
+    const rx = Math.round(sx), ry = Math.round(e.y);
+    if (e.type === 0) {
+      // Mouse
+      ctx.fillStyle = '#384050'; ctx.fillRect(rx + 1, ry + 2, 6, 4);
+      ctx.fillStyle = '#b0b8c8'; ctx.fillRect(rx + 2, ry + 3, 4, 2);
+      ctx.fillStyle = '#f880b0'; ctx.fillRect(rx + 2, ry + 1, 2, 2); ctx.fillRect(rx + 7, ry + 4, 1, 2);
+    } else {
+      // Cat (16x16)
+      ctx.fillStyle = '#d06010'; ctx.fillRect(rx + 2, ry + 2, 11, 11);
+      ctx.fillStyle = '#402010'; ctx.fillRect(rx + 2, ry, 2, 3); ctx.fillRect(rx + 7, ry, 2, 3);
+      ctx.fillRect(rx + 4, ry + 4, 1, 2); ctx.fillRect(rx + 7, ry + 4, 1, 2);
+      ctx.fillStyle = '#f8d040'; ctx.fillRect(rx + 3, ry + 13, 3, 3); ctx.fillRect(rx + 9, ry + 13, 3, 3);
+    }
+  }
+
+  function drawBossSpr(b, sx) {
+    const rx = Math.round(sx), ry = Math.round(b.y);
+    if (b.type === 0) {
+      // Lion
+      ctx.fillStyle = '#904010'; ctx.fillRect(rx, ry, 10, 10);
+      ctx.fillStyle = '#f8d040'; ctx.fillRect(rx + 2, ry + 2, 13, 11);
+      ctx.fillStyle = '#402010'; ctx.fillRect(rx + 3, ry + 4, 2, 2); ctx.fillRect(rx + 2, ry + 13, 4, 3); ctx.fillRect(rx + 10, ry + 13, 4, 3);
+    } else if (b.type === 1) {
+      // Tiger
+      ctx.fillStyle = '#f86810'; ctx.fillRect(rx + 1, ry + 1, 14, 12);
+      ctx.fillStyle = '#101018'; ctx.fillRect(rx + 4, ry + 1, 2, 6); ctx.fillRect(rx + 9, ry + 1, 2, 6); ctx.fillRect(rx + 13, ry + 1, 2, 5);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(rx + 2, ry + 7, 5, 3); ctx.fillRect(rx + 2, ry + 13, 4, 3); ctx.fillRect(rx + 10, ry + 13, 4, 3);
+    } else {
+      // Elephant
+      ctx.fillStyle = '#607090'; ctx.fillRect(rx + 2, ry, 14, 13);
+      ctx.fillStyle = '#d01838'; ctx.fillRect(rx + 7, ry + 1, 8, 6);
+      ctx.fillStyle = '#fff8d8'; ctx.fillRect(rx, ry + 6, 4, 2);
+      ctx.fillStyle = '#405068'; ctx.fillRect(rx + 3, ry + 13, 4, 3); ctx.fillRect(rx + 10, ry + 13, 4, 3);
+    }
+  }
+
+  // Game State
+  let state = 'TITLE', stageIdx = 0, score = 0, frame = 0, bgmStep = 0, bgmTimer = 0;
+  let camX = 0, bossLocked = false;
+  let px = 24, py = GROUND_Y - 16, pvy = 0, pfacing = 1, pjumps = 2, php = 5, pinvul = 0, pthrowCd = 0, pwalk = 0;
+  let plats = [], qblocks = [], treats = [], enemies = [], booms = [], projs = [], boss = null;
+  const held = { left: false, right: false };
+
+  function loadStage(idx, keepHp) {
+    stageIdx = idx;
+    camX = 0; bossLocked = false;
+    px = 24; py = GROUND_Y - 16; pvy = 0; pfacing = 1; pjumps = 2;
+    php = keepHp ? Math.max(3, php) : 5; pinvul = 0; pthrowCd = 0;
+    plats = [
+      {x:72,y:80,w:32},{x:152,y:72,w:32},{x:224,y:80,w:32},{x:288,y:64,w:32},
+      {x:376,y:80,w:24},{x:448,y:72,w:24}
+    ];
+    qblocks = [{x:80,y:48,used:false},{x:168,y:40,used:false},{x:240,y:48,used:false},{x:384,y:48,used:false}];
+    treats = [{x:120,y:64,vy:0,floating:true,baseY:64},{x:296,y:48,vy:0,floating:true,baseY:48}];
+    const catHp = stageIdx > 0 ? 2 : 1;
+    enemies = [
+      {type:0,x:112,y:GROUND_Y-8,vx:-1,vy:0,min:72,max:168,hp:1,hop:60},
+      {type:1,x:192,y:GROUND_Y-16,vx:-1,vy:0,min:144,max:240,hp:catHp,hop:45},
+      {type:0,x:264,y:GROUND_Y-8,vx:-1,vy:0,min:216,max:320,hp:1,hop:60},
+      {type:1,x:316,y:GROUND_Y-16,vx:-1,vy:0,min:256,max:344,hp:catHp,hop:35}
+    ];
+    booms = []; projs = [];
+    const maxHp = stageIdx === 0 ? 8 : stageIdx === 1 ? 10 : 14;
+    boss = {active:false,type:stageIdx,x:468,y:GROUND_Y-16,vx:0,vy:0,facing:-1,hp:maxHp,maxHp,state:0,timer:50,flash:0,treatCd:260};
+    state = 'PLAYING';
+  }
+
+  const hit = (ax,ay,aw,ah,bx,by,bw,bh) => ax < bx+bw && ax+aw > bx && ay < by+bh && ay+ah > by;
+
+  function hurt() {
+    if (pinvul > 0) return;
+    php = Math.max(0, php - 1); pinvul = 65; pvy = -2.4;
+    tone(180, 0.2, 'sawtooth', 0.08, 80);
+    if (php === 0) state = 'GAMEOVER';
+  }
+
+  function dmgBoss() {
+    if (!boss.active || boss.hp <= 0) return;
+    boss.hp--; boss.flash = 10; score += 50;
+    tone(420, 0.07, 'square', 0.07, 180);
+    if (boss.hp <= 0) {
+      boss.active = false; score += 500;
+      tone(587, 0.14, 'square', 0.08, 1046);
+      state = stageIdx < 2 ? 'STAGECLEAR' : 'VICTORY';
+    }
+  }
+
+  function triggerBtn(btn, isDown) {
+    const el = document.querySelector(`[data-btn="${btn}"]`);
+    if (el) el.classList.toggle('active', isDown);
+    if (isDown) ensureAudio();
+    if (btn === 'left' || btn === 'right') held[btn] = isDown;
+    if (!isDown) return;
+
+    if (state === 'TITLE') {
+      if (btn === 'select' || btn === 'down') { stageIdx = (stageIdx + 1) % 3; tone(500,0.05); }
+      else if (btn === 'up') { stageIdx = (stageIdx + 2) % 3; tone(500,0.05); }
+      else if (btn === 'start' || btn === 'a') { score = 0; tone(660,0.1); loadStage(stageIdx, false); }
+      return;
+    }
+    if (state === 'PAUSED') { if (btn === 'start') state = 'PLAYING'; return; }
+    if (state === 'STAGECLEAR') { if (btn === 'start' || btn === 'a') loadStage(stageIdx + 1, true); return; }
+    if (state === 'GAMEOVER') { if (btn === 'start' || btn === 'a') loadStage(stageIdx, false); return; }
+    if (state === 'VICTORY') { if (btn === 'start' || btn === 'a') { stageIdx = 0; score = 0; state = 'TITLE'; } return; }
+
+    if (btn === 'start') { state = 'PAUSED'; return; }
+    if (btn === 'a' && pjumps > 0) {
+      pvy = pjumps === 2 ? -3.7 : -3.2; pjumps--;
+      tone(340, 0.1, 'square', 0.06, 680);
+    }
+    if (btn === 'b' && pthrowCd === 0 && booms.length < 2) {
+      pthrowCd = 16;
+      booms.push({x: px + (pfacing > 0 ? 12 : -4), y: py + 4, vx: pfacing * 4, age: 0, ret: false, cd: 0});
+      tone(620, 0.08, 'triangle', 0.07, 320);
+    }
+  }
+
+  const KM = {ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',ArrowUp:'up',ArrowDown:'down',Space:'a',KeyW:'a',KeyX:'a',KeyJ:'b',KeyK:'b',KeyZ:'b',ShiftLeft:'select',ShiftRight:'select',Enter:'start',KeyP:'start'};
+  window.addEventListener('keydown', e => { const b = KM[e.code]; if (b) { e.preventDefault(); if (!e.repeat) triggerBtn(b, true); } });
+  window.addEventListener('keyup', e => { const b = KM[e.code]; if (b) triggerBtn(b, false); });
+  document.querySelectorAll('[data-btn]').forEach(el => {
+    const n = el.dataset.btn;
+    el.addEventListener('pointerdown', e => { e.preventDefault(); triggerBtn(n, true); });
+    ['pointerup','pointerleave','pointercancel'].forEach(ev => el.addEventListener(ev, e => { e.preventDefault(); triggerBtn(n, false); }));
+  });
+
+  // Shell & LCD controls
+  const SHELLS = {
+    leaf:     ['#16a34a','#4ade80','#166534','rgba(255,255,255,0.88)'],
+    inferno:  ['#ea580c','#fb923c','#9a3412','rgba(255,255,255,0.88)'],
+    midnight: ['#1f2430','#343c4e','#11141b','rgba(255,255,255,0.75)'],
+    cloud:    ['#e5e7eb','#ffffff','#b8bec9','rgba(20,24,33,0.78)'],
+    wave:     ['#0891b2','#22d3ee','#155e75','rgba(255,255,255,0.88)'],
+    volt:     ['#eab308','#fde047','#a16207','rgba(20,24,33,0.82)']
+  };
+  document.querySelectorAll('[data-shell]').forEach(el => el.addEventListener('click', () => {
+    document.querySelectorAll('[data-shell]').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    const [bg, hi, lo, txt] = SHELLS[el.dataset.shell];
+    const r = document.documentElement.style;
+    r.setProperty('--shell-bg', bg); r.setProperty('--shell-hi', hi); r.setProperty('--shell-lo', lo); r.setProperty('--shell-text', txt);
+  }));
+  document.querySelectorAll('[data-lcd]').forEach(el => el.addEventListener('click', () => {
+    document.querySelectorAll('[data-lcd]').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    lcdMode = el.dataset.lcd;
+    canvas.style.filter = lcdMode === 'dmg1' ? 'sepia(1) hue-rotate(48deg) saturate(2.1) contrast(1.1)' : lcdMode === 'dmg2' ? 'grayscale(1) contrast(1.15)' : 'none';
+  }));
+  document.getElementById('btn-grid').addEventListener('click', e => {
+    const off = document.getElementById('lcd-grid').classList.toggle('off');
+    e.target.textContent = off ? 'Grid: OFF' : 'Grid: ON';
+    e.target.classList.toggle('active', !off);
+  });
+  document.getElementById('btn-sfx').addEventListener('click', e => { sfxOn = !sfxOn; e.target.textContent = sfxOn ? 'SFX: ON' : 'SFX: OFF'; e.target.classList.toggle('active', sfxOn); });
+  document.getElementById('btn-bgm').addEventListener('click', e => { bgmOn = !bgmOn; e.target.textContent = bgmOn ? 'BGM: ON' : 'BGM: OFF'; e.target.classList.toggle('active', bgmOn); });
+
+  function tick() {
+    frame++;
+    if (state !== 'PLAYING') return;
+    if (bgmOn && audioCtx) {
+      if (bgmTimer > 0) bgmTimer--;
+      else { bgmTimer = 9; const hz = BGM_HZ[bgmStep++ & 31]; if (hz) tone(hz, 0.1, 'square', 0.02); }
+    }
+    if (pinvul > 0) pinvul--;
+    if (pthrowCd > 0) pthrowCd--;
+
+    if (held.left)  { px -= 2; pfacing = -1; pwalk++; }
+    if (held.right) { px += 2; pfacing =  1; pwalk++; }
+    px = Math.max(bossLocked ? ARENA_CAM_X + 2 : 2, Math.min(LEVEL_PX - 18, px));
+
+    const prevY = py;
+    pvy = Math.min(4, pvy + 0.25);
+    py += pvy;
+    if (py + 16 >= GROUND_Y) { py = GROUND_Y - 16; pvy = 0; pjumps = 2; }
+    for (const p of plats) {
+      if (pvy >= 0 && prevY + 16 <= p.y + 4 && py + 16 >= p.y && px + 13 > p.x && px + 3 < p.x + p.w) {
+        py = p.y - 16; pvy = 0; pjumps = 2;
+      }
+    }
+    for (const q of qblocks) {
+      if (hit(px + 2, py, 12, 16, q.x, q.y, 8, 8) && pvy < 0 && prevY >= q.y + 4) {
+        py = q.y + 8; pvy = 0.5;
+        if (!q.used) { q.used = true; treats.push({x:q.x, y:q.y-8, vy:-2.2, floating:false, baseY:q.y-8}); tone(660,0.08); }
+      }
+    }
+
+    if (!bossLocked) {
+      camX = Math.max(camX, Math.max(0, Math.min(ARENA_CAM_X, px - 56)));
+      if (camX >= ARENA_CAM_X && px >= ARENA_CAM_X + 16) { bossLocked = true; boss.active = true; tone(150,0.22,'sawtooth',0.08,70); }
+    }
+
+    for (let i = booms.length - 1; i >= 0; i--) {
+      const b = booms[i]; b.age++; if (b.cd > 0) b.cd--;
+      if (!b.ret) { b.x += b.vx; if (b.age >= 22) b.ret = true; }
+      else {
+        b.x += b.x < px + 4 ? 4 : -4;
+        b.y += b.y < py + 4 ? 2 : -2;
+        if (hit(b.x, b.y, 8, 8, px - 2, py - 2, 20, 20) || b.age > 75) { booms.splice(i, 1); continue; }
+      }
+      for (let j = enemies.length - 1; j >= 0; j--) {
+        const e = enemies[j], ew = e.type ? 16 : 8, eh = e.type ? 16 : 8;
+        if (b.cd === 0 && hit(b.x, b.y, 8, 8, e.x, e.y, ew, eh)) {
+          b.cd = 8; e.hp--; tone(380,0.06);
+          if (e.hp <= 0) { score += e.type ? 100 : 50; if (php < 5) treats.push({x:e.x,y:e.y,vy:-2,floating:false,baseY:e.y}); enemies.splice(j, 1); }
+        }
+      }
+      if (boss.active && b.cd === 0 && hit(b.x, b.y, 8, 8, boss.x, boss.y, 16, 16)) { b.cd = 12; dmgBoss(); }
+    }
+
+    for (let i = treats.length - 1; i >= 0; i--) {
+      const t = treats[i];
+      if (t.floating) t.y = t.baseY + Math.sin(frame * 0.14) * 2;
+      else { t.vy = Math.min(2.5, t.vy + 0.18); t.y += t.vy; if (t.y + 8 >= GROUND_Y) { t.y = GROUND_Y - 8; t.vy = 0; } }
+      if (hit(px, py, 16, 16, t.x, t.y, 8, 8)) { treats.splice(i, 1); if (php < 5) php++; score += 75; tone(587,0.08,'square',0.07,880); }
+    }
+
+    for (let i = enemies.length - 1; i >= 0; i--) {
+      const e = enemies[i], ew = e.type ? 16 : 8, eh = e.type ? 16 : 8;
+      if (frame & 1) { e.x += e.vx; if (e.x <= e.min) e.vx = 1; if (e.x >= e.max) e.vx = -1; }
+      if (e.type === 1) {
+        if (--e.hop <= 0 && e.y + 16 >= GROUND_Y) { e.vy = -3.4; e.hop = 70; }
+        e.vy = Math.min(3.5, e.vy + 0.22); e.y += e.vy;
+        if (e.y + 16 >= GROUND_Y) { e.y = GROUND_Y - 16; e.vy = 0; }
+      }
+      if (hit(px + 2, py + 2, 12, 14, e.x, e.y, ew, eh)) {
+        if (pvy > 0 && prevY + 14 <= e.y + 6) {
+          pvy = -3.0; pjumps = 1; e.hp--; tone(320,0.07,'square',0.07,560);
+          if (e.hp <= 0) { score += e.type ? 100 : 50; enemies.splice(i, 1); }
+        } else hurt();
+      }
+    }
+
+    if (boss.active && boss.hp > 0) {
+      if (boss.flash > 0) boss.flash--;
+      boss.facing = px < boss.x ? -1 : 1;
+      if (--boss.treatCd <= 0) { boss.treatCd = 280; if (php <= 3) treats.push({x: ARENA_CAM_X + 64, y: 24, vy: 0, floating: false, baseY: 24}); }
+      if (--boss.timer <= 0) {
+        if (boss.state === 0) {
+          if (boss.type === 0) {
+            if (Math.random() < 0.5) { boss.state = 1; boss.timer = 40; projs.push({x:boss.x+(boss.facing<0?-6:16),y:GROUND_Y-10,vx:boss.facing*2,vy:0,g:false,life:110}); }
+            else { boss.state = 2; boss.timer = 44; boss.vx = boss.facing * 2; }
+          } else if (boss.type === 1) {
+            if (Math.random() < 0.5) { boss.state = 2; boss.timer = 46; boss.vy = -3.8; boss.vx = boss.facing * 2; }
+            else { boss.state = 1; boss.timer = 36; projs.push({x:boss.x+(boss.facing<0?-6:16),y:GROUND_Y-14,vx:boss.facing*2.8,vy:0,g:false,life:110}); }
+          } else {
+            if (Math.random() < 0.5) { boss.state = 3; boss.timer = 55; boss.vy = -3.2; boss.vx = boss.facing; }
+            else { boss.state = 1; boss.timer = 44; projs.push({x:boss.x+(boss.facing<0?-6:16),y:boss.y,vx:boss.facing*2,vy:-3.0,g:true,life:110}); }
+          }
+        } else { boss.state = 0; boss.vx = 0; boss.timer = boss.type === 1 ? 34 : 46; }
+      }
+      const wasAir = boss.y + 16 < GROUND_Y;
+      boss.x = Math.max(ARENA_CAM_X + 8, Math.min(LEVEL_PX - 22, boss.x + boss.vx));
+      boss.vy = Math.min(3.5, boss.vy + 0.22); boss.y += boss.vy;
+      if (boss.y + 16 >= GROUND_Y) {
+        boss.y = GROUND_Y - 16; boss.vy = 0;
+        if (wasAir && boss.type === 2 && boss.state === 3) {
+          projs.push({x:boss.x,y:GROUND_Y-8,vx:-2,vy:0,g:false,life:100});
+          projs.push({x:boss.x+12,y:GROUND_Y-8,vx:2,vy:0,g:false,life:100});
+        }
+      }
+      if (hit(px + 2, py + 2, 12, 14, boss.x, boss.y, 16, 16)) {
+        if (pvy > 0 && prevY + 14 <= boss.y + 6) { pvy = -3.2; pjumps = 1; dmgBoss(); } else hurt();
+      }
+    }
+
+    for (let i = projs.length - 1; i >= 0; i--) {
+      const p = projs[i]; p.x += p.vx; p.y += p.vy;
+      if (p.g) p.vy = Math.min(3, p.vy + 0.18);
+      if (p.y + 8 >= GROUND_Y) { p.y = GROUND_Y - 8; p.vy = p.g ? -1.8 : 0; }
+      if (hit(px + 2, py + 2, 12, 14, p.x, p.y, 8, 8)) { projs.splice(i, 1); hurt(); continue; }
+      if (--p.life <= 0 || p.x < ARENA_CAM_X - 16 || p.x > LEVEL_PX + 16) projs.splice(i, 1);
+    }
+  }
+
+  function render() {
+    const th = STAGE_THEMES[stageIdx];
+    if (state === 'TITLE') {
+      ctx.fillStyle = '#182040'; ctx.fillRect(0, 0, 160, 144);
+      drawTxt(16, 16, 'CHAIRMAN', '#ffffff');
+      drawTxt(16, 24, 'ADVENTURE!', '#f8d040');
+      drawTxt(16, 40, 'MODRETRO GBC', '#f85868');
+      drawTxt(16, 64, 'STG 1: LION',     stageIdx === 0 ? '#f85868' : '#ffffff');
+      drawTxt(16, 72, 'STG 2: TIGER',    stageIdx === 1 ? '#f85868' : '#ffffff');
+      drawTxt(16, 80, 'STG 3: ELEPHANT', stageIdx === 2 ? '#f85868' : '#ffffff');
+      drawTxt(16, 104, 'A:JUMP  B:BONE', '#a0d8f8');
+      drawTxt(16, 112, 'EAT TREAT: +HP', '#80f090');
+      drawTxt(24, 128, 'PRESS START!',   '#f8d040');
+      drawChairman(124, 24, 1, 0);
+      drawBone(144, 26, (frame >> 3) & 1);
+      return;
+    }
+    if (state === 'STAGECLEAR' || state === 'GAMEOVER' || state === 'VICTORY') {
+      ctx.fillStyle = '#182040'; ctx.fillRect(0, 0, 160, 144);
+      drawChairman(72, 16, 1, 0);
+      if (state === 'STAGECLEAR') { drawTxt(24, 44, 'BOSS DEFEATED!', '#f8d040'); drawTxt(12, 68, 'GOOD BOY CHAIRMAN!', '#80f090'); drawTxt(20, 96, 'START: NEXT STG', '#ffffff'); }
+      else if (state === 'VICTORY') { drawTxt(40, 44, 'VICTORY!!', '#f8d040'); drawTxt(12, 68, 'CHAIRMAN IS HERO!', '#80f090'); drawTxt(16, 96, 'START: PLAY AGAIN', '#ffffff'); }
+      else { drawTxt(40, 44, 'GAME OVER!', '#f85868'); drawTxt(40, 68, 'TRY AGAIN!', '#ffffff'); drawTxt(36, 96, 'PRESS START', '#f8d040'); }
+      return;
+    }
+
+    // Playfield (160x128)
+    ctx.fillStyle = th.sky; ctx.fillRect(0, 0, 160, 128);
+    // Clouds
+    ctx.fillStyle = '#ffffff';
+    for (let c = 0; c < 10; c++) {
+      const cx = Math.round(c * 64 - camX * 0.5);
+      if (cx > -24 && cx < 168) { ctx.fillRect(cx + 2, 16, 12, 5); ctx.fillRect(cx, 18, 16, 4); }
+    }
+    // Ground
+    ctx.fillStyle = th.grass; ctx.fillRect(0, GROUND_Y, 160, 8);
+    ctx.fillStyle = th.dirt;  ctx.fillRect(0, GROUND_Y + 8, 160, 8);
+    // Platforms & ? Blocks
+    for (const p of plats) {
+      const sx = Math.round(p.x - camX);
+      if (sx + p.w < 0 || sx > 160) continue;
+      ctx.fillStyle = th.brick; ctx.fillRect(sx, p.y, p.w, 8);
+      ctx.fillStyle = '#f8c828'; ctx.fillRect(sx, p.y, p.w, 2);
+    }
+    for (const q of qblocks) {
+      const sx = Math.round(q.x - camX);
+      if (sx < -8 || sx > 160) continue;
+      ctx.fillStyle = q.used ? '#686878' : '#f8d028'; ctx.fillRect(sx, q.y, 8, 8);
+      ctx.fillStyle = '#381808'; ctx.strokeRect(sx + 0.5, q.y + 0.5, 7, 7);
+    }
+    for (const t of treats) drawTreat(t.x - camX, t.y);
+    for (const e of enemies) if (e.x - camX > -16 && e.x - camX < 168) drawEnemySpr(e, e.x - camX);
+    if (boss.active && boss.hp > 0 && ((boss.flash & 2) === 0)) drawBossSpr(boss, boss.x - camX);
+    for (const p of projs) { ctx.fillStyle = '#f8d028'; ctx.fillRect(Math.round(p.x - camX), Math.round(p.y), 6, 6); }
+    if (pinvul === 0 || (pinvul & 4) === 0) drawChairman(px - camX, py, pfacing, (pwalk >> 3) & 1);
+    for (const b of booms) drawBone(b.x - camX, b.y, (frame >> 2) & 1);
+
+    // Bottom Window HUD (y=128..143)
+    ctx.fillStyle = th.hudBg; ctx.fillRect(0, 128, 160, 16);
+    for (let i = 0; i < 5; i++) {
+      ctx.fillStyle = i < php ? '#f82840' : '#404860';
+      ctx.fillRect(2 + i * 8, 130, 6, 5);
+    }
+    drawTxt(48, 128, th.name, '#ffffff');
+    drawTxt(120, 128, String(score).padStart(5, '0'), '#f8d040');
+    if (state === 'PAUSED') {
+      drawTxt(0, 136, 'CHAIRMAN   PAUSED', '#f85868');
+    } else if (boss.active && boss.hp > 0) {
+      drawTxt(0, 136, th.bossName + ':', '#ffffff');
+      const bars = Math.ceil((boss.hp / boss.maxHp) * 10);
+      for (let i = 0; i < 10; i++) {
+        ctx.fillStyle = i < bars ? '#f82840' : '#303850';
+        ctx.fillRect(56 + i * 8, 138, 7, 4);
+      }
+    } else {
+      drawTxt(0, 136, 'CHAIRMAN  B:BONE A:J', '#a0d8f8');
+    }
+  }
+
+  let acc = 0, last = 0;
+  function loop(ts) {
+    if (!last) last = ts;
+    acc += Math.min(80, ts - last); last = ts;
+    while (acc >= 1000 / 60) { tick(); acc -= 1000 / 60; }
+    render();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
